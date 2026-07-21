@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, Minus, Search, TrendingDown, TrendingUp } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { BandChip } from "@/components/band-chip";
@@ -62,7 +63,8 @@ function Trend({ student }: { student: Student }) {
 }
 
 export function Gradebook() {
-  const { students, setActiveStudentId, setRole } = useApp();
+  const { students, setActiveStudentId } = useApp();
+  const router = useRouter();
   const [group, setGroup] = React.useState<string>(ALL_GROUPS);
   const [query, setQuery] = React.useState("");
 
@@ -74,7 +76,7 @@ export function Gradebook() {
 
   function openStudent(id: string) {
     setActiveStudentId(id);
-    setRole("student");
+    router.push("/student");
   }
 
   return (

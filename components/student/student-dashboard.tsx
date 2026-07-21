@@ -21,13 +21,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { formatBand, SKILL_LABELS } from "@/lib/band";
 import { formatLongDate } from "@/lib/date";
 import { useMounted } from "@/lib/use-mounted";
@@ -53,8 +46,7 @@ const PRIORITY_LABELS = {
 } as const;
 
 export function StudentDashboard() {
-  const { students, activeStudent, activeStudentId, setActiveStudentId } =
-    useApp();
+  const { activeStudent } = useApp();
   const s = activeStudent;
   const first = s.mockTests[0];
   const latest = s.mockTests[s.mockTests.length - 1];
@@ -76,27 +68,6 @@ export function StudentDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
-        <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight">
-            Прогресс: {s.name.split(" ")[0]}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{s.group}</p>
-        </div>
-        <Select value={activeStudentId} onValueChange={setActiveStudentId}>
-          <SelectTrigger className="w-60" aria-label="Choose student">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {students.map((st) => (
-              <SelectItem key={st.id} value={st.id}>
-                {st.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* Target progress */}
       <Card className="animate-fade-up" style={{ animationDelay: "80ms" }}>
         <CardContent className="grid gap-6 p-6 md:grid-cols-[1fr_auto]">

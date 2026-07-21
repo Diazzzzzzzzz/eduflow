@@ -1,15 +1,13 @@
 "use client";
 
 import * as React from "react";
-import type { MockTest, Role, SkillScores, Student } from "@/lib/types";
+import type { MockTest, SkillScores, Student } from "@/lib/types";
 import { STUDENTS } from "@/lib/mock-data";
 import { calcOverall } from "@/lib/band";
 
 const STORAGE_KEY = "ielts-pulse:v1";
 
 interface AppState {
-  role: Role;
-  setRole: (role: Role) => void;
   students: Student[];
   activeStudentId: string;
   setActiveStudentId: (id: string) => void;
@@ -29,7 +27,6 @@ interface AppState {
 const AppContext = React.createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRole] = React.useState<Role>("teacher");
   const [students, setStudents] = React.useState<Student[]>(STUDENTS);
   const [activeStudentId, setActiveStudentId] = React.useState(STUDENTS[0].id);
   const [theme, setTheme] = React.useState<"dark" | "light">("light");
@@ -166,8 +163,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     students.find((s) => s.id === activeStudentId) ?? students[0];
 
   const value: AppState = {
-    role,
-    setRole,
     students,
     activeStudentId,
     setActiveStudentId,

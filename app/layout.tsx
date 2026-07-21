@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Newsreader, Plus_Jakarta_Sans } from "next/font/google";
 import { AppProvider } from "@/components/app-provider";
+import { Topbar } from "@/components/layout/topbar";
+import { SiteFooter } from "@/components/layout/site-footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,7 +38,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen font-sans">
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <div className="canvas-grid flex min-h-screen flex-col">
+            <Topbar />
+            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+              {children}
+            </main>
+            <SiteFooter />
+          </div>
+        </AppProvider>
       </body>
     </html>
   );
