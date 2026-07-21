@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light-first premium EdTech palette: soft-sand canvas, white cards,
+       academic royal blue, slate text hierarchy. */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 224 64% 33%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    /* One shade deeper than the brand emerald/amber so 12px badge text
+       clears WCAG AA 4.5:1 on white */
+    --success: 163 94% 24%;
+    --success-foreground: 0 0% 100%;
+    --warning: 26 90% 37%;
+    --warning-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 213 27% 84%;
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 96%;
+    --card: 222 44% 10%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 44% 9%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 218 33% 15%;
+    --secondary-foreground: 214 30% 86%;
+    --muted: 218 33% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 91% 68%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 72% 57%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 160 84% 45%;
+    --success-foreground: 166 90% 9%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 26 83% 14%;
+    --border: 218 30% 17%;
+    --input: 218 28% 22%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04";
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Subtle dotted grid backdrop for the app canvas */
+.canvas-grid {
+  background-image: radial-gradient(
+    hsl(var(--border) / 0.55) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+/* Thin styled scrollbars for tables */
+.slim-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.slim-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+.slim-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
