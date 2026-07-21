@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:setup": "node scripts/db-setup.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
@@ -30,6 +31,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.19",
+    "pg": "^8.22.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",
     "tsx": "^4.23.1",
