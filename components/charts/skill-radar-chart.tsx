@@ -53,7 +53,7 @@ export function SkillRadarChart({
             }}
             formatter={(value: number, name: string) => [
               value.toFixed(1),
-              name === "current" ? "Current" : "Target",
+              name === "current" ? "Текущий" : "Цель",
             ]}
           />
           <Radar

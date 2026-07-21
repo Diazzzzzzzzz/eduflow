@@ -17,30 +17,30 @@ export function OverviewCards() {
 
   const cards = [
     {
-      label: "Active students",
+      label: "Активные студенты",
       value: String(stats.totalStudents),
-      hint: `${stats.cohortSize} in your cohort`,
+      hint: `${stats.cohortSize} в вашем потоке`,
       icon: Users,
       tone: "text-primary bg-primary/15 ring-primary/30",
     },
     {
-      label: "Average band score",
+      label: "Средний балл",
       value: stats.avgBand.toFixed(1),
-      hint: "+0.4 vs last term",
+      hint: "+0.4 к прошлому семестру",
       icon: TrendingUp,
       tone: "text-accent bg-accent/15 ring-accent/30",
     },
     {
-      label: "Target met rate",
+      label: "Достижение целей",
       value: `${stats.targetMetRate}%`,
-      hint: "within 0.5 of target band",
+      hint: "в пределах 0.5 от целевого балла",
       icon: Target,
       tone: "text-success bg-success/15 ring-success/30",
     },
     {
-      label: "Attendance rate",
+      label: "Посещаемость",
       value: `${stats.attendance}%`,
-      hint: "past 4 weeks",
+      hint: "за последние 4 недели",
       icon: CalendarCheck2,
       tone: "text-warning bg-warning/15 ring-warning/30",
     },

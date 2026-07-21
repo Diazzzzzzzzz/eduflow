@@ -21,9 +21,9 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "IELTS Pulse — Academic Tracking for Language Centers",
+  title: "IELTS Pulse — Аналитика для языковых центров",
   description:
-    "Track student progress across mock exams, visualize band score dynamics, and keep parents in the loop. Built for IELTS preparation centers.",
+    "Отслеживайте прогресс студентов по mock-экзаменам, визуализируйте динамику баллов и держите родителей в курсе. Создано для центров подготовки к IELTS.",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang="ru"
       className={`${inter.variable} ${jakarta.variable} ${newsreader.variable}`}
       suppressHydrationWarning
     >

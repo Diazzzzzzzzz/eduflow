@@ -2,19 +2,19 @@ import type { MockTest, Recommendation, SkillScores, Student } from "./types";
 import { calcOverall } from "./band";
 
 export const GROUPS = [
-  "IELTS Intensive — Morning",
-  "IELTS Intensive — Evening",
-  "IELTS Foundation",
-  "IELTS Weekend Sprint",
+  "IELTS Интенсив — Утро",
+  "IELTS Интенсив — Вечер",
+  "IELTS Базовый",
+  "IELTS Спринт (выходные)",
 ] as const;
 
 const MOCK_LABELS = [
-  "Mock #1 — Diagnostic",
+  "Mock #1 — Диагностика",
   "Mock #2 — Cambridge 17",
   "Mock #3 — Cambridge 18",
-  "Mock #4 — Midterm Mock",
+  "Mock #4 — Промежуточный",
   "Mock #5 — Cambridge 19",
-  "Mock #6 — Full Simulation",
+  "Mock #6 — Полная симуляция",
 ];
 
 // One mock per month, Feb → Jul 2026
@@ -58,14 +58,14 @@ function rec(
 export const STUDENTS: Student[] = [
   {
     id: "st-01",
-    name: "Arman Kalibekov",
-    initials: "AK",
-    group: "IELTS Intensive — Morning",
+    name: "Арман Калибеков",
+    initials: "АК",
+    group: "IELTS Интенсив — Утро",
     targetBand: 7.5,
     examDate: "2026-09-19",
     attendance: 96,
     teacherNote:
-      "Arman is showing great progress in Listening. Needs to practice Writing Task 2 vocabulary and linking devices.",
+      "Арман показывает отличный прогресс в Listening. Нужно поработать над лексикой и связками в Writing Task 2.",
     mockTests: tests([
       [6.0, 5.5, 5.0, 5.5],
       [6.5, 6.0, 5.5, 6.0],
@@ -79,35 +79,35 @@ export const STUDENTS: Student[] = [
         "r-01a",
         "writing",
         "high",
-        "Task 2 coherence needs linking words",
-        "Essays lose marks on progression. Drill 'however / consequently / in contrast' and paragraph topic sentences — 3 timed intros this week."
+        "Связность в Task 2 требует связок",
+        "Эссе теряют баллы за логику изложения. Отработайте «however / consequently / in contrast» и тематические предложения абзацев — 3 вступления на время за эту неделю."
       ),
       rec(
         "r-01b",
         "reading",
         "medium",
-        "True / False / Not Given accuracy",
-        "Currently 6/13 on TFNG sets. Practise locating the exact sentence before judging — Cambridge 18, Tests 2–4."
+        "Точность в True / False / Not Given",
+        "Сейчас 6/13 в заданиях TFNG. Тренируйтесь находить точное предложение перед выбором ответа — Cambridge 18, тесты 2–4."
       ),
       rec(
         "r-01c",
         "speaking",
         "low",
-        "Part 3 answer depth",
-        "Answers are fluent but short. Use the 'opinion → reason → example' frame to stretch responses past 30 seconds."
+        "Глубина ответов в Part 3",
+        "Ответы беглые, но короткие. Используйте схему «мнение → причина → пример», чтобы ответы длились дольше 30 секунд."
       ),
     ],
   },
   {
     id: "st-02",
-    name: "Aruzhan Mukasheva",
-    initials: "AM",
-    group: "IELTS Intensive — Morning",
+    name: "Аружан Мукашева",
+    initials: "АМ",
+    group: "IELTS Интенсив — Утро",
     targetBand: 8.0,
     examDate: "2026-08-22",
     attendance: 100,
     teacherNote:
-      "Aruzhan is our strongest reader. Speaking fluency is excellent; push pronunciation of consonant clusters for 8.0.",
+      "Аружан — наш сильнейший читатель. Беглость речи отличная; отточите произношение сочетаний согласных для 8.0.",
     mockTests: tests([
       [7.0, 7.5, 6.0, 6.5],
       [7.0, 7.5, 6.5, 7.0],
@@ -121,28 +121,28 @@ export const STUDENTS: Student[] = [
         "r-02a",
         "writing",
         "high",
-        "Task 1 overview statements",
-        "Reports jump straight into data. Open body with a two-sentence overview of main trends before any figures."
+        "Обзорное предложение в Task 1",
+        "Отчёты сразу переходят к данным. Начинайте с двух предложений об основных тенденциях до любых цифр."
       ),
       rec(
         "r-02b",
         "speaking",
         "medium",
-        "Consonant cluster pronunciation",
-        "'Sixth', 'strengths', 'crisps' — shadow BBC 6-Minute English daily for 10 minutes."
+        "Произношение сочетаний согласных",
+        "«Sixth», «strengths», «crisps» — по 10 минут в день повторяйте за BBC 6-Minute English."
       ),
     ],
   },
   {
     id: "st-03",
-    name: "Dias Serikbay",
-    initials: "DS",
-    group: "IELTS Intensive — Evening",
+    name: "Диас Серикбай",
+    initials: "ДС",
+    group: "IELTS Интенсив — Вечер",
     targetBand: 7.0,
     examDate: "2026-10-03",
     attendance: 88,
     teacherNote:
-      "Dias improved two half-bands in Listening this term. Reading speed is the main blocker — needs timed section practice.",
+      "Диас поднял Listening на полбалла за семестр. Главный барьер — скорость чтения; нужна работа с секциями на время.",
     mockTests: tests([
       [5.5, 5.0, 5.0, 5.5],
       [6.0, 5.5, 5.5, 5.5],
@@ -156,28 +156,28 @@ export const STUDENTS: Student[] = [
         "r-03a",
         "reading",
         "high",
-        "Section 3 time management",
-        "Regularly leaves 6+ questions blank. Cap Section 1 at 15 minutes and practise skimming for paragraph gist first."
+        "Тайм-менеджмент в Section 3",
+        "Регулярно оставляет 6+ вопросов без ответа. Ограничьте Section 1 15 минутами и тренируйте беглый просмотр для понимания сути абзаца."
       ),
       rec(
         "r-03b",
         "writing",
         "medium",
-        "Complex sentence variety",
-        "Over-relies on simple sentences. Target one conditional and one relative clause per paragraph."
+        "Разнообразие сложных предложений",
+        "Слишком много простых предложений. Цель — одно условное и одно определительное придаточное в каждом абзаце."
       ),
     ],
   },
   {
     id: "st-04",
-    name: "Aigerim Nurlanova",
-    initials: "AN",
-    group: "IELTS Foundation",
+    name: "Айгерим Нурланова",
+    initials: "АН",
+    group: "IELTS Базовый",
     targetBand: 7.0,
     examDate: "2026-11-14",
     attendance: 92,
     teacherNote:
-      "Aigerim participates actively and her vocabulary range is growing fast. Listening Section 4 remains the weak spot.",
+      "Айгерим активно участвует, её словарный запас быстро растёт. Слабое место — Listening Section 4.",
     mockTests: tests([
       [4.5, 5.0, 4.5, 5.0],
       [5.0, 5.0, 5.0, 5.0],
@@ -191,28 +191,28 @@ export const STUDENTS: Student[] = [
         "r-04a",
         "listening",
         "high",
-        "Section 4 academic monologues",
-        "Loses focus after minute 3. Practise note-completion with one TED-Ed talk per day, transcribing key nouns."
+        "Академические монологи в Section 4",
+        "Теряет концентрацию после 3-й минуты. Тренируйте заполнение пропусков по одному ролику TED-Ed в день, выписывая ключевые существительные."
       ),
       rec(
         "r-04b",
         "writing",
         "medium",
-        "Task 2 paragraph structure",
-        "Ideas are good but unordered. Use the PEEL frame (Point, Explain, Example, Link) for every body paragraph."
+        "Структура абзацев в Task 2",
+        "Идеи хорошие, но не упорядочены. Используйте схему PEEL (Point, Explain, Example, Link) для каждого абзаца."
       ),
     ],
   },
   {
     id: "st-05",
-    name: "Alikhan Tulegenov",
-    initials: "AT",
-    group: "IELTS Intensive — Evening",
+    name: "Алихан Тулегенов",
+    initials: "АТ",
+    group: "IELTS Интенсив — Вечер",
     targetBand: 7.5,
     examDate: "2026-09-05",
     attendance: 94,
     teacherNote:
-      "Alikhan's speaking is near-native in fluency. Writing grammar accuracy under time pressure is the last gap to 7.5.",
+      "Речь Алихана почти как у носителя по беглости. Последний барьер к 7.5 — грамматическая точность в Writing под давлением времени.",
     mockTests: tests([
       [6.5, 6.0, 5.5, 7.0],
       [6.5, 6.5, 6.0, 7.0],
@@ -226,28 +226,28 @@ export const STUDENTS: Student[] = [
         "r-05a",
         "writing",
         "high",
-        "Article and preposition accuracy",
-        "Recurring 'the/a' omissions cost GRA marks. Self-edit checklist pass in the last 3 minutes of every task."
+        "Точность артиклей и предлогов",
+        "Повторяющиеся пропуски «the/a» стоят баллов по GRA. Делайте проверку по чек-листу в последние 3 минуты каждого задания."
       ),
       rec(
         "r-05b",
         "reading",
         "low",
-        "Matching headings strategy",
-        "Read the headings first and predict paragraph function before scanning."
+        "Стратегия matching headings",
+        "Сначала читайте заголовки и предполагайте функцию абзаца до сканирования текста."
       ),
     ],
   },
   {
     id: "st-06",
-    name: "Madina Yessenova",
-    initials: "MY",
-    group: "IELTS Weekend Sprint",
+    name: "Мадина Есенова",
+    initials: "МЕ",
+    group: "IELTS Спринт (выходные)",
     targetBand: 7.0,
     examDate: "2026-08-29",
     attendance: 85,
     teacherNote:
-      "Madina made a strong jump this month after switching to daily listening drills. Keep momentum on Writing Task 1.",
+      "Мадина заметно продвинулась за месяц после перехода на ежедневные упражнения по Listening. Держите темп в Writing Task 1.",
     mockTests: tests([
       [5.5, 6.0, 5.0, 5.5],
       [6.0, 6.0, 5.5, 6.0],
@@ -261,28 +261,28 @@ export const STUDENTS: Student[] = [
         "r-06a",
         "writing",
         "high",
-        "Task 1 data selection",
-        "Describes every data point equally. Pick the 2–3 most significant trends and group the rest."
+        "Выбор данных в Task 1",
+        "Описывает все данные одинаково. Выберите 2–3 самые важные тенденции, остальное сгруппируйте."
       ),
       rec(
         "r-06b",
         "speaking",
         "medium",
-        "Part 2 long-turn stamina",
-        "Runs out of ideas at 60 seconds. Practise the 5W1H expansion on cue cards daily."
+        "Выносливость в длинном ответе Part 2",
+        "Идеи заканчиваются на 60-й секунде. Ежедневно тренируйте расширение по схеме 5W1H на карточках."
       ),
     ],
   },
   {
     id: "st-07",
-    name: "Nurislam Bekzhanov",
-    initials: "NB",
-    group: "IELTS Foundation",
+    name: "Нурислам Бекжанов",
+    initials: "НБ",
+    group: "IELTS Базовый",
     targetBand: 6.5,
     examDate: "2026-12-05",
     attendance: 78,
     teacherNote:
-      "Nurislam's attendance dipped in June — flagged for a parent check-in. Scores hold steady when he attends consistently.",
+      "Посещаемость Нурислама снизилась в июне — отмечен для беседы с родителями. При регулярном посещении баллы держатся стабильно.",
     mockTests: tests([
       [4.5, 4.5, 4.0, 4.5],
       [5.0, 4.5, 4.5, 5.0],
@@ -296,28 +296,28 @@ export const STUDENTS: Student[] = [
         "r-07a",
         "listening",
         "high",
-        "Spelling in answer transfer",
-        "Loses 3–4 correct answers per test to spelling. Drill the top-100 IELTS listening nouns weekly."
+        "Орфография при переносе ответов",
+        "Теряет 3–4 верных ответа за тест из-за орфографии. Еженедельно отрабатывайте топ-100 существительных IELTS Listening."
       ),
       rec(
         "r-07b",
         "reading",
         "medium",
-        "Vocabulary for paraphrase spotting",
-        "Build 10 synonym pairs per unit from Cambridge Vocabulary for IELTS."
+        "Лексика для распознавания перефраза",
+        "Составляйте по 10 пар синонимов на юнит из Cambridge Vocabulary for IELTS."
       ),
     ],
   },
   {
     id: "st-08",
-    name: "Tomiris Aitbayeva",
-    initials: "TA",
-    group: "IELTS Intensive — Morning",
+    name: "Томирис Айтбаева",
+    initials: "ТА",
+    group: "IELTS Интенсив — Утро",
     targetBand: 7.0,
     examDate: "2026-09-26",
     attendance: 98,
     teacherNote:
-      "Tomiris is exceptionally consistent — never misses homework. Ready to push speaking beyond memorised structures.",
+      "Томирис исключительно стабильна — никогда не пропускает домашние задания. Готова выйти за рамки заученных структур в Speaking.",
     mockTests: tests([
       [6.0, 6.0, 5.5, 5.5],
       [6.0, 6.5, 5.5, 6.0],
@@ -331,28 +331,28 @@ export const STUDENTS: Student[] = [
         "r-08a",
         "speaking",
         "high",
-        "Natural responses over templates",
-        "Examiner will spot memorised chunks. Practise reacting to unexpected Part 3 questions with 'It depends…' pivots."
+        "Естественные ответы вместо шаблонов",
+        "Экзаменатор заметит заученные фразы. Тренируйте реакцию на неожиданные вопросы Part 3 через связки «It depends…»."
       ),
       rec(
         "r-08b",
         "writing",
         "low",
-        "Lexical range in Task 2",
-        "Upgrade high-frequency verbs: 'get → obtain / acquire', 'big → substantial'."
+        "Разнообразие лексики в Task 2",
+        "Заменяйте частотные глаголы: «get → obtain / acquire», «big → substantial»."
       ),
     ],
   },
   {
     id: "st-09",
-    name: "Bekarys Zhumagulov",
-    initials: "BZ",
-    group: "IELTS Weekend Sprint",
+    name: "Бекарыс Жумагулов",
+    initials: "БЖ",
+    group: "IELTS Спринт (выходные)",
     targetBand: 6.5,
     examDate: "2026-10-17",
     attendance: 90,
     teacherNote:
-      "Bekarys thinks deeply but hesitates in Speaking. Confidence drills are working — fluency is up a half-band.",
+      "Бекарыс мыслит глубоко, но неуверен в Speaking. Упражнения на уверенность работают — беглость выросла на полбалла.",
     mockTests: tests([
       [5.5, 6.0, 5.0, 4.5],
       [5.5, 6.0, 5.0, 5.0],
@@ -366,28 +366,28 @@ export const STUDENTS: Student[] = [
         "r-09a",
         "speaking",
         "high",
-        "Reduce hesitation fillers",
-        "Long pauses before answers. Practise 3-second response starts: rephrase the question aloud while thinking."
+        "Сократить слова-паузы",
+        "Долгие паузы перед ответами. Тренируйте старт ответа за 3 секунды: переформулируйте вопрос вслух, пока думаете."
       ),
       rec(
         "r-09b",
         "listening",
         "medium",
-        "Map / plan labelling tasks",
-        "Confuses left/right orientation under pressure. Do 2 map tasks weekly with the audio at 1.25x."
+        "Задания на карты и планы",
+        "Путает лево/право под давлением. Делайте по 2 задания с картами в неделю с аудио на скорости 1.25x."
       ),
     ],
   },
   {
     id: "st-10",
-    name: "Zere Amangeldina",
-    initials: "ZA",
-    group: "IELTS Intensive — Evening",
+    name: "Зере Амангельдина",
+    initials: "ЗА",
+    group: "IELTS Интенсив — Вечер",
     targetBand: 8.0,
     examDate: "2026-08-15",
     attendance: 97,
     teacherNote:
-      "Zere is two weeks from exam day and trending at 7.5. Final focus: Writing Task 2 position clarity for the 8.0 push.",
+      "До экзамена Зере две недели, тренд — 7.5. Финальный фокус: чёткость позиции в Writing Task 2 для рывка к 8.0.",
     mockTests: tests([
       [7.0, 7.0, 6.0, 6.5],
       [7.5, 7.0, 6.5, 7.0],
@@ -401,28 +401,28 @@ export const STUDENTS: Student[] = [
         "r-10a",
         "writing",
         "high",
-        "Thesis position in Task 2",
-        "Position appears only in the conclusion. State a clear opinion in the introduction and echo it in every paragraph."
+        "Позиция-тезис в Task 2",
+        "Позиция появляется только в заключении. Заявите чёткое мнение во вступлении и повторяйте его в каждом абзаце."
       ),
       rec(
         "r-10b",
         "speaking",
         "low",
-        "Intonation variety",
-        "Delivery is accurate but flat. Mark stress words in practice answers and exaggerate on record-and-review."
+        "Разнообразие интонации",
+        "Речь точная, но монотонная. Отмечайте ударные слова в тренировочных ответах и утрируйте их при записи и разборе."
       ),
     ],
   },
   {
     id: "st-11",
-    name: "Sanzhar Orazbekov",
-    initials: "SO",
-    group: "IELTS Foundation",
+    name: "Санжар Оразбеков",
+    initials: "СО",
+    group: "IELTS Базовый",
     targetBand: 6.5,
     examDate: "2026-11-28",
     attendance: 91,
     teacherNote:
-      "Sanzhar joined mid-term and is catching up quickly. Grammar foundations are solid; vocabulary breadth is the priority.",
+      "Санжар присоединился в середине семестра и быстро догоняет. Грамматическая база крепкая; приоритет — расширение словарного запаса.",
     mockTests: tests([
       [5.0, 4.5, 4.5, 5.0],
       [5.0, 5.0, 5.0, 5.0],
@@ -436,28 +436,28 @@ export const STUDENTS: Student[] = [
         "r-11a",
         "reading",
         "high",
-        "Academic word list coverage",
-        "Unknown vocabulary blocks comprehension. Work through AWL sublists 1–3 with spaced repetition."
+        "Охват Academic Word List",
+        "Незнакомая лексика мешает пониманию. Прорабатывайте подсписки AWL 1–3 с интервальным повторением."
       ),
       rec(
         "r-11b",
         "writing",
         "medium",
-        "Task response completeness",
-        "Often answers only half of two-part questions. Underline both parts of the prompt before planning."
+        "Полнота ответа на задание",
+        "Часто отвечает лишь на половину вопросов из двух частей. Подчёркивайте обе части задания перед планированием."
       ),
     ],
   },
   {
     id: "st-12",
-    name: "Kamila Dauletova",
-    initials: "KD",
-    group: "IELTS Weekend Sprint",
+    name: "Камила Даулетова",
+    initials: "КД",
+    group: "IELTS Спринт (выходные)",
     targetBand: 7.5,
     examDate: "2026-10-10",
     attendance: 95,
     teacherNote:
-      "Kamila balances school olympiads with IELTS prep impressively. Reading is already at target — hold and polish Writing.",
+      "Камила впечатляюще совмещает школьные олимпиады с подготовкой к IELTS. Reading уже на целевом уровне — держите и полируйте Writing.",
     mockTests: tests([
       [6.0, 6.5, 5.5, 6.0],
       [6.5, 7.0, 6.0, 6.0],
@@ -471,15 +471,15 @@ export const STUDENTS: Student[] = [
         "r-12a",
         "writing",
         "high",
-        "Cohesion without mechanical linkers",
-        "Overuses 'Firstly / Secondly / In conclusion'. Vary with referencing ('this trend', 'such measures')."
+        "Связность без механических связок",
+        "Злоупотребляет «Firstly / Secondly / In conclusion». Разнообразьте отсылками («this trend», «such measures»)."
       ),
       rec(
         "r-12b",
         "listening",
         "low",
-        "Multiple-choice distractor traps",
-        "Watch for corrections mid-audio ('actually, on second thought…') in Section 2."
+        "Ловушки-дистракторы в multiple-choice",
+        "Следите за исправлениями по ходу аудио («actually, on second thought…») в Section 2."
       ),
     ],
   },

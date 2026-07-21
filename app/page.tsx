@@ -31,7 +31,7 @@ export default function Home() {
               strokeLinejoin="round"
             />
           </svg>
-          Powered by IELTS Pulse
+          Работает на IELTS Pulse
         </span>
       </footer>
     </div>

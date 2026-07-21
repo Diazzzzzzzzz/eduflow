@@ -81,29 +81,29 @@ export function Gradebook() {
     <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
       <CardHeader className="flex-row flex-wrap items-end justify-between gap-4 space-y-0">
         <div className="space-y-1.5">
-          <CardTitle className="font-display">Mock exam gradebook</CardTitle>
+          <CardTitle className="font-display">Журнал Mock-экзаменов</CardTitle>
           <CardDescription>
-            Latest section bands per student — click a row to open their
-            progress view.
+            Последние баллы по секциям у каждого студента — нажмите на строку,
+            чтобы открыть прогресс.
           </CardDescription>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search students…"
+              placeholder="Поиск студентов…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-48 pl-8"
-              aria-label="Search students"
+              aria-label="Поиск студентов"
             />
           </div>
           <Select value={group} onValueChange={setGroup}>
-            <SelectTrigger className="w-56" aria-label="Filter by group">
+            <SelectTrigger className="w-56" aria-label="Фильтр по группе">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_GROUPS}>All groups</SelectItem>
+              <SelectItem value={ALL_GROUPS}>Все группы</SelectItem>
               {GROUPS.map((g) => (
                 <SelectItem key={g} value={g}>
                   {g}
@@ -117,9 +117,10 @@ export function Gradebook() {
       <CardContent>
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed py-14 text-center">
-            <p className="font-medium">No students match this filter</p>
+            <p className="font-medium">Нет студентов по этому фильтру</p>
             <p className="text-sm text-muted-foreground">
-              Try another group or clear the search to see the full cohort.
+              Выберите другую группу или очистите поиск, чтобы увидеть весь
+              поток.
             </p>
             <Button
               variant="outline"
@@ -130,22 +131,22 @@ export function Gradebook() {
                 setQuery("");
               }}
             >
-              Clear filters
+              Сбросить фильтры
             </Button>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead>Student</TableHead>
-                <TableHead>Group</TableHead>
+                <TableHead>Студент</TableHead>
+                <TableHead>Группа</TableHead>
                 <TableHead className="text-center">L</TableHead>
                 <TableHead className="text-center">R</TableHead>
                 <TableHead className="text-center">W</TableHead>
                 <TableHead className="text-center">S</TableHead>
-                <TableHead className="text-center">Overall</TableHead>
-                <TableHead className="text-center">Trend</TableHead>
-                <TableHead className="text-center">Target</TableHead>
+                <TableHead className="text-center">Общий</TableHead>
+                <TableHead className="text-center">Динамика</TableHead>
+                <TableHead className="text-center">Цель</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -166,7 +167,7 @@ export function Gradebook() {
                         <div>
                           <p className="font-medium leading-tight">{s.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            Exam {formatDayMonth(s.examDate)}
+                            Экзамен {formatDayMonth(s.examDate)}
                           </p>
                         </div>
                       </div>

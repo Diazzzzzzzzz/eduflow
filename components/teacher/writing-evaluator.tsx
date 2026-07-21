@@ -22,17 +22,17 @@ const SAMPLE_RESULT: WritingEvaluation = {
   grammar: 6.5,
   overall: 6.5,
   feedback: [
-    "Position is clear, but body paragraph 2 drifts from the thesis — restate the main argument in the topic sentence.",
-    "Cohesive devices are repetitive ('moreover' ×4). Vary with referencing: 'this measure', 'such an approach'.",
-    "Good lexical range ('detrimental', 'inevitably'); watch article accuracy — 'the society' → 'society'.",
+    "Позиция ясна, но второй абзац уходит от тезиса — повторите главный аргумент в первом предложении абзаца.",
+    "Средства связи однообразны ('moreover' ×4). Разнообразьте отсылками: 'this measure', 'such an approach'.",
+    "Хороший словарный запас ('detrimental', 'inevitably'); следите за артиклями — 'the society' → 'society'.",
   ],
 };
 
 const CRITERIA: { key: keyof WritingEvaluation & string; label: string }[] = [
-  { key: "taskAchievement", label: "Task Achievement" },
-  { key: "coherence", label: "Coherence & Cohesion" },
-  { key: "lexical", label: "Lexical Resource" },
-  { key: "grammar", label: "Grammar Range & Accuracy" },
+  { key: "taskAchievement", label: "Выполнение задания" },
+  { key: "coherence", label: "Связность и логичность" },
+  { key: "lexical", label: "Словарный запас" },
+  { key: "grammar", label: "Грамматика" },
 ];
 
 export function WritingEvaluator() {
@@ -58,14 +58,13 @@ export function WritingEvaluator() {
         <div className="space-y-1.5">
           <CardTitle className="flex items-center gap-2 font-display">
             <Sparkles className="h-4 w-4 text-primary" />
-            AI writing evaluator
+            AI-оценка письма
             <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-              Demo
+              Демо
             </span>
           </CardTitle>
           <CardDescription>
-            Paste a Task 2 essay to get band estimates across the four marking
-            criteria.
+            Вставьте эссе Task 2, чтобы получить оценку по четырём критериям.
           </CardDescription>
         </div>
       </CardHeader>
@@ -74,22 +73,22 @@ export function WritingEvaluator() {
           <Textarea
             value={essay}
             onChange={(e) => setEssay(e.target.value)}
-            placeholder="Paste the student's essay here… (aim for 250+ words)"
+            placeholder="Вставьте эссе студента… (не менее 250 слов)"
             className="min-h-[220px] resize-y"
             aria-label="Essay text"
           />
           <div className="flex items-center justify-between">
             <span className="tabular text-xs text-muted-foreground">
-              {words} words
+              {words} слов
             </span>
             <Button onClick={analyze} disabled={loading || words < 20}>
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin" /> Analyzing…
+                  <Loader2 className="animate-spin" /> Анализ…
                 </>
               ) : (
                 <>
-                  <Sparkles /> Quick analyze
+                  <Sparkles /> Быстрый анализ
                 </>
               )}
             </Button>
@@ -112,9 +111,9 @@ export function WritingEvaluator() {
           ) : result ? (
             <div className="space-y-4 animate-fade-up" aria-live="polite">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">Estimated bands</p>
+                <p className="text-sm font-medium">Оценка по критериям</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Overall</span>
+                  <span className="text-xs text-muted-foreground">Общий</span>
                   <BandChip band={result.overall} />
                 </div>
               </div>
@@ -143,10 +142,10 @@ export function WritingEvaluator() {
           ) : (
             <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-2 text-center">
               <Sparkles className="h-6 w-6 text-muted-foreground" />
-              <p className="text-sm font-medium">No analysis yet</p>
+              <p className="text-sm font-medium">Анализа пока нет</p>
               <p className="max-w-[26ch] text-xs text-muted-foreground">
-                Paste an essay and select Quick analyze to see criterion bands
-                and feedback.
+                Вставьте эссе и нажмите «Быстрый анализ», чтобы увидеть баллы и
+                комментарии.
               </p>
             </div>
           )}

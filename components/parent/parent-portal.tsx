@@ -50,10 +50,10 @@ export function ParentPortal() {
       <div className="flex items-center justify-between gap-3 animate-fade-up">
         <div>
           <h1 className="font-display text-xl font-bold tracking-tight">
-            Weekly report card
+            Еженедельный отчёт
           </h1>
           <p className="text-sm text-muted-foreground">
-            Preview of what parents receive
+            Предпросмотр отчёта для родителей
           </p>
         </div>
         <Select value={activeStudentId} onValueChange={setActiveStudentId}>
@@ -83,12 +83,12 @@ export function ParentPortal() {
           <div className="min-w-0">
             <p className="truncate font-medium leading-tight">{s.name}</p>
             <p className="text-xs text-muted-foreground">
-              IELTS Pulse{weekOf ? ` · Week of ${weekOf}` : ""}
+              IELTS Pulse{weekOf ? ` · Неделя ${weekOf}` : ""}
             </p>
           </div>
           <span className="ml-auto flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-xs font-medium text-success">
             <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-success" />
-            On track
+            В графике
           </span>
         </div>
 
@@ -98,7 +98,7 @@ export function ParentPortal() {
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 text-sm font-medium">
                 <CalendarCheck2 className="h-4 w-4 text-success" />
-                Weekly attendance
+                Посещаемость за неделю
               </span>
               <span className="tabular text-sm font-semibold text-success">
                 {s.attendance}%
@@ -116,7 +116,7 @@ export function ParentPortal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">{latest.label}</p>
-                <p className="mt-0.5 text-sm font-medium">Latest mock exam</p>
+                <p className="mt-0.5 text-sm font-medium">Последний mock-экзамен</p>
               </div>
               <BandChip band={latest.overall} target={s.targetBand} size="lg" />
             </div>
@@ -136,7 +136,7 @@ export function ParentPortal() {
               ))}
             </div>
             <p className="tabular mt-3 text-center text-xs text-muted-foreground">
-              Target band: {formatBand(s.targetBand)} · Exam{" "}
+              Целевой балл: {formatBand(s.targetBand)} · Экзамен{" "}
               {formatDayMonthYear(s.examDate)}
             </p>
           </div>
@@ -145,11 +145,11 @@ export function ParentPortal() {
           <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4">
             <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-primary">
               <Quote className="h-3.5 w-3.5" />
-              Teacher&apos;s note
+              Комментарий преподавателя
             </div>
             <p className="mt-2 text-sm leading-relaxed">{s.teacherNote}</p>
             <p className="mt-2 text-xs text-muted-foreground">
-              — Dana Iskakova, Academic Director
+              — Дана Искакова, академический директор
             </p>
           </div>
 
@@ -162,7 +162,7 @@ export function ParentPortal() {
             >
               {shared === "whatsapp" ? (
                 <>
-                  <Check /> Sent
+                  <Check /> Отправлено
                 </>
               ) : (
                 <>
@@ -177,7 +177,7 @@ export function ParentPortal() {
             >
               {shared === "telegram" ? (
                 <>
-                  <Check /> Sent
+                  <Check /> Отправлено
                 </>
               ) : (
                 <>
@@ -188,7 +188,7 @@ export function ParentPortal() {
           </div>
           <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
             <Share2 className="h-3 w-3" />
-            Parents get this card every Friday at 18:00
+            Родители получают этот отчёт каждую пятницу в 18:00
           </p>
         </div>
       </div>

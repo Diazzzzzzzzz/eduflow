@@ -25,7 +25,7 @@ export function Logo({ className }: { className?: string }) {
           IELTS Pulse
         </p>
         <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          by EduFlow
+          от EduFlow
         </p>
       </div>
     </div>
@@ -43,7 +43,7 @@ export function CenterBadge({ className }: { className?: string }) {
         "flex items-center gap-2 rounded-full border border-border/80 bg-card py-1 pl-1 pr-3 shadow-sm",
         className
       )}
-      title="Astana English Academy — partner centre"
+      title="Astana English Academy — партнёрский центр"
     >
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
         AE

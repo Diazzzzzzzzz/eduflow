@@ -13,6 +13,12 @@ import {
  * the service-role key must stay on the server.
  */
 
+// Next.js patches global fetch and caches responses on disk (.next/cache),
+// which would serve stale rows across requests/restarts. Force no-store so DB
+// reads/writes always hit Postgres.
+const noStoreFetch: typeof fetch = (input, init) =>
+  fetch(input, { ...init, cache: "no-store" });
+
 /**
  * Admin client using the service-role key. Bypasses RLS, so it is used for the
  * app's server-side data fetching until end-user auth is in place. Returns null
@@ -22,6 +28,7 @@ export function createAdminClient(): SupabaseClient<Database> | null {
   if (!hasServiceRole()) return null;
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: noStoreFetch },
   });
 }
 
@@ -33,5 +40,6 @@ export function createServerAnonClient(): SupabaseClient<Database> | null {
   if (!isSupabaseConfigured()) return null;
   return createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: noStoreFetch },
   });
 }

@@ -112,6 +112,14 @@ alter table public.mock_tests       enable row level security;
 alter table public.recommendations  enable row level security;
 alter table public.parent_reports   enable row level security;
 
+-- Idempotent: drop existing policies so this migration can be re-applied.
+drop policy if exists "centers_select_own"        on public.language_centers;
+drop policy if exists "teachers_select_center"    on public.teachers;
+drop policy if exists "students_rw_center"        on public.students;
+drop policy if exists "mock_tests_rw_center"      on public.mock_tests;
+drop policy if exists "recommendations_rw_center" on public.recommendations;
+drop policy if exists "parent_reports_rw_center"  on public.parent_reports;
+
 -- Centres: a member can read their own centre.
 create policy "centers_select_own" on public.language_centers
   for select using (id in (select public.current_user_center_ids()));

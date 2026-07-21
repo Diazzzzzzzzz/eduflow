@@ -33,7 +33,7 @@ lines.push("");
 lines.push(
   `insert into public.teachers (id, center_id, name, role) values\n  (${q(
     TEACHER_ID
-  )}, ${q(CENTER_ID)}, ${q("Dana Iskakova")}, ${q("director")})\n  on conflict (id) do nothing;`
+  )}, ${q(CENTER_ID)}, ${q("Дана Искакова")}, ${q("director")})\n  on conflict (id) do nothing;`
 );
 lines.push("");
 

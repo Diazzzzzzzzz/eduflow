@@ -55,7 +55,7 @@ export function AddResultDialog({
     addMockResult(
       studentId,
       scores,
-      label.trim() || "Mock — Extra Practice",
+      label.trim() || "Mock — Доп. практика",
       new Date().toISOString().slice(0, 10)
     );
     setSaved(true);
@@ -75,21 +75,21 @@ export function AddResultDialog({
     >
       <DialogTrigger asChild>
         <Button>
-          <Plus /> Add mock test result
+          <Plus /> Добавить результат Mock
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add mock test result</DialogTitle>
+          <DialogTitle>Добавить результат Mock-экзамена</DialogTitle>
           <DialogDescription>
-            Enter section bands in 0.5 steps. The overall band is calculated
-            with official IELTS rounding.
+            Введите баллы по секциям с шагом 0.5. Общий балл рассчитывается по
+            официальному округлению IELTS.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="student">Student</Label>
+            <Label htmlFor="student">Студент</Label>
             <Select value={studentId} onValueChange={setStudentId}>
               <SelectTrigger id="student">
                 <SelectValue />
@@ -105,10 +105,10 @@ export function AddResultDialog({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="label">Test label</Label>
+            <Label htmlFor="label">Название теста</Label>
             <Input
               id="label"
-              placeholder="e.g. Mock #7 — Cambridge 19 Test 2"
+              placeholder="напр. Mock #7 — Cambridge 19 Test 2"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
             />
@@ -141,13 +141,13 @@ export function AddResultDialog({
 
           <div className="flex items-center justify-between rounded-lg border bg-secondary/50 px-4 py-3">
             <span className="text-sm font-medium text-muted-foreground">
-              Overall band
+              Общий балл
             </span>
             {overall !== null ? (
               <BandChip band={overall} size="lg" />
             ) : (
               <span className="text-sm text-muted-foreground">
-                Enter all four sections
+                Введите все четыре секции
               </span>
             )}
           </div>
@@ -155,14 +155,14 @@ export function AddResultDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            Отмена
           </Button>
           <Button
             variant={saved ? "success" : "default"}
             disabled={!complete || saved}
             onClick={handleSave}
           >
-            {saved ? "Saved" : "Save result"}
+            {saved ? "Сохранено" : "Сохранить"}
           </Button>
         </DialogFooter>
       </DialogContent>

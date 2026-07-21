@@ -21,7 +21,7 @@ export function Topbar() {
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Notifications"
+            aria-label="Уведомления"
             className="relative"
           >
             <Bell className="h-4 w-4" />
@@ -32,7 +32,9 @@ export function Topbar() {
             size="icon"
             onClick={toggleTheme}
             aria-label={
-              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+              theme === "dark"
+                ? "Переключить на светлую тему"
+                : "Переключить на тёмную тему"
             }
           >
             {theme === "dark" ? (
@@ -43,10 +45,10 @@ export function Topbar() {
           </Button>
           <div
             className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary ring-1 ring-inset ring-primary/30"
-            aria-label="Signed in as Dana Iskakova"
-            title="Dana Iskakova — Academic Director"
+            aria-label="Вы вошли как Дана Искакова"
+            title="Дана Искакова — академический директор"
           >
-            DI
+            ДИ
           </div>
         </div>
       </div>

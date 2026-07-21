@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
 
 const ROLES: { id: Role; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: "teacher", label: "Teacher", icon: LayoutDashboard },
-  { id: "student", label: "Student", icon: GraduationCap },
-  { id: "parent", label: "Parent", icon: Smartphone },
+  { id: "teacher", label: "Учитель", icon: LayoutDashboard },
+  { id: "student", label: "Студент", icon: GraduationCap },
+  { id: "parent", label: "Родитель", icon: Smartphone },
 ];
 
 export function RoleSwitcher() {
@@ -16,7 +16,7 @@ export function RoleSwitcher() {
   return (
     <div
       role="tablist"
-      aria-label="Switch dashboard view"
+      aria-label="Переключить вид панели"
       className="flex items-center gap-1 rounded-lg bg-secondary p-1"
     >
       {ROLES.map(({ id, label, icon: Icon }) => (

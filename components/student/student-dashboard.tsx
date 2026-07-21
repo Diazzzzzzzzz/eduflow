@@ -46,6 +46,12 @@ const PRIORITY_VARIANT = {
   low: "secondary",
 } as const;
 
+const PRIORITY_LABELS = {
+  high: "высокий приоритет",
+  medium: "средний приоритет",
+  low: "низкий приоритет",
+} as const;
+
 export function StudentDashboard() {
   const { students, activeStudent, activeStudentId, setActiveStudentId } =
     useApp();
@@ -73,7 +79,7 @@ export function StudentDashboard() {
       <div className="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight">
-            {s.name.split(" ")[0]}&apos;s progress
+            Прогресс: {s.name.split(" ")[0]}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{s.group}</p>
         </div>
@@ -97,28 +103,28 @@ export function StudentDashboard() {
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Target className="h-4 w-4 text-primary" />
-              Target progress
+              Прогресс к цели
             </div>
             <div className="flex items-end gap-4">
               <div>
-                <p className="text-xs text-muted-foreground">Current band</p>
+                <p className="text-xs text-muted-foreground">Текущий балл</p>
                 <p className="tabular font-serif text-5xl font-medium">
                   {formatBand(latest.overall)}
                 </p>
               </div>
               <div className="pb-1 text-muted-foreground">→</div>
               <div>
-                <p className="text-xs text-muted-foreground">Target band</p>
+                <p className="text-xs text-muted-foreground">Целевой балл</p>
                 <p className="tabular font-serif text-5xl font-medium text-primary">
                   {formatBand(s.targetBand)}
                 </p>
               </div>
             </div>
             <div className="space-y-1.5">
-              <Progress value={pct} aria-label="Progress toward target band" />
+              <Progress value={pct} aria-label="Прогресс к целевому баллу" />
               <p className="tabular text-xs text-muted-foreground">
-                {Math.round(pct)}% of the way from {formatBand(first.overall)}{" "}
-                (first mock) to target
+                {Math.round(pct)}% пути от {formatBand(first.overall)} (первый
+                mock) до цели
               </p>
             </div>
           </div>
@@ -126,7 +132,7 @@ export function StudentDashboard() {
             <div className="flex items-center gap-3 rounded-lg border bg-secondary/40 px-4 py-3">
               <CalendarClock className="h-4 w-4 shrink-0 text-primary" />
               <div>
-                <p className="text-xs text-muted-foreground">Predicted exam</p>
+                <p className="text-xs text-muted-foreground">Ожидаемый экзамен</p>
                 <p className="text-sm font-medium">
                   {formatLongDate(s.examDate)}
                 </p>
@@ -137,8 +143,8 @@ export function StudentDashboard() {
                 {daysLeft ?? "—"}
               </span>
               <p className="text-xs text-muted-foreground">
-                days left
-                <br /> to prepare
+                дней до
+                <br /> экзамена
               </p>
             </div>
           </div>
@@ -150,10 +156,10 @@ export function StudentDashboard() {
         <Card className="animate-fade-up" style={{ animationDelay: "160ms" }}>
           <CardHeader>
             <CardTitle className="font-display">
-              Six-month band history
+              Динамика за 6 месяцев
             </CardTitle>
             <CardDescription>
-              Section scores across the last {s.mockTests.length} mock exams
+              Баллы по секциям за последние {s.mockTests.length} mock-экзаменов
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -163,10 +169,10 @@ export function StudentDashboard() {
         <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
           <CardHeader>
             <CardTitle className="font-display">
-              Strengths &amp; weaknesses
+              Сильные и слабые стороны
             </CardTitle>
             <CardDescription>
-              Latest mock vs the {formatBand(s.targetBand)} target (dashed)
+              Последний mock и цель {formatBand(s.targetBand)} (пунктир)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -179,10 +185,10 @@ export function StudentDashboard() {
       <div className="animate-fade-up space-y-3" style={{ animationDelay: "320ms" }}>
         <div>
           <h2 className="font-display text-lg font-semibold">
-            Weak-spot recommendations
+            Рекомендации по слабым местам
           </h2>
           <p className="text-sm text-muted-foreground">
-            Generated from {s.name.split(" ")[0]}&apos;s last three mock exams
+            На основе последних трёх mock-экзаменов
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -202,7 +208,7 @@ export function StudentDashboard() {
                       {SKILL_LABELS[r.skill]}
                     </div>
                     <Badge variant={PRIORITY_VARIANT[r.priority]}>
-                      {r.priority} priority
+                      {PRIORITY_LABELS[r.priority]}
                     </Badge>
                   </div>
                   <p className="font-medium leading-snug">{r.title}</p>

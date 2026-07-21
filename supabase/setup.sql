@@ -116,6 +116,14 @@ alter table public.mock_tests       enable row level security;
 alter table public.recommendations  enable row level security;
 alter table public.parent_reports   enable row level security;
 
+-- Idempotent: drop existing policies so this migration can be re-applied.
+drop policy if exists "centers_select_own"        on public.language_centers;
+drop policy if exists "teachers_select_center"    on public.teachers;
+drop policy if exists "students_rw_center"        on public.students;
+drop policy if exists "mock_tests_rw_center"      on public.mock_tests;
+drop policy if exists "recommendations_rw_center" on public.recommendations;
+drop policy if exists "parent_reports_rw_center"  on public.parent_reports;
+
 -- Centres: a member can read their own centre.
 create policy "centers_select_own" on public.language_centers
   for select using (id in (select public.current_user_center_ids()));
@@ -174,249 +182,249 @@ insert into public.language_centers (id, name, slug) values
   on conflict (id) do nothing;
 
 insert into public.teachers (id, center_id, name, role) values
-  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'Dana Iskakova', 'director')
+  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'Дана Искакова', 'director')
   on conflict (id) do nothing;
 
 delete from public.students where id in ('33333333-3333-3333-3333-000000000001', '33333333-3333-3333-3333-000000000002', '33333333-3333-3333-3333-000000000003', '33333333-3333-3333-3333-000000000004', '33333333-3333-3333-3333-000000000005', '33333333-3333-3333-3333-000000000006', '33333333-3333-3333-3333-000000000007', '33333333-3333-3333-3333-000000000008', '33333333-3333-3333-3333-000000000009', '33333333-3333-3333-3333-000000000010', '33333333-3333-3333-3333-000000000011', '33333333-3333-3333-3333-000000000012');
 
--- Arman Kalibekov
+-- Арман Калибеков
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000001', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Arman Kalibekov', 'AK', 'IELTS Intensive — Morning', 7.5, '2026-09-19', 96, 'Arman is showing great progress in Listening. Needs to practice Writing Task 2 vocabulary and linking devices.');
+  ('33333333-3333-3333-3333-000000000001', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Арман Калибеков', 'АК', 'IELTS Интенсив — Утро', 7.5, '2026-09-19', 96, 'Арман показывает отличный прогресс в Listening. Нужно поработать над лексикой и связками в Writing Task 2.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000001', 'Mock #1 — Diagnostic', '2026-02-14', 6, 5.5, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000001', 'Mock #1 — Диагностика', '2026-02-14', 6, 5.5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000001', 'Mock #2 — Cambridge 17', '2026-03-14', 6.5, 6, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000001', 'Mock #3 — Cambridge 18', '2026-04-11', 6.5, 6.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000001', 'Mock #4 — Midterm Mock', '2026-05-09', 7, 6.5, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000001', 'Mock #4 — Промежуточный', '2026-05-09', 7, 6.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000001', 'Mock #5 — Cambridge 19', '2026-06-13', 7.5, 6.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000001', 'Mock #6 — Full Simulation', '2026-07-11', 7.5, 7, 6, 7);
+  ('33333333-3333-3333-3333-000000000001', 'Mock #6 — Полная симуляция', '2026-07-11', 7.5, 7, 6, 7);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000001', 'writing', 'high', 'Task 2 coherence needs linking words', 'Essays lose marks on progression. Drill ''however / consequently / in contrast'' and paragraph topic sentences — 3 timed intros this week.');
+  ('33333333-3333-3333-3333-000000000001', 'writing', 'high', 'Связность в Task 2 требует связок', 'Эссе теряют баллы за логику изложения. Отработайте «however / consequently / in contrast» и тематические предложения абзацев — 3 вступления на время за эту неделю.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000001', 'reading', 'medium', 'True / False / Not Given accuracy', 'Currently 6/13 on TFNG sets. Practise locating the exact sentence before judging — Cambridge 18, Tests 2–4.');
+  ('33333333-3333-3333-3333-000000000001', 'reading', 'medium', 'Точность в True / False / Not Given', 'Сейчас 6/13 в заданиях TFNG. Тренируйтесь находить точное предложение перед выбором ответа — Cambridge 18, тесты 2–4.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000001', 'speaking', 'low', 'Part 3 answer depth', 'Answers are fluent but short. Use the ''opinion → reason → example'' frame to stretch responses past 30 seconds.');
+  ('33333333-3333-3333-3333-000000000001', 'speaking', 'low', 'Глубина ответов в Part 3', 'Ответы беглые, но короткие. Используйте схему «мнение → причина → пример», чтобы ответы длились дольше 30 секунд.');
 
--- Aruzhan Mukasheva
+-- Аружан Мукашева
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000002', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Aruzhan Mukasheva', 'AM', 'IELTS Intensive — Morning', 8, '2026-08-22', 100, 'Aruzhan is our strongest reader. Speaking fluency is excellent; push pronunciation of consonant clusters for 8.0.');
+  ('33333333-3333-3333-3333-000000000002', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Аружан Мукашева', 'АМ', 'IELTS Интенсив — Утро', 8, '2026-08-22', 100, 'Аружан — наш сильнейший читатель. Беглость речи отличная; отточите произношение сочетаний согласных для 8.0.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000002', 'Mock #1 — Diagnostic', '2026-02-14', 7, 7.5, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000002', 'Mock #1 — Диагностика', '2026-02-14', 7, 7.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000002', 'Mock #2 — Cambridge 17', '2026-03-14', 7, 7.5, 6.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000002', 'Mock #3 — Cambridge 18', '2026-04-11', 7.5, 8, 6.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000002', 'Mock #4 — Midterm Mock', '2026-05-09', 7.5, 8, 6.5, 7.5);
+  ('33333333-3333-3333-3333-000000000002', 'Mock #4 — Промежуточный', '2026-05-09', 7.5, 8, 6.5, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000002', 'Mock #5 — Cambridge 19', '2026-06-13', 8, 8.5, 7, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000002', 'Mock #6 — Full Simulation', '2026-07-11', 8, 8.5, 7, 7.5);
+  ('33333333-3333-3333-3333-000000000002', 'Mock #6 — Полная симуляция', '2026-07-11', 8, 8.5, 7, 7.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000002', 'writing', 'high', 'Task 1 overview statements', 'Reports jump straight into data. Open body with a two-sentence overview of main trends before any figures.');
+  ('33333333-3333-3333-3333-000000000002', 'writing', 'high', 'Обзорное предложение в Task 1', 'Отчёты сразу переходят к данным. Начинайте с двух предложений об основных тенденциях до любых цифр.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000002', 'speaking', 'medium', 'Consonant cluster pronunciation', '''Sixth'', ''strengths'', ''crisps'' — shadow BBC 6-Minute English daily for 10 minutes.');
+  ('33333333-3333-3333-3333-000000000002', 'speaking', 'medium', 'Произношение сочетаний согласных', '«Sixth», «strengths», «crisps» — по 10 минут в день повторяйте за BBC 6-Minute English.');
 
--- Dias Serikbay
+-- Диас Серикбай
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000003', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Dias Serikbay', 'DS', 'IELTS Intensive — Evening', 7, '2026-10-03', 88, 'Dias improved two half-bands in Listening this term. Reading speed is the main blocker — needs timed section practice.');
+  ('33333333-3333-3333-3333-000000000003', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Диас Серикбай', 'ДС', 'IELTS Интенсив — Вечер', 7, '2026-10-03', 88, 'Диас поднял Listening на полбалла за семестр. Главный барьер — скорость чтения; нужна работа с секциями на время.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000003', 'Mock #1 — Diagnostic', '2026-02-14', 5.5, 5, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000003', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000003', 'Mock #2 — Cambridge 17', '2026-03-14', 6, 5.5, 5.5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000003', 'Mock #3 — Cambridge 18', '2026-04-11', 6, 5.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000003', 'Mock #4 — Midterm Mock', '2026-05-09', 6.5, 6, 5.5, 6);
+  ('33333333-3333-3333-3333-000000000003', 'Mock #4 — Промежуточный', '2026-05-09', 6.5, 6, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000003', 'Mock #5 — Cambridge 19', '2026-06-13', 6.5, 6, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000003', 'Mock #6 — Full Simulation', '2026-07-11', 7, 6, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000003', 'Mock #6 — Полная симуляция', '2026-07-11', 7, 6, 6, 6.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000003', 'reading', 'high', 'Section 3 time management', 'Regularly leaves 6+ questions blank. Cap Section 1 at 15 minutes and practise skimming for paragraph gist first.');
+  ('33333333-3333-3333-3333-000000000003', 'reading', 'high', 'Тайм-менеджмент в Section 3', 'Регулярно оставляет 6+ вопросов без ответа. Ограничьте Section 1 15 минутами и тренируйте беглый просмотр для понимания сути абзаца.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000003', 'writing', 'medium', 'Complex sentence variety', 'Over-relies on simple sentences. Target one conditional and one relative clause per paragraph.');
+  ('33333333-3333-3333-3333-000000000003', 'writing', 'medium', 'Разнообразие сложных предложений', 'Слишком много простых предложений. Цель — одно условное и одно определительное придаточное в каждом абзаце.');
 
--- Aigerim Nurlanova
+-- Айгерим Нурланова
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000004', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Aigerim Nurlanova', 'AN', 'IELTS Foundation', 7, '2026-11-14', 92, 'Aigerim participates actively and her vocabulary range is growing fast. Listening Section 4 remains the weak spot.');
+  ('33333333-3333-3333-3333-000000000004', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Айгерим Нурланова', 'АН', 'IELTS Базовый', 7, '2026-11-14', 92, 'Айгерим активно участвует, её словарный запас быстро растёт. Слабое место — Listening Section 4.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000004', 'Mock #1 — Diagnostic', '2026-02-14', 4.5, 5, 4.5, 5);
+  ('33333333-3333-3333-3333-000000000004', 'Mock #1 — Диагностика', '2026-02-14', 4.5, 5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000004', 'Mock #2 — Cambridge 17', '2026-03-14', 5, 5, 5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000004', 'Mock #3 — Cambridge 18', '2026-04-11', 5, 5.5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000004', 'Mock #4 — Midterm Mock', '2026-05-09', 5.5, 5.5, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000004', 'Mock #4 — Промежуточный', '2026-05-09', 5.5, 5.5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000004', 'Mock #5 — Cambridge 19', '2026-06-13', 5.5, 6, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000004', 'Mock #6 — Full Simulation', '2026-07-11', 6, 6, 5.5, 6);
+  ('33333333-3333-3333-3333-000000000004', 'Mock #6 — Полная симуляция', '2026-07-11', 6, 6, 5.5, 6);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000004', 'listening', 'high', 'Section 4 academic monologues', 'Loses focus after minute 3. Practise note-completion with one TED-Ed talk per day, transcribing key nouns.');
+  ('33333333-3333-3333-3333-000000000004', 'listening', 'high', 'Академические монологи в Section 4', 'Теряет концентрацию после 3-й минуты. Тренируйте заполнение пропусков по одному ролику TED-Ed в день, выписывая ключевые существительные.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000004', 'writing', 'medium', 'Task 2 paragraph structure', 'Ideas are good but unordered. Use the PEEL frame (Point, Explain, Example, Link) for every body paragraph.');
+  ('33333333-3333-3333-3333-000000000004', 'writing', 'medium', 'Структура абзацев в Task 2', 'Идеи хорошие, но не упорядочены. Используйте схему PEEL (Point, Explain, Example, Link) для каждого абзаца.');
 
--- Alikhan Tulegenov
+-- Алихан Тулегенов
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000005', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Alikhan Tulegenov', 'AT', 'IELTS Intensive — Evening', 7.5, '2026-09-05', 94, 'Alikhan''s speaking is near-native in fluency. Writing grammar accuracy under time pressure is the last gap to 7.5.');
+  ('33333333-3333-3333-3333-000000000005', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Алихан Тулегенов', 'АТ', 'IELTS Интенсив — Вечер', 7.5, '2026-09-05', 94, 'Речь Алихана почти как у носителя по беглости. Последний барьер к 7.5 — грамматическая точность в Writing под давлением времени.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000005', 'Mock #1 — Diagnostic', '2026-02-14', 6.5, 6, 5.5, 7);
+  ('33333333-3333-3333-3333-000000000005', 'Mock #1 — Диагностика', '2026-02-14', 6.5, 6, 5.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000005', 'Mock #2 — Cambridge 17', '2026-03-14', 6.5, 6.5, 6, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000005', 'Mock #3 — Cambridge 18', '2026-04-11', 7, 6.5, 6, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000005', 'Mock #4 — Midterm Mock', '2026-05-09', 7, 7, 6, 7.5);
+  ('33333333-3333-3333-3333-000000000005', 'Mock #4 — Промежуточный', '2026-05-09', 7, 7, 6, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000005', 'Mock #5 — Cambridge 19', '2026-06-13', 7.5, 7, 6.5, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000005', 'Mock #6 — Full Simulation', '2026-07-11', 7.5, 7, 6.5, 8);
+  ('33333333-3333-3333-3333-000000000005', 'Mock #6 — Полная симуляция', '2026-07-11', 7.5, 7, 6.5, 8);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000005', 'writing', 'high', 'Article and preposition accuracy', 'Recurring ''the/a'' omissions cost GRA marks. Self-edit checklist pass in the last 3 minutes of every task.');
+  ('33333333-3333-3333-3333-000000000005', 'writing', 'high', 'Точность артиклей и предлогов', 'Повторяющиеся пропуски «the/a» стоят баллов по GRA. Делайте проверку по чек-листу в последние 3 минуты каждого задания.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000005', 'reading', 'low', 'Matching headings strategy', 'Read the headings first and predict paragraph function before scanning.');
+  ('33333333-3333-3333-3333-000000000005', 'reading', 'low', 'Стратегия matching headings', 'Сначала читайте заголовки и предполагайте функцию абзаца до сканирования текста.');
 
--- Madina Yessenova
+-- Мадина Есенова
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000006', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Madina Yessenova', 'MY', 'IELTS Weekend Sprint', 7, '2026-08-29', 85, 'Madina made a strong jump this month after switching to daily listening drills. Keep momentum on Writing Task 1.');
+  ('33333333-3333-3333-3333-000000000006', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Мадина Есенова', 'МЕ', 'IELTS Спринт (выходные)', 7, '2026-08-29', 85, 'Мадина заметно продвинулась за месяц после перехода на ежедневные упражнения по Listening. Держите темп в Writing Task 1.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000006', 'Mock #1 — Diagnostic', '2026-02-14', 5.5, 6, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000006', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 6, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000006', 'Mock #2 — Cambridge 17', '2026-03-14', 6, 6, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000006', 'Mock #3 — Cambridge 18', '2026-04-11', 6.5, 6.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000006', 'Mock #4 — Midterm Mock', '2026-05-09', 6.5, 6.5, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000006', 'Mock #4 — Промежуточный', '2026-05-09', 6.5, 6.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000006', 'Mock #5 — Cambridge 19', '2026-06-13', 7, 6.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000006', 'Mock #6 — Full Simulation', '2026-07-11', 7, 7, 6.5, 6.5);
+  ('33333333-3333-3333-3333-000000000006', 'Mock #6 — Полная симуляция', '2026-07-11', 7, 7, 6.5, 6.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000006', 'writing', 'high', 'Task 1 data selection', 'Describes every data point equally. Pick the 2–3 most significant trends and group the rest.');
+  ('33333333-3333-3333-3333-000000000006', 'writing', 'high', 'Выбор данных в Task 1', 'Описывает все данные одинаково. Выберите 2–3 самые важные тенденции, остальное сгруппируйте.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000006', 'speaking', 'medium', 'Part 2 long-turn stamina', 'Runs out of ideas at 60 seconds. Practise the 5W1H expansion on cue cards daily.');
+  ('33333333-3333-3333-3333-000000000006', 'speaking', 'medium', 'Выносливость в длинном ответе Part 2', 'Идеи заканчиваются на 60-й секунде. Ежедневно тренируйте расширение по схеме 5W1H на карточках.');
 
--- Nurislam Bekzhanov
+-- Нурислам Бекжанов
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000007', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Nurislam Bekzhanov', 'NB', 'IELTS Foundation', 6.5, '2026-12-05', 78, 'Nurislam''s attendance dipped in June — flagged for a parent check-in. Scores hold steady when he attends consistently.');
+  ('33333333-3333-3333-3333-000000000007', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Нурислам Бекжанов', 'НБ', 'IELTS Базовый', 6.5, '2026-12-05', 78, 'Посещаемость Нурислама снизилась в июне — отмечен для беседы с родителями. При регулярном посещении баллы держатся стабильно.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000007', 'Mock #1 — Diagnostic', '2026-02-14', 4.5, 4.5, 4, 4.5);
+  ('33333333-3333-3333-3333-000000000007', 'Mock #1 — Диагностика', '2026-02-14', 4.5, 4.5, 4, 4.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000007', 'Mock #2 — Cambridge 17', '2026-03-14', 5, 4.5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000007', 'Mock #3 — Cambridge 18', '2026-04-11', 5, 5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000007', 'Mock #4 — Midterm Mock', '2026-05-09', 5, 5, 4.5, 5);
+  ('33333333-3333-3333-3333-000000000007', 'Mock #4 — Промежуточный', '2026-05-09', 5, 5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000007', 'Mock #5 — Cambridge 19', '2026-06-13', 5.5, 5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000007', 'Mock #6 — Full Simulation', '2026-07-11', 5.5, 5.5, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000007', 'Mock #6 — Полная симуляция', '2026-07-11', 5.5, 5.5, 5, 5.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000007', 'listening', 'high', 'Spelling in answer transfer', 'Loses 3–4 correct answers per test to spelling. Drill the top-100 IELTS listening nouns weekly.');
+  ('33333333-3333-3333-3333-000000000007', 'listening', 'high', 'Орфография при переносе ответов', 'Теряет 3–4 верных ответа за тест из-за орфографии. Еженедельно отрабатывайте топ-100 существительных IELTS Listening.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000007', 'reading', 'medium', 'Vocabulary for paraphrase spotting', 'Build 10 synonym pairs per unit from Cambridge Vocabulary for IELTS.');
+  ('33333333-3333-3333-3333-000000000007', 'reading', 'medium', 'Лексика для распознавания перефраза', 'Составляйте по 10 пар синонимов на юнит из Cambridge Vocabulary for IELTS.');
 
--- Tomiris Aitbayeva
+-- Томирис Айтбаева
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000008', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Tomiris Aitbayeva', 'TA', 'IELTS Intensive — Morning', 7, '2026-09-26', 98, 'Tomiris is exceptionally consistent — never misses homework. Ready to push speaking beyond memorised structures.');
+  ('33333333-3333-3333-3333-000000000008', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Томирис Айтбаева', 'ТА', 'IELTS Интенсив — Утро', 7, '2026-09-26', 98, 'Томирис исключительно стабильна — никогда не пропускает домашние задания. Готова выйти за рамки заученных структур в Speaking.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000008', 'Mock #1 — Diagnostic', '2026-02-14', 6, 6, 5.5, 5.5);
+  ('33333333-3333-3333-3333-000000000008', 'Mock #1 — Диагностика', '2026-02-14', 6, 6, 5.5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000008', 'Mock #2 — Cambridge 17', '2026-03-14', 6, 6.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000008', 'Mock #3 — Cambridge 18', '2026-04-11', 6.5, 6.5, 6, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000008', 'Mock #4 — Midterm Mock', '2026-05-09', 6.5, 7, 6, 6);
+  ('33333333-3333-3333-3333-000000000008', 'Mock #4 — Промежуточный', '2026-05-09', 6.5, 7, 6, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000008', 'Mock #5 — Cambridge 19', '2026-06-13', 7, 7, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000008', 'Mock #6 — Full Simulation', '2026-07-11', 7, 7, 6.5, 6.5);
+  ('33333333-3333-3333-3333-000000000008', 'Mock #6 — Полная симуляция', '2026-07-11', 7, 7, 6.5, 6.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000008', 'speaking', 'high', 'Natural responses over templates', 'Examiner will spot memorised chunks. Practise reacting to unexpected Part 3 questions with ''It depends…'' pivots.');
+  ('33333333-3333-3333-3333-000000000008', 'speaking', 'high', 'Естественные ответы вместо шаблонов', 'Экзаменатор заметит заученные фразы. Тренируйте реакцию на неожиданные вопросы Part 3 через связки «It depends…».');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000008', 'writing', 'low', 'Lexical range in Task 2', 'Upgrade high-frequency verbs: ''get → obtain / acquire'', ''big → substantial''.');
+  ('33333333-3333-3333-3333-000000000008', 'writing', 'low', 'Разнообразие лексики в Task 2', 'Заменяйте частотные глаголы: «get → obtain / acquire», «big → substantial».');
 
--- Bekarys Zhumagulov
+-- Бекарыс Жумагулов
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000009', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Bekarys Zhumagulov', 'BZ', 'IELTS Weekend Sprint', 6.5, '2026-10-17', 90, 'Bekarys thinks deeply but hesitates in Speaking. Confidence drills are working — fluency is up a half-band.');
+  ('33333333-3333-3333-3333-000000000009', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Бекарыс Жумагулов', 'БЖ', 'IELTS Спринт (выходные)', 6.5, '2026-10-17', 90, 'Бекарыс мыслит глубоко, но неуверен в Speaking. Упражнения на уверенность работают — беглость выросла на полбалла.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000009', 'Mock #1 — Diagnostic', '2026-02-14', 5.5, 6, 5, 4.5);
+  ('33333333-3333-3333-3333-000000000009', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 6, 5, 4.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000009', 'Mock #2 — Cambridge 17', '2026-03-14', 5.5, 6, 5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000009', 'Mock #3 — Cambridge 18', '2026-04-11', 6, 6, 5.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000009', 'Mock #4 — Midterm Mock', '2026-05-09', 6, 6.5, 5.5, 5.5);
+  ('33333333-3333-3333-3333-000000000009', 'Mock #4 — Промежуточный', '2026-05-09', 6, 6.5, 5.5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000009', 'Mock #5 — Cambridge 19', '2026-06-13', 6, 6.5, 5.5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000009', 'Mock #6 — Full Simulation', '2026-07-11', 6.5, 6.5, 6, 6);
+  ('33333333-3333-3333-3333-000000000009', 'Mock #6 — Полная симуляция', '2026-07-11', 6.5, 6.5, 6, 6);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000009', 'speaking', 'high', 'Reduce hesitation fillers', 'Long pauses before answers. Practise 3-second response starts: rephrase the question aloud while thinking.');
+  ('33333333-3333-3333-3333-000000000009', 'speaking', 'high', 'Сократить слова-паузы', 'Долгие паузы перед ответами. Тренируйте старт ответа за 3 секунды: переформулируйте вопрос вслух, пока думаете.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000009', 'listening', 'medium', 'Map / plan labelling tasks', 'Confuses left/right orientation under pressure. Do 2 map tasks weekly with the audio at 1.25x.');
+  ('33333333-3333-3333-3333-000000000009', 'listening', 'medium', 'Задания на карты и планы', 'Путает лево/право под давлением. Делайте по 2 задания с картами в неделю с аудио на скорости 1.25x.');
 
--- Zere Amangeldina
+-- Зере Амангельдина
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000010', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Zere Amangeldina', 'ZA', 'IELTS Intensive — Evening', 8, '2026-08-15', 97, 'Zere is two weeks from exam day and trending at 7.5. Final focus: Writing Task 2 position clarity for the 8.0 push.');
+  ('33333333-3333-3333-3333-000000000010', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Зере Амангельдина', 'ЗА', 'IELTS Интенсив — Вечер', 8, '2026-08-15', 97, 'До экзамена Зере две недели, тренд — 7.5. Финальный фокус: чёткость позиции в Writing Task 2 для рывка к 8.0.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000010', 'Mock #1 — Diagnostic', '2026-02-14', 7, 7, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000010', 'Mock #1 — Диагностика', '2026-02-14', 7, 7, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000010', 'Mock #2 — Cambridge 17', '2026-03-14', 7.5, 7, 6.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000010', 'Mock #3 — Cambridge 18', '2026-04-11', 7.5, 7.5, 6.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000010', 'Mock #4 — Midterm Mock', '2026-05-09', 8, 7.5, 6.5, 7.5);
+  ('33333333-3333-3333-3333-000000000010', 'Mock #4 — Промежуточный', '2026-05-09', 8, 7.5, 6.5, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000010', 'Mock #5 — Cambridge 19', '2026-06-13', 8, 8, 7, 7.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000010', 'Mock #6 — Full Simulation', '2026-07-11', 8.5, 8, 7, 7.5);
+  ('33333333-3333-3333-3333-000000000010', 'Mock #6 — Полная симуляция', '2026-07-11', 8.5, 8, 7, 7.5);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000010', 'writing', 'high', 'Thesis position in Task 2', 'Position appears only in the conclusion. State a clear opinion in the introduction and echo it in every paragraph.');
+  ('33333333-3333-3333-3333-000000000010', 'writing', 'high', 'Позиция-тезис в Task 2', 'Позиция появляется только в заключении. Заявите чёткое мнение во вступлении и повторяйте его в каждом абзаце.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000010', 'speaking', 'low', 'Intonation variety', 'Delivery is accurate but flat. Mark stress words in practice answers and exaggerate on record-and-review.');
+  ('33333333-3333-3333-3333-000000000010', 'speaking', 'low', 'Разнообразие интонации', 'Речь точная, но монотонная. Отмечайте ударные слова в тренировочных ответах и утрируйте их при записи и разборе.');
 
--- Sanzhar Orazbekov
+-- Санжар Оразбеков
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000011', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Sanzhar Orazbekov', 'SO', 'IELTS Foundation', 6.5, '2026-11-28', 91, 'Sanzhar joined mid-term and is catching up quickly. Grammar foundations are solid; vocabulary breadth is the priority.');
+  ('33333333-3333-3333-3333-000000000011', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Санжар Оразбеков', 'СО', 'IELTS Базовый', 6.5, '2026-11-28', 91, 'Санжар присоединился в середине семестра и быстро догоняет. Грамматическая база крепкая; приоритет — расширение словарного запаса.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000011', 'Mock #1 — Diagnostic', '2026-02-14', 5, 4.5, 4.5, 5);
+  ('33333333-3333-3333-3333-000000000011', 'Mock #1 — Диагностика', '2026-02-14', 5, 4.5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000011', 'Mock #2 — Cambridge 17', '2026-03-14', 5, 5, 5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000011', 'Mock #3 — Cambridge 18', '2026-04-11', 5.5, 5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000011', 'Mock #4 — Midterm Mock', '2026-05-09', 5.5, 5.5, 5, 5.5);
+  ('33333333-3333-3333-3333-000000000011', 'Mock #4 — Промежуточный', '2026-05-09', 5.5, 5.5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000011', 'Mock #5 — Cambridge 19', '2026-06-13', 6, 5.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000011', 'Mock #6 — Full Simulation', '2026-07-11', 6, 6, 5.5, 6);
+  ('33333333-3333-3333-3333-000000000011', 'Mock #6 — Полная симуляция', '2026-07-11', 6, 6, 5.5, 6);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000011', 'reading', 'high', 'Academic word list coverage', 'Unknown vocabulary blocks comprehension. Work through AWL sublists 1–3 with spaced repetition.');
+  ('33333333-3333-3333-3333-000000000011', 'reading', 'high', 'Охват Academic Word List', 'Незнакомая лексика мешает пониманию. Прорабатывайте подсписки AWL 1–3 с интервальным повторением.');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000011', 'writing', 'medium', 'Task response completeness', 'Often answers only half of two-part questions. Underline both parts of the prompt before planning.');
+  ('33333333-3333-3333-3333-000000000011', 'writing', 'medium', 'Полнота ответа на задание', 'Часто отвечает лишь на половину вопросов из двух частей. Подчёркивайте обе части задания перед планированием.');
 
--- Kamila Dauletova
+-- Камила Даулетова
 insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000012', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Kamila Dauletova', 'KD', 'IELTS Weekend Sprint', 7.5, '2026-10-10', 95, 'Kamila balances school olympiads with IELTS prep impressively. Reading is already at target — hold and polish Writing.');
+  ('33333333-3333-3333-3333-000000000012', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Камила Даулетова', 'КД', 'IELTS Спринт (выходные)', 7.5, '2026-10-10', 95, 'Камила впечатляюще совмещает школьные олимпиады с подготовкой к IELTS. Reading уже на целевом уровне — держите и полируйте Writing.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000012', 'Mock #1 — Diagnostic', '2026-02-14', 6, 6.5, 5.5, 6);
+  ('33333333-3333-3333-3333-000000000012', 'Mock #1 — Диагностика', '2026-02-14', 6, 6.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000012', 'Mock #2 — Cambridge 17', '2026-03-14', 6.5, 7, 6, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000012', 'Mock #3 — Cambridge 18', '2026-04-11', 6.5, 7, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000012', 'Mock #4 — Midterm Mock', '2026-05-09', 7, 7.5, 6, 6.5);
+  ('33333333-3333-3333-3333-000000000012', 'Mock #4 — Промежуточный', '2026-05-09', 7, 7.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000012', 'Mock #5 — Cambridge 19', '2026-06-13', 7, 7.5, 6.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
-  ('33333333-3333-3333-3333-000000000012', 'Mock #6 — Full Simulation', '2026-07-11', 7.5, 7.5, 6.5, 7);
+  ('33333333-3333-3333-3333-000000000012', 'Mock #6 — Полная симуляция', '2026-07-11', 7.5, 7.5, 6.5, 7);
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000012', 'writing', 'high', 'Cohesion without mechanical linkers', 'Overuses ''Firstly / Secondly / In conclusion''. Vary with referencing (''this trend'', ''such measures'').');
+  ('33333333-3333-3333-3333-000000000012', 'writing', 'high', 'Связность без механических связок', 'Злоупотребляет «Firstly / Secondly / In conclusion». Разнообразьте отсылками («this trend», «such measures»).');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
-  ('33333333-3333-3333-3333-000000000012', 'listening', 'low', 'Multiple-choice distractor traps', 'Watch for corrections mid-audio (''actually, on second thought…'') in Section 2.');
+  ('33333333-3333-3333-3333-000000000012', 'listening', 'low', 'Ловушки-дистракторы в multiple-choice', 'Следите за исправлениями по ходу аудио («actually, on second thought…») в Section 2.');
