@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { PracticeSession } from "@/components/student/practice-session";
+import { PracticeEngine } from "@/components/cambridge/practice-engine";
 import { SKILLS } from "@/lib/types";
 
 export default function PracticeSectionPage({
@@ -9,5 +9,5 @@ export default function PracticeSectionPage({
 }) {
   const section = params.section;
   if (!SKILLS.includes(section as (typeof SKILLS)[number])) notFound();
-  return <PracticeSession section={section as (typeof SKILLS)[number]} />;
+  return <PracticeEngine section={section as (typeof SKILLS)[number]} />;
 }
