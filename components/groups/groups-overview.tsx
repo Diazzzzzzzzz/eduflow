@@ -2,9 +2,19 @@
 
 import { CalendarDays, ChevronRight, Users } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { GROUP_LIST } from "@/lib/group-data";
 import { formatBand } from "@/lib/band";
+
+/** Derive a level label from the group name for the level badge. */
+function levelOf(name: string): string {
+  if (name.startsWith("Pre-Intermediate")) return "Pre-Intermediate";
+  if (name.startsWith("Intermediate")) return "Intermediate";
+  if (name.startsWith("Advanced")) return "Advanced";
+  return "IELTS";
+}
 
 export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void }) {
   const { students } = useApp();
@@ -14,7 +24,7 @@ export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void 
       <div className="animate-fade-up">
         <h2 className="font-display text-lg font-semibold">Группы центра</h2>
         <p className="text-sm text-muted-foreground">
-          Нажмите на группу, чтобы открыть посещаемость и домашние задания.
+          Откройте группу, чтобы увидеть журнал, домашние задания и посещаемость.
         </p>
       </div>
 
@@ -33,54 +43,73 @@ export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void 
               )
             : 0;
           return (
-            <button
+            <Card
               key={group.name}
+              role="button"
+              tabIndex={0}
               onClick={() => onSelect(group.name)}
-              className="group animate-fade-up text-left focus-visible:outline-none"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") onSelect(group.name);
+              }}
+              className="group animate-fade-up cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <Card className="transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-card-hover">
-                <CardContent className="space-y-3 p-5">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-display text-base font-semibold">
-                        {group.name}
-                      </p>
-                      <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                        <CalendarDays className="h-3.5 w-3.5" /> {group.schedule}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              <CardContent className="space-y-3 p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-display text-base font-semibold">
+                      {group.name}
+                    </p>
+                    <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                      <CalendarDays className="h-3.5 w-3.5" /> {group.schedule}
+                    </p>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 border-t pt-3">
-                    <div>
-                      <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                        <Users className="h-3 w-3" /> Студенты
-                      </p>
-                      <p className="tabular mt-0.5 font-display text-lg font-bold">
-                        {members.length}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[11px] text-muted-foreground">
-                        Средний балл
-                      </p>
-                      <p className="tabular mt-0.5 font-display text-lg font-bold text-primary">
-                        {formatBand(Math.round(avgBand * 10) / 10)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[11px] text-muted-foreground">
-                        Посещаемость
-                      </p>
-                      <p className="tabular mt-0.5 font-display text-lg font-bold text-success">
-                        {attendance}%
-                      </p>
-                    </div>
+                  <Badge variant="secondary" className="whitespace-nowrap">
+                    {levelOf(group.name)}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 border-t pt-3">
+                  <div>
+                    <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <Users className="h-3 w-3" /> Студенты
+                    </p>
+                    <p className="tabular mt-0.5 font-display text-lg font-bold">
+                      {members.length}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            </button>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Средний балл
+                    </p>
+                    <p className="tabular mt-0.5 font-display text-lg font-bold text-primary">
+                      {formatBand(Math.round(avgBand * 10) / 10)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Посещаемость
+                    </p>
+                    <p className="tabular mt-0.5 font-display text-lg font-bold text-success">
+                      {attendance}%
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect(group.name);
+                  }}
+                >
+                  Открыть группу
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

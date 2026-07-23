@@ -62,15 +62,20 @@ function Trend({ student }: { student: Student }) {
   );
 }
 
-export function Gradebook() {
+export function Gradebook({ groupName }: { groupName?: string } = {}) {
   const { students } = useApp();
   const [group, setGroup] = React.useState<string>(ALL_GROUPS);
   const [query, setQuery] = React.useState("");
   // Which student's teacher-side detail modal is open (stays in Teacher UI).
   const [detailId, setDetailId] = React.useState<string | null>(null);
+  // When scoped to a group, the journal is filtered strictly to that group and
+  // the group filter + add button are hidden (owned by the group header).
+  const scoped = !!groupName;
 
   const filtered = students.filter((s) => {
-    const inGroup = group === ALL_GROUPS || s.group === group;
+    const inGroup = scoped
+      ? s.group === groupName
+      : group === ALL_GROUPS || s.group === group;
     const matches = s.name.toLowerCase().includes(query.trim().toLowerCase());
     return inGroup && matches;
   });
@@ -97,20 +102,24 @@ export function Gradebook() {
               aria-label="Поиск студентов"
             />
           </div>
-          <Select value={group} onValueChange={setGroup}>
-            <SelectTrigger className="w-56" aria-label="Фильтр по группе">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_GROUPS}>Все группы</SelectItem>
-              {GROUPS.map((g) => (
-                <SelectItem key={g} value={g}>
-                  {g}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <AddResultDialog />
+          {!scoped && (
+            <>
+              <Select value={group} onValueChange={setGroup}>
+                <SelectTrigger className="w-56" aria-label="Фильтр по группе">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL_GROUPS}>Все группы</SelectItem>
+                  {GROUPS.map((g) => (
+                    <SelectItem key={g} value={g}>
+                      {g}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <AddResultDialog />
+            </>
+          )}
         </div>
       </CardHeader>
       <CardContent>
