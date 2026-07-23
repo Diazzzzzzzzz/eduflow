@@ -59,6 +59,7 @@ export async function middleware(request: NextRequest) {
   if (authed) {
     const areas: Array<[string, string]> = [
       ["/teacher", "teacher"],
+      ["/groups", "teacher"],
       ["/student", "student"],
       ["/parent", "parent"],
     ];

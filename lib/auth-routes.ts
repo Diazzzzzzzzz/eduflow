@@ -13,7 +13,7 @@ export function roleHome(role: string | null | undefined): string {
 }
 
 /** Path prefixes that require an authenticated session. */
-export const PROTECTED_PREFIXES = ["/teacher", "/student", "/parent"];
+export const PROTECTED_PREFIXES = ["/teacher", "/groups", "/student", "/parent"];
 
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(
