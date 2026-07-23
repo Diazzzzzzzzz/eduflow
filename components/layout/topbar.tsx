@@ -3,10 +3,10 @@
 import { Bell, Moon, Sun } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { CenterBadge, Logo } from "@/components/layout/logo";
-import { RoleSwitcher } from "@/components/layout/role-switcher";
+import { UserMenu, type MenuUser } from "@/components/layout/user-menu";
 import { Button } from "@/components/ui/button";
 
-export function Topbar() {
+export function Topbar({ user }: { user: MenuUser }) {
   const { theme, toggleTheme } = useApp();
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur-md">
@@ -16,7 +16,6 @@ export function Topbar() {
           <span className="hidden h-6 w-px bg-border sm:block" aria-hidden />
           <CenterBadge className="hidden sm:flex" />
         </div>
-        <RoleSwitcher />
         <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
@@ -43,13 +42,7 @@ export function Topbar() {
               <Moon className="h-4 w-4" />
             )}
           </Button>
-          <div
-            className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary ring-1 ring-inset ring-primary/30"
-            aria-label="Вы вошли как Дана Искакова"
-            title="Дана Искакова — академический директор"
-          >
-            ДИ
-          </div>
+          <UserMenu user={user} />
         </div>
       </div>
     </header>
