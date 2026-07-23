@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { ArrowUpRight, Minus, Search, TrendingDown, TrendingUp } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { BandChip } from "@/components/band-chip";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
+import { StudentDetailDialog } from "@/components/teacher/student-detail-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -63,10 +63,11 @@ function Trend({ student }: { student: Student }) {
 }
 
 export function Gradebook() {
-  const { students, setActiveStudentId } = useApp();
-  const router = useRouter();
+  const { students } = useApp();
   const [group, setGroup] = React.useState<string>(ALL_GROUPS);
   const [query, setQuery] = React.useState("");
+  // Which student's teacher-side detail modal is open (stays in Teacher UI).
+  const [detailId, setDetailId] = React.useState<string | null>(null);
 
   const filtered = students.filter((s) => {
     const inGroup = group === ALL_GROUPS || s.group === group;
@@ -74,19 +75,15 @@ export function Gradebook() {
     return inGroup && matches;
   });
 
-  function openStudent(id: string) {
-    setActiveStudentId(id);
-    router.push("/student");
-  }
-
   return (
-    <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
+    <>
+      <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
       <CardHeader className="flex-row flex-wrap items-end justify-between gap-4 space-y-0">
         <div className="space-y-1.5">
           <CardTitle className="font-display">Журнал Mock-экзаменов</CardTitle>
           <CardDescription>
             Последние баллы по секциям у каждого студента — нажмите на строку,
-            чтобы открыть прогресс.
+            чтобы открыть карточку студента.
           </CardDescription>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -159,7 +156,7 @@ export function Gradebook() {
                   <TableRow
                     key={s.id}
                     className="cursor-pointer"
-                    onClick={() => openStudent(s.id)}
+                    onClick={() => setDetailId(s.id)}
                   >
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -207,6 +204,14 @@ export function Gradebook() {
           </Table>
         )}
       </CardContent>
-    </Card>
+      </Card>
+
+      <StudentDetailDialog
+        studentId={detailId}
+        onOpenChange={(open) => {
+          if (!open) setDetailId(null);
+        }}
+      />
+    </>
   );
 }

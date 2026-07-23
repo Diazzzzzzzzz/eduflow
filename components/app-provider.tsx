@@ -18,6 +18,8 @@ interface AppState {
     label: string,
     date: string
   ) => void;
+  /** Update a student's teacher note (shown to parents). */
+  updateTeacherNote: (studentId: string, note: string) => void;
   /** True when the roster is served from Supabase rather than mock data. */
   dbBacked: boolean;
   theme: "dark" | "light";
@@ -151,6 +153,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [persist, theme, dbBacked]
   );
 
+  const updateTeacherNote = React.useCallback(
+    (studentId: string, note: string) => {
+      setStudents((prev) =>
+        prev.map((s) => (s.id === studentId ? { ...s, teacherNote: note } : s))
+      );
+    },
+    []
+  );
+
   const toggleTheme = React.useCallback(() => {
     setTheme((t) => {
       const next = t === "dark" ? "light" : "dark";
@@ -168,6 +179,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setActiveStudentId,
     activeStudent,
     addMockResult,
+    updateTeacherNote,
     dbBacked,
     theme,
     toggleTheme,

@@ -54,6 +54,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(roleHome(role), request.url));
   }
 
+  // Role isolation: each area belongs to one role. A teacher can't enter the
+  // Student practice workspace, etc. — send them to their own dashboard.
+  if (authed) {
+    const areas: Array<[string, string]> = [
+      ["/teacher", "teacher"],
+      ["/student", "student"],
+      ["/parent", "parent"],
+    ];
+    for (const [prefix, requiredRole] of areas) {
+      if (
+        (path === prefix || path.startsWith(`${prefix}/`)) &&
+        role !== requiredRole
+      ) {
+        return NextResponse.redirect(new URL(roleHome(role), request.url));
+      }
+    }
+  }
+
   return response;
 }
 
