@@ -14,6 +14,9 @@ RUN npm ci
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Guarantee public/ exists so the runtime COPY never fails, even if the repo
+# ships without static assets.
+RUN mkdir -p public
 # Public Supabase vars are baked into the client bundle at build time. Pass
 # them as build args on Railway if you want them inlined; the server also reads
 # them at runtime from the environment.

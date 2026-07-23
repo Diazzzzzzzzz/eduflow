@@ -1,0 +1,2 @@
+# Keeps the public/ directory tracked in git so the Dockerfile COPY of
+# /app/public succeeds on Railway. Add static assets (favicon, images) here.
