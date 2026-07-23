@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, ChevronRight, Users } from "lucide-react";
+import { ChevronRight, Clock, Users } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -60,11 +60,11 @@ export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void 
                     <p className="font-display text-base font-semibold">
                       {group.name}
                     </p>
-                    <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                      <CalendarDays className="h-3.5 w-3.5" /> {group.schedule}
-                    </p>
+                    <Badge variant="secondary" className="mt-1 gap-1 font-normal">
+                      <Clock className="h-3 w-3" /> {group.schedule}
+                    </Badge>
                   </div>
-                  <Badge variant="secondary" className="whitespace-nowrap">
+                  <Badge variant="default" className="whitespace-nowrap">
                     {levelOf(group.name)}
                   </Badge>
                 </div>

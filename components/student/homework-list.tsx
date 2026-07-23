@@ -127,7 +127,15 @@ export function HomeworkList() {
 
   React.useEffect(() => setToday(new Date().toISOString().slice(0, 10)), []);
 
-  const mine = homework.filter((h) => h.groupName === activeStudent.group);
+  // Only homework this student was actually assigned (has a submission row) —
+  // so individually-assigned tasks don't leak to the whole group.
+  const mine = homework.filter(
+    (h) =>
+      h.groupName === activeStudent.group &&
+      submissions.some(
+        (s) => s.homeworkId === h.id && s.studentId === activeStudent.id
+      )
+  );
 
   return (
     <div className="space-y-4">

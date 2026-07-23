@@ -17,6 +17,8 @@ interface NewHomework {
   description: string;
   section: HomeworkSection;
   dueDate: string;
+  /** When set, assign only to these students (individual); else the whole group. */
+  assignToStudentIds?: string[];
 }
 
 interface GroupsState {
@@ -44,17 +46,20 @@ export function GroupsProvider({ children }: { children: React.ReactNode }) {
 
   const createHomework = React.useCallback(
     (input: NewHomework) => {
+      const { assignToStudentIds, ...rest } = input;
       const id = `hw-${Date.now()}`;
       const hw: Homework = {
         id,
-        ...input,
+        ...rest,
         createdAt: new Date().toISOString().slice(0, 10),
       };
       setHomework((prev) => [hw, ...prev]);
-      // Assign to every student currently in that group.
-      const assigned: Submission[] = students
-        .filter((s) => s.group === input.groupName)
-        .map((s) => ({
+      // Assign to the named students (individual) or the whole group.
+      const targets =
+        assignToStudentIds && assignToStudentIds.length
+          ? students.filter((s) => assignToStudentIds.includes(s.id))
+          : students.filter((s) => s.group === input.groupName);
+      const assigned: Submission[] = targets.map((s) => ({
           id: `sub-${id}-${s.id}`,
           homeworkId: id,
           studentId: s.id,

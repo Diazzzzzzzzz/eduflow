@@ -1,18 +1,13 @@
 "use client";
 
 import * as React from "react";
-import {
-  ArrowLeft,
-  BookOpen,
-  CalendarDays,
-  ClipboardList,
-  GraduationCap,
-} from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, ClipboardList, GraduationCap } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { AttendanceTracker } from "@/components/groups/attendance-tracker";
 import { HomeworkManager } from "@/components/groups/homework-manager";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
 import { Gradebook } from "@/components/teacher/gradebook";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GROUP_SCHEDULES } from "@/lib/group-data";
@@ -53,10 +48,14 @@ export function GroupDetail({
             <h2 className="font-display text-lg font-semibold leading-tight">
               {groupName}
             </h2>
-            <p className="flex items-center gap-1 text-xs text-muted-foreground">
-              <CalendarDays className="h-3.5 w-3.5" /> {GROUP_SCHEDULES[groupName]}{" "}
-              · {members.length} студентов
-            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <Badge variant="secondary" className="gap-1 font-normal">
+                <Clock className="h-3 w-3" /> {GROUP_SCHEDULES[groupName]}
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                {members.length} студентов
+              </span>
+            </div>
           </div>
         </div>
         <AddResultDialog defaultStudentId={members[0]?.id} />
