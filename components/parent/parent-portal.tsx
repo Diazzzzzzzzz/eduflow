@@ -83,7 +83,7 @@ export function ParentPortal() {
           <div className="min-w-0">
             <p className="truncate font-medium leading-tight">{s.name}</p>
             <p className="text-xs text-muted-foreground">
-              IELTS Pulse{weekOf ? ` · Неделя ${weekOf}` : ""}
+              EduFlow{weekOf ? ` · Неделя ${weekOf}` : ""}
             </p>
           </div>
           <span className="ml-auto flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-1 text-xs font-medium text-success">

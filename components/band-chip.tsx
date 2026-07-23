@@ -16,7 +16,7 @@ interface BandChipProps {
 }
 
 /**
- * The signature score unit of IELTS Pulse: a tabular-numeral band chip
+ * The signature score unit of EduFlow: a tabular-numeral band chip
  * whose tone encodes distance from the student's target band.
  */
 export function BandChip({ band, target, size = "md", className }: BandChipProps) {

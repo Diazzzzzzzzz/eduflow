@@ -22,10 +22,10 @@ export function Logo({ className }: { className?: string }) {
       </div>
       <div className="hidden leading-tight min-[400px]:block">
         <p className="font-display text-sm font-bold tracking-tight">
-          IELTS Pulse
+          EduFlow
         </p>
         <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          от EduFlow
+          IELTS Analytics
         </p>
       </div>
     </div>

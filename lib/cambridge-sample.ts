@@ -1,7 +1,7 @@
 import type { CambridgeTestFull } from "./cambridge-types";
 
 /**
- * ORIGINAL, IELTS-style practice content authored for IELTS Pulse. It mirrors
+ * ORIGINAL, IELTS-style practice content authored for EduFlow. It mirrors
  * the structure of a Cambridge test (book 18 / test 1) so the engine can be
  * demonstrated end-to-end, but the passages, questions, and answer keys are our
  * own work — NOT reproductions of the copyrighted Cambridge IELTS materials.

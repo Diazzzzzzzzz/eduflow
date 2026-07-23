@@ -1,4 +1,4 @@
-# IELTS Pulse (EduFlow)
+# EduFlow
 
 Academic tracking & analytics SaaS for IELTS preparation centers: mock-exam
 gradebook, band-score dynamics, weak-spot recommendations, and parent report

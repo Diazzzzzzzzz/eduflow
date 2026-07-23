@@ -23,7 +23,7 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "IELTS Pulse — Аналитика для языковых центров",
+  title: "EduFlow — Аналитика для языковых центров",
   description:
     "Отслеживайте прогресс студентов по mock-экзаменам, визуализируйте динамику баллов и держите родителей в курсе. Создано для центров подготовки к IELTS.",
 };

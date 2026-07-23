@@ -1,4 +1,4 @@
-/** White-label footer with the "Powered by IELTS Pulse" attribution badge. */
+/** White-label footer with the "Powered by EduFlow" attribution badge. */
 export function SiteFooter() {
   return (
     <footer className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 pb-8 pt-4 sm:px-6">
@@ -15,7 +15,7 @@ export function SiteFooter() {
             strokeLinejoin="round"
           />
         </svg>
-        Работает на IELTS Pulse
+        Работает на EduFlow
       </span>
     </footer>
   );
