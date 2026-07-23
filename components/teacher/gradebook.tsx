@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, Minus, Search, TrendingDown, TrendingUp } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { BandChip } from "@/components/band-chip";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
-import { StudentDetailDialog } from "@/components/teacher/student-detail-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,13 +64,19 @@ function Trend({ student }: { student: Student }) {
 
 export function Gradebook({ groupName }: { groupName?: string } = {}) {
   const { students } = useApp();
+  const router = useRouter();
   const [group, setGroup] = React.useState<string>(ALL_GROUPS);
   const [query, setQuery] = React.useState("");
-  // Which student's teacher-side detail modal is open (stays in Teacher UI).
-  const [detailId, setDetailId] = React.useState<string | null>(null);
   // When scoped to a group, the journal is filtered strictly to that group and
   // the group filter + add button are hidden (owned by the group header).
   const scoped = !!groupName;
+
+  // Row click opens the dedicated full-screen student report (stays in the
+  // Teacher context — never the Student persona).
+  function openStudent(student: Student) {
+    const gid = encodeURIComponent(groupName ?? student.group);
+    router.push(`/teacher/groups/${gid}/students/${student.id}`);
+  }
 
   const filtered = students.filter((s) => {
     const inGroup = scoped
@@ -81,8 +87,7 @@ export function Gradebook({ groupName }: { groupName?: string } = {}) {
   });
 
   return (
-    <>
-      <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
+    <Card className="animate-fade-up" style={{ animationDelay: "240ms" }}>
       <CardHeader className="flex-row flex-wrap items-end justify-between gap-4 space-y-0">
         <div className="space-y-1.5">
           <CardTitle className="font-display">Журнал Mock-экзаменов</CardTitle>
@@ -165,7 +170,7 @@ export function Gradebook({ groupName }: { groupName?: string } = {}) {
                   <TableRow
                     key={s.id}
                     className="cursor-pointer"
-                    onClick={() => setDetailId(s.id)}
+                    onClick={() => openStudent(s)}
                   >
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -213,14 +218,6 @@ export function Gradebook({ groupName }: { groupName?: string } = {}) {
           </Table>
         )}
       </CardContent>
-      </Card>
-
-      <StudentDetailDialog
-        studentId={detailId}
-        onOpenChange={(open) => {
-          if (!open) setDetailId(null);
-        }}
-      />
-    </>
+    </Card>
   );
 }

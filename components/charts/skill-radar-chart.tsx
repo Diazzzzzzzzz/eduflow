@@ -16,9 +16,11 @@ import { SKILL_LABELS } from "@/lib/band";
 export function SkillRadarChart({
   latest,
   target,
+  heightClass = "h-72",
 }: {
   latest: MockTest;
   target: number;
+  heightClass?: string;
 }) {
   const data = SKILLS.map((skill) => ({
     skill: SKILL_LABELS[skill],
@@ -27,7 +29,7 @@ export function SkillRadarChart({
   }));
 
   return (
-    <div className="h-72 w-full">
+    <div className={`${heightClass} w-full`}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} outerRadius="72%">
           <PolarGrid stroke="currentColor" className="text-border" />

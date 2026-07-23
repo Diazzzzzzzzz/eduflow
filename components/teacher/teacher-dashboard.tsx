@@ -1,23 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { useRouter } from "next/navigation";
 import { OverviewCards } from "@/components/teacher/overview-cards";
 import { WritingEvaluator } from "@/components/teacher/writing-evaluator";
 import { GroupsOverview } from "@/components/groups/groups-overview";
-import { GroupDetail } from "@/components/groups/group-detail";
 
 export function TeacherDashboard() {
-  const [selectedGroup, setSelectedGroup] = React.useState<string | null>(null);
-
-  // Group workspace takes over the view when a group is open.
-  if (selectedGroup) {
-    return (
-      <GroupDetail
-        groupName={selectedGroup}
-        onBack={() => setSelectedGroup(null)}
-      />
-    );
-  }
+  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -30,7 +19,11 @@ export function TeacherDashboard() {
         </p>
       </div>
       <OverviewCards />
-      <GroupsOverview onSelect={setSelectedGroup} />
+      <GroupsOverview
+        onSelect={(name) =>
+          router.push(`/teacher/groups/${encodeURIComponent(name)}`)
+        }
+      />
       <WritingEvaluator />
     </div>
   );
