@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from "./env";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./env";
+import { DEMO_COOKIE, demoSession, isDemoRole } from "@/lib/demo-session";
 
 /**
  * Request-scoped, cookie-based Supabase client for server components / route
@@ -40,20 +41,36 @@ export async function getUserProfile(): Promise<{
   user: { id: string; email: string | null };
   profile: Profile | null;
 } | null> {
-  const supabase = createServerSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  let user: User | null = null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, role, full_name, student_id")
-    .eq("id", user.id)
-    .maybeSingle();
+  if (isSupabaseConfigured()) {
+    const supabase = createServerSupabase();
+    // Guard against a hung network call (e.g. Supabase down) so the layout
+    // can't spin forever — fall through to the demo session or /login.
+    const timeout = new Promise<{ data: { user: User | null } }>((resolve) =>
+      setTimeout(() => resolve({ data: { user: null } }), 8000)
+    );
+    const {
+      data: { user: authUser },
+    } = await Promise.race([supabase.auth.getUser(), timeout]);
+    user = authUser;
 
-  return {
-    user: { id: user.id, email: user.email ?? null },
-    profile: (profile as Profile) ?? null,
-  };
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, role, full_name, student_id")
+        .eq("id", user.id)
+        .maybeSingle();
+      return {
+        user: { id: user.id, email: user.email ?? null },
+        profile: (profile as Profile) ?? null,
+      };
+    }
+  }
+
+  // No real session — honor a local demo cookie if present.
+  const demoRole = cookies().get(DEMO_COOKIE)?.value;
+  if (isDemoRole(demoRole)) return demoSession(demoRole);
+
+  return null;
 }

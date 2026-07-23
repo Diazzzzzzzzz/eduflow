@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
+import { DEMO_COOKIE } from "@/lib/demo-session";
 import { cn } from "@/lib/utils";
 
 export interface MenuUser {
@@ -27,7 +27,6 @@ function initialsFrom(user: MenuUser): string {
 }
 
 export function UserMenu({ user }: { user: MenuUser }) {
-  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [signingOut, setSigningOut] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -45,9 +44,15 @@ export function UserMenu({ user }: { user: MenuUser }) {
 
   async function signOut() {
     setSigningOut(true);
-    await getSupabaseBrowser().auth.signOut();
-    router.push("/login");
-    router.refresh();
+    try {
+      await getSupabaseBrowser().auth.signOut();
+    } catch (err) {
+      console.error("Sign-out error:", err);
+    }
+    // Clear any local demo-session cookie too.
+    document.cookie = `${DEMO_COOKIE}=; path=/; max-age=0`;
+    // Hard navigation so the cleared cookies reach the server.
+    window.location.assign("/login");
   }
 
   return (

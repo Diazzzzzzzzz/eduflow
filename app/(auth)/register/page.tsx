@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { roleHome, type Role } from "@/lib/auth-routes";
 import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ const ROLES: { value: Role; label: string }[] = [
 ];
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [fullName, setFullName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -33,27 +32,42 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     setNotice(null);
+    if (!isSupabaseConfigured()) {
+      setError("Supabase не настроен. Регистрация недоступна.");
+      return;
+    }
     setLoading(true);
-    const { data, error } = await getSupabaseBrowser().auth.signUp({
-      email,
-      password,
-      options: { data: { role, full_name: fullName } },
-    });
-    if (error) {
-      setError(error.message);
+    try {
+      const signUp = getSupabaseBrowser().auth.signUp({
+        email,
+        password,
+        options: { data: { role, full_name: fullName } },
+      });
+      const { data, error } = await Promise.race([
+        signUp,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 10_000)
+        ),
+      ]);
+      if (error) {
+        console.error("Supabase sign-up error:", error);
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      if (data.session) {
+        window.location.assign(roleHome(role));
+        return;
+      }
+      setNotice(
+        "Аккаунт создан. Подтвердите email по ссылке из письма, затем войдите."
+      );
       setLoading(false);
-      return;
+    } catch (err) {
+      console.error("Supabase sign-up exception/timeout:", err);
+      setError("Превышено время ожидания ответа сервера. Попробуйте ещё раз.");
+      setLoading(false);
     }
-    if (data.session) {
-      router.push(roleHome(role));
-      router.refresh();
-      return;
-    }
-    // Email confirmation required — no session yet.
-    setNotice(
-      "Аккаунт создан. Подтвердите email по ссылке из письма, затем войдите."
-    );
-    setLoading(false);
   }
 
   return (
