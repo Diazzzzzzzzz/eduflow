@@ -27,9 +27,11 @@ RUN npm run build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-# Railway provides $PORT; Next standalone server reads PORT/HOSTNAME.
+# Bind to all interfaces so Railway can reach the container. Next's standalone
+# server.js reads HOSTNAME + PORT from the environment; Railway injects $PORT at
+# runtime (overriding this default), and the server listens on 0.0.0.0:$PORT.
+ENV HOSTNAME="0.0.0.0"
 ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
