@@ -1,0 +1,438 @@
+{
+  "book": "Cambridge IELTS 19 Academic",
+  "tests": [
+    {
+      "test_id": 1,
+      "listening": {
+        "part_1": {
+          "title": "Hinchingbrooke Country Park",
+          "questions": [
+            {"id": 1, "prompt": "Area: [1] hectares", "answer": "170"},
+            {"id": 2, "prompt": "Wetland: lakes, ponds and a [2]", "answer": "river"},
+            {"id": 3, "prompt": "Science: Children look at [3] about plants, etc.", "answer": "cards"},
+            {"id": 4, "prompt": "Geography: includes learning to use a [4] and compass", "answer": "map"},
+            {"id": 5, "prompt": "Leisure and tourism: mostly concentrates on the park's [5]", "answer": "facilities"},
+            {"id": 6, "prompt": "Music: Children make [6] with natural materials", "answer": "instruments"},
+            {"id": 7, "prompt": "They give children a feeling of [7] that they may not have elsewhere.", "answer": "freedom"},
+            {"id": 8, "prompt": "Children learn new [8] and gain self-confidence.", "answer": "skills"},
+            {"id": 9, "prompt": "Cost per child: £ [9]", "answer": "4.95"},
+            {"id": 10, "prompt": "Adults, such as [10] free.", "answer": "teachers"}
+          ]
+        },
+        "part_2": {
+          "title": "Stanthorpe Twinning Association & Farley House",
+          "questions": [
+            {"id": 11, "type": "multiple_choice", "answer": "B"},
+            {"id": 12, "type": "multiple_choice", "answer": "C"},
+            {"id": 13, "type": "multiple_choice", "answer": "A"},
+            {"id": 14, "type": "multiple_choice", "answer": "C"},
+            {"id": 15, "type": "multiple_choice", "answer": "A"},
+            {"id": 16, "type": "matching_map", "label": "Farm shop", "answer": "E"},
+            {"id": 17, "type": "matching_map", "label": "Disabled entry", "answer": "C"},
+            {"id": 18, "type": "matching_map", "label": "Adventure playground", "answer": "B"},
+            {"id": 19, "type": "matching_map", "label": "Kitchen gardens", "answer": "A"},
+            {"id": 20, "type": "matching_map", "label": "The Temple of the Four Winds", "answer": "D"}
+          ]
+        },
+        "part_3": {
+          "title": "Bread Reuse Project & Food Trends",
+          "questions": [
+            {"id": "21-22", "type": "multiple_choice_multiple", "answers": ["B", "C"]},
+            {"id": "23-24", "type": "multiple_choice_multiple", "answers": ["B", "D"]},
+            {"id": 25, "type": "matching", "label": "Use of local products", "answer": "C"},
+            {"id": 26, "type": "matching", "label": "Reduction in unnecessary packaging", "answer": "D"},
+            {"id": 27, "type": "matching", "label": "Gluten-free and lactose-free food", "answer": "A"},
+            {"id": 28, "type": "matching", "label": "Use of branded products related to celebrity chefs", "answer": "B"},
+            {"id": 29, "type": "matching", "label": "Development of 'ghost kitchens' for takeaway food", "answer": "F"},
+            {"id": 30, "type": "matching", "label": "Use of mushrooms for common health concerns", "answer": "E"}
+          ]
+        },
+        "part_4": {
+          "title": "Céide Fields",
+          "questions": [
+            {"id": 31, "answer": "walls"},
+            {"id": 32, "answer": "son"},
+            {"id": 33, "answer": "fuel"},
+            {"id": 34, "answer": "oxygen"},
+            {"id": 35, "answer": "round"},
+            {"id": 36, "answer": "butter"},
+            {"id": 37, "answer": "family"},
+            {"id": 38, "answer": "winter"},
+            {"id": 39, "answer": "soil"},
+            {"id": 40, "answer": "rain"}
+          ]
+        }
+      },
+      "reading": {
+        "answers": {
+          "1": "FALSE", "2": "FALSE", "3": "NOT GIVEN", "4": "FALSE", "5": "NOT GIVEN", "6": "TRUE", "7": "TRUE",
+          "8": "paint", "9": "topspin", "10": "training", "11": "intestines", "12": "weights", "13": "grips",
+          "14": "D", "15": "G", "16": "C", "17": "A", "18": "G", "19": "B", "20-21": ["B", "D"], "22-23": ["C", "E"],
+          "24": "grain", "25": "punishment", "26": "ransom", "27": "D", "28": "A", "29": "C", "30": "D",
+          "31": "G", "32": "J", "33": "H", "34": "B", "35": "E", "36": "C", "37": "YES", "38": "NOT GIVEN", "39": "NO", "40": "NOT GIVEN"
+        }
+      },
+      "writing": {
+        "task_1": "The graph below gives information on the numbers of participants for different activities at one social centre in Melbourne, Australia for the period 2000 to 2020.",
+        "task_2": "Some people think that competition at work, at school and in daily life is a good thing. Others believe that we should try to cooperate more, rather than competing against each other. Discuss both these views and give your own opinion."
+      },
+      "speaking": {
+        "part_1": {
+          "topic": "International food",
+          "questions": [
+            "What types of food from other countries do you enjoy eating?",
+            "How often do you eat food from other countries?",
+            "Have you ever tried making food at home from another country?",
+            "What kind of international food is popular in your country?"
+          ]
+        },
+        "part_2": {
+          "topic": "Describe a law that was introduced in your country and that you thought was a very good idea.",
+          "prompt_points": [
+            "what the law was about",
+            "why it was introduced",
+            "how long ago it was introduced",
+            "and explain why you thought it was a very good idea."
+          ]
+        },
+        "part_3": {
+          "school_rules": [
+            "What kind of rules should schools have for their students?",
+            "Should students be involved in making rules for their school?",
+            "How important is it for schools to enforce their rules strictly?"
+          ],
+          "working_in_legal_profession": [
+            "What personal qualities are needed to work as a lawyer?",
+            "Why do some people choose to study law at university?",
+            "Do you think the job of a lawyer will change in the future?"
+          ]
+        }
+      }
+    },
+    {
+      "test_id": 2,
+      "listening": {
+        "part_1": {
+          "title": "Registration for a fitness center / volunteering",
+          "questions": [
+            {"id": 1, "answer": "Central"},
+            {"id": 2, "answer": "receptionist"},
+            {"id": 3, "answer": "11.30"},
+            {"id": 4, "answer": "park"},
+            {"id": 5, "answer": "badge"},
+            {"id": 6, "answer": "cleaning"},
+            {"id": 7, "answer": "computer"},
+            {"id": 8, "answer": "newspaper"},
+            {"id": 9, "answer": "certificate"},
+            {"id": 10, "answer": "07789 532041"}
+          ]
+        },
+        "part_2": {
+          "title": "Local Radio Station / Radio Club",
+          "questions": [
+            {"id": 11, "type": "multiple_choice", "answer": "C"},
+            {"id": 12, "type": "multiple_choice", "answer": "A"},
+            {"id": 13, "type": "multiple_choice", "answer": "B"},
+            {"id": 14, "type": "multiple_choice", "answer": "B"},
+            {"id": 15, "type": "matching_map", "answer": "D"},
+            {"id": 16, "type": "matching_map", "answer": "G"},
+            {"id": 17, "type": "matching_map", "answer": "B"},
+            {"id": 18, "type": "matching_map", "answer": "F"},
+            {"id": 19, "type": "matching_map", "answer": "A"},
+            {"id": 20, "type": "matching_map", "answer": "C"}
+          ]
+        },
+        "part_3": {
+          "title": "Work placement project",
+          "questions": [
+            {"id": 21, "type": "multiple_choice", "answer": "A"},
+            {"id": 22, "type": "multiple_choice", "answer": "C"},
+            {"id": 23, "type": "multiple_choice", "answer": "B"},
+            {"id": 24, "type": "multiple_choice", "answer": "B"},
+            {"id": 25, "type": "matching", "answer": "E"},
+            {"id": 26, "type": "matching", "answer": "C"},
+            {"id": 27, "type": "matching", "answer": "A"},
+            {"id": 28, "type": "matching", "answer": "F"},
+            {"id": 29, "type": "matching", "answer": "D"},
+            {"id": 30, "type": "matching", "answer": "G"}
+          ]
+        },
+        "part_4": {
+          "title": "Bilingualism in children",
+          "questions": [
+            {"id": 31, "answer": "brain"},
+            {"id": 32, "answer": "culture"},
+            {"id": 33, "answer": "accent"},
+            {"id": 34, "answer": "mixing"},
+            {"id": 35, "answer": "grammar"},
+            {"id": 36, "answer": "vocabulary"},
+            {"id": 37, "answer": "reading"},
+            {"id": 38, "answer": "confidence"},
+            {"id": 39, "answer": "patience"},
+            {"id": 40, "answer": "media"}
+          ]
+        }
+      },
+      "reading": {
+        "answers": {
+          "1": "TRUE", "2": "FALSE", "3": "NOT GIVEN", "4": "FALSE", "5": "TRUE", "6": "TRUE", "7": "NOT GIVEN",
+          "8": "timber", "9": "charcoal", "10": "iron", "11": "glass", "12": "farming", "13": "floods",
+          "14": "v", "15": "i", "16": "vii", "17": "iii", "18": "vi", "19": "ii", "20": "C", "21": "D", "22": "A", "23": "B",
+          "24": "nitrogen", "25": "light", "26": "roots", "27": "B", "28": "D", "29": "C", "30": "A",
+          "31": "C", "32": "A", "33": "D", "34": "YES", "35": "NO", "36": "NOT GIVEN", "37": "YES", "38": "NO", "39": "C", "40": "F"
+        }
+      },
+      "writing": {
+        "task_1": "The plans below show a public park when it opened in 1920 and the same park today.",
+        "task_2": "In some countries, more and more people are choosing to live alone in recent years. What are the reasons for this? Is it a positive or negative development?"
+      },
+      "speaking": {
+        "part_1": {
+          "topic": "Outer space and stars",
+          "questions": [
+            "Have you ever looked at the stars at night?",
+            "Do you enjoy watching movies about outer space?",
+            "Did you learn about stars and planets at school?",
+            "Would you like to travel into space in the future?"
+          ]
+        },
+        "part_2": {
+          "topic": "Describe a time when you received bad service in a shop or restaurant.",
+          "prompt_points": [
+            "when and where it happened",
+            "what happened",
+            "how you reacted to the bad service",
+            "and explain how you felt about the experience."
+          ]
+        },
+        "part_3": {
+          "customer_service": [
+            "What makes good customer service in shops and restaurants?",
+            "Do you think customers should always complain if they are unhappy with the service?",
+            "How can companies train their employees to provide better service?"
+          ],
+          "online_shopping_and_reviews": [
+            "Why do many people prefer to read customer reviews before buying something?",
+            "How trustworthy are online customer reviews in your opinion?",
+            "Do you think online shopping will completely replace traditional shops in the future?"
+          ]
+        }
+      }
+    },
+    {
+      "test_id": 3,
+      "listening": {
+        "part_1": {
+          "title": "Moving house service inquiry",
+          "questions": [
+            {"id": 1, "answer": "Greendale"},
+            {"id": 2, "answer": "garage"},
+            {"id": 3, "answer": "plants"},
+            {"id": 4, "answer": "boxes"},
+            {"id": 5, "answer": "Sunday"},
+            {"id": 6, "answer": "insurance"},
+            {"id": 7, "answer": "kitchen"},
+            {"id": 8, "answer": "heavy"},
+            {"id": 9, "answer": "painting"},
+            {"id": 10, "answer": "keys"}
+          ]
+        },
+        "part_2": {
+          "title": "Community Arts Festival",
+          "questions": [
+            {"id": 11, "type": "multiple_choice", "answer": "B"},
+            {"id": 12, "type": "multiple_choice", "answer": "C"},
+            {"id": 13, "type": "multiple_choice", "answer": "A"},
+            {"id": 14, "type": "multiple_choice", "answer": "C"},
+            {"id": "15-16", "type": "multiple_choice_multiple", "answers": ["B", "E"]},
+            {"id": "17-18", "type": "multiple_choice_multiple", "answers": ["A", "D"]},
+            {"id": "19-20", "type": "multiple_choice_multiple", "answers": ["C", "D"]}
+          ]
+        },
+        "part_3": {
+          "title": "Research on urban farming",
+          "questions": [
+            {"id": 21, "type": "multiple_choice", "answer": "A"},
+            {"id": 22, "type": "multiple_choice", "answer": "C"},
+            {"id": 23, "type": "multiple_choice", "answer": "B"},
+            {"id": 24, "type": "multiple_choice", "answer": "A"},
+            {"id": 25, "type": "matching", "answer": "F"},
+            {"id": 26, "type": "matching", "answer": "D"},
+            {"id": 27, "type": "matching", "answer": "B"},
+            {"id": 28, "type": "matching", "answer": "E"},
+            {"id": 29, "type": "matching", "answer": "A"},
+            {"id": 30, "type": "matching", "answer": "C"}
+          ]
+        },
+        "part_4": {
+          "title": "The history of coffee production",
+          "questions": [
+            {"id": 31, "answer": "goats"},
+            {"id": 32, "answer": "monks"},
+            {"id": 33, "answer": "trade"},
+            {"id": 34, "answer": "slaves"},
+            {"id": 35, "answer": "cloves"},
+            {"id": 36, "answer": "climate"},
+            {"id": 37, "answer": "railway"},
+            {"id": 38, "answer": "diseases"},
+            {"id": 39, "answer": "pesticides"},
+            {"id": 40, "answer": "quality"}
+          ]
+        }
+      },
+      "reading": {
+        "answers": {
+          "1": "FALSE", "2": "TRUE", "3": "NOT GIVEN", "4": "TRUE", "5": "FALSE", "6": "FALSE", "7": "TRUE",
+          "8": "seeds", "9": "insects", "10": "birds", "11": "wind", "12": "fertilizer", "13": "harvest",
+          "14": "iv", "15": "vii", "16": "ii", "17": "v", "18": "viii", "19": "i", "20": "C", "21": "B", "22": "D", "23": "A",
+          "24": "YES", "25": "NO", "26": "NOT GIVEN", "27": "D", "28": "B", "29": "A", "30": "C",
+          "31": "B", "32": "D", "33": "C", "34": "E", "35": "G", "36": "A", "37": "YES", "38": "NO", "39": "YES", "40": "NOT GIVEN"
+        }
+      },
+      "writing": {
+        "task_1": "The chart below shows the total number of Olympic medals won by the top ten countries in the 2012 Summer Olympic Games.",
+        "task_2": "Some people believe that university students should pay the full cost of their education, while others think that the government should pay for university education. Discuss both views and give your opinion."
+      },
+      "speaking": {
+        "part_1": {
+          "topic": "Keys and locking things",
+          "questions": [
+            "Do you always carry keys with you when you leave home?",
+            "Have you ever lost a key?",
+            "Do you think keyless electronic locks are better than traditional keys?",
+            "What things in your life do you usually lock?"
+          ]
+        },
+        "part_2": {
+          "topic": "Describe a website you visited that helped you solve a problem or learn something useful.",
+          "prompt_points": [
+            "what the website was",
+            "how you found out about it",
+            "what information or help it provided",
+            "and explain why it was useful to you."
+          ]
+        },
+        "part_3": {
+          "learning_online": [
+            "What are the advantages of learning things online compared to learning in a classroom?",
+            "Are there any disadvantages to relying on the internet for information?",
+            "How do you think online learning will change in the future?"
+          ],
+          "internet_and_society": [
+            "How has the internet changed the way people communicate daily?",
+            "Do older people use the internet as much as younger people in your country?",
+            "What problems can arise when people spend too much time online?"
+          ]
+        }
+      }
+    },
+    {
+      "test_id": 4,
+      "listening": {
+        "part_1": {
+          "title": "Hotel room booking & Event arrangement",
+          "questions": [
+            {"id": 1, "answer": "Carlton"},
+            {"id": 2, "answer": "garden"},
+            {"id": 3, "answer": "screens"},
+            {"id": 4, "answer": "stage"},
+            {"id": 5, "answer": "vegetarian"},
+            {"id": 6, "answer": "cake"},
+            {"id": 7, "answer": "microphone"},
+            {"id": 8, "answer": "photographer"},
+            {"id": 9, "answer": "deposit"},
+            {"id": 10, "answer": "cancellation"}
+          ]
+        },
+        "part_2": {
+          "title": "Volunteer Work with Wildlife",
+          "questions": [
+            {"id": 11, "type": "multiple_choice", "answer": "C"},
+            {"id": 12, "type": "multiple_choice", "answer": "A"},
+            {"id": 13, "type": "multiple_choice", "answer": "B"},
+            {"id": 14, "type": "multiple_choice", "answer": "C"},
+            {"id": 15, "type": "matching_map", "answer": "F"},
+            {"id": 16, "type": "matching_map", "answer": "C"},
+            {"id": 17, "type": "matching_map", "answer": "H"},
+            {"id": 18, "type": "matching_map", "answer": "A"},
+            {"id": 19, "type": "matching_map", "answer": "E"},
+            {"id": 20, "type": "matching_map", "answer": "D"}
+          ]
+        },
+        "part_3": {
+          "title": "Student discussion on architecture project",
+          "questions": [
+            {"id": "21-22", "type": "multiple_choice_multiple", "answers": ["A", "D"]},
+            {"id": "23-24", "type": "multiple_choice_multiple", "answers": ["C", "E"]},
+            {"id": 25, "type": "matching", "answer": "B"},
+            {"id": 26, "type": "matching", "answer": "E"},
+            {"id": 27, "type": "matching", "answer": "A"},
+            {"id": 28, "type": "matching", "answer": "D"},
+            {"id": 29, "type": "matching", "answer": "C"},
+            {"id": 30, "type": "matching", "answer": "F"}
+          ]
+        },
+        "part_4": {
+          "title": "Ancient seafaring techniques and navigation",
+          "questions": [
+            {"id": 31, "answer": "stars"},
+            {"id": 32, "answer": "clouds"},
+            {"id": 33, "answer": "birds"},
+            {"id": 34, "answer": "waves"},
+            {"id": 35, "answer": "currents"},
+            {"id": 36, "answer": "islands"},
+            {"id": 37, "answer": "canoe"},
+            {"id": 38, "answer": "sails"},
+            {"id": 39, "answer": "timber"},
+            {"id": 40, "answer": "trade"}
+          ]
+        }
+      },
+      "reading": {
+        "answers": {
+          "1": "TRUE", "2": "FALSE", "3": "NOT GIVEN", "4": "TRUE", "5": "TRUE", "6": "FALSE", "7": "NOT GIVEN",
+          "8": "stones", "9": "clay", "10": "silver", "11": "trade", "12": "graves", "13": "weapons",
+          "14": "v", "15": "iii", "16": "viii", "17": "i", "18": "vi", "19": "iv", "20": "D", "21": "B", "22": "C", "23": "A",
+          "24": "YES", "25": "NO", "26": "NO", "27": "B", "28": "D", "29": "A", "30": "C",
+          "31": "D", "32": "A", "33": "C", "34": "F", "35": "B", "36": "E", "37": "NOT GIVEN", "38": "YES", "39": "NO", "40": "YES"
+        }
+      },
+      "writing": {
+        "task_1": "The diagram below shows the process of recycling plastic bottles to manufacture new plastic products.",
+        "task_2": "Many people believe that international sports events help to reduce tension between countries, while others think they create more conflict. Discuss both views and give your own opinion."
+      },
+      "speaking": {
+        "part_1": {
+          "topic": "Memory and remembering things",
+          "questions": [
+            "Do you consider yourself good at remembering names or numbers?",
+            "What techniques do you use to help you remember important tasks?",
+            "Did you have to memorize poems or facts when you were at school?",
+            "Why do you think some people forget things easily?"
+          ]
+        },
+        "part_2": {
+          "topic": "Describe an important decision you made that took a long time to think about.",
+          "prompt_points": [
+            "what the decision was",
+            "why it was important to you",
+            "how long it took you to decide",
+            "and explain why it took you a long time to make this decision."
+          ]
+        },
+        "part_3": {
+          "decision_making": [
+            "Why do some decisions take longer to make than others?",
+            "Should young people make important decisions on their own or seek advice from parents?",
+            "How do people's decision-making styles change as they get older?"
+          ],
+          "decision_making_in_business": [
+            "What factors should managers consider when making key business decisions?",
+            "Is it better for companies to make decisions quickly or after long research?",
+            "How can technology or data help business leaders make better choices?"
+          ]
+        }
+      }
+    }
+  ]
+}

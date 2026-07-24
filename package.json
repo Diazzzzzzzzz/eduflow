@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:setup": "node scripts/db-setup.mjs",
-    "auth:seed": "node --env-file=.env.local scripts/seed-auth.mjs"
+    "auth:seed": "node --env-file=.env.local scripts/seed-auth.mjs",
+    "seed:cambridge19": "tsx --env-file=.env.local scripts/seed-cambridge19.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
