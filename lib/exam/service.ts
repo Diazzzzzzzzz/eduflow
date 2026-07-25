@@ -6,7 +6,7 @@
  * here too, so a candidate cannot read the keys out of the network tab.
  */
 
-import { findSectionBySkill, EXAM_SECTIONS } from "./demo-exam";
+import { findSectionBySkill, EXAM_SECTIONS } from "./papers";
 import { scoreSection } from "./scoring";
 import type {
   AnswerMap,

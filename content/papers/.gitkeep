@@ -1,0 +1,3 @@
+# Papers saved from the admin builder.
+# Ephemeral container filesystems do not persist these — download the JSON
+# and commit it if the paper should survive a redeploy.

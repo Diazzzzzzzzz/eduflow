@@ -609,13 +609,4 @@ export const DEMO_READING_SECTION: ExamSectionFull = {
   ],
 };
 
-/** Every section the engine can serve. Keyed by id for lookup. */
-export const EXAM_SECTIONS: Record<string, ExamSectionFull> = {
-  [DEMO_READING_SECTION.id]: DEMO_READING_SECTION,
-};
-
-export function findSectionBySkill(skill: string): ExamSectionFull | null {
-  return (
-    Object.values(EXAM_SECTIONS).find((s) => s.skill === skill) ?? null
-  );
-}
+// The catalogue of papers lives in ./papers — this module only defines one.
