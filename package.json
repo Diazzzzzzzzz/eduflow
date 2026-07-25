@@ -9,7 +9,9 @@
     "lint": "next lint",
     "db:setup": "node scripts/db-setup.mjs",
     "auth:seed": "node --env-file=.env.local scripts/seed-auth.mjs",
-    "seed:cambridge19": "tsx --env-file=.env.local scripts/seed-cambridge19.ts"
+    "seed:cambridge19": "tsx --env-file=.env.local scripts/seed-cambridge19.ts",
+    "db:seed": "tsx scripts/seed-remote.ts",
+    "db:push": "supabase db push"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
