@@ -39,3 +39,6 @@ pnpm-debug.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Local parsing scratch area — holds copyrighted source PDFs, never commit
+Tests Parsing/
