@@ -1,9 +1,17 @@
 "use client";
 
 import * as React from "react";
-import { ArrowLeft, BookOpen, Clock, ClipboardList, GraduationCap } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Layers,
+} from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { AttendanceTracker } from "@/components/groups/attendance-tracker";
+import { CurrentLessonControl } from "@/components/lessons/current-lesson-control";
 import { HomeworkManager } from "@/components/groups/homework-manager";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
 import { Gradebook } from "@/components/teacher/gradebook";
@@ -12,10 +20,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GROUP_SCHEDULES } from "@/lib/group-data";
 
-type Tab = "students" | "homework" | "attendance";
+type Tab = "students" | "lessons" | "homework" | "attendance";
 
 const TABS: { id: Tab; label: string; icon: typeof GraduationCap }[] = [
   { id: "students", label: "Студенты", icon: GraduationCap },
+  { id: "lessons", label: "Уроки", icon: Layers },
   { id: "homework", label: "Домашние задания", icon: BookOpen },
   { id: "attendance", label: "Посещаемость", icon: ClipboardList },
 ];
@@ -85,6 +94,7 @@ export function GroupDetail({
       </nav>
 
       {tab === "students" && <Gradebook groupName={groupName} />}
+      {tab === "lessons" && <CurrentLessonControl groupName={groupName} />}
       {tab === "homework" && (
         <HomeworkManager groupName={groupName} students={members} />
       )}

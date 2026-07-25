@@ -373,3 +373,61 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000018', 'writing', 'high', 'Связность без механических связок', 'Опирается на «Firstly / Secondly». Переходите к отсылкам: «this approach», «such measures».');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
   ('33333333-3333-3333-3333-000000000018', 'speaking', 'low', 'Интонационное разнообразие', 'Речь точная, но ровная. Отмечайте ударные слова в ответах и слушайте себя в записи.');
+
+-- Course syllabus (lib/lessons-data.ts)
+delete from public.lessons where center_id = '11111111-1111-1111-1111-111111111111';
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 1, 'Знакомство с форматом и диагностика', 'Структура четырёх секций, критерии оценивания и что именно даёт балл. Диагностический срез, чтобы зафиксировать стартовый уровень.', 'general', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 2, 'Listening Section 1: формы и заполнение пропусков', 'Бытовой диалог, числа, даты и имена по буквам. Отработка написания ответа ровно в том виде, в каком он звучит.', 'listening', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 3, 'Reading: скимминг, сканирование и тайм-менеджмент', 'Как за двадцать минут пройти текст с тринадцатью вопросами: чтение ради общей идеи против поиска конкретного факта.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 4, 'Writing Task 1: описание графиков и трендов', 'Структура отчёта, язык динамики (rise, plateau, fluctuate) и обязательный обзорный абзац перед цифрами.', 'writing', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 5, 'Speaking Part 1: беглость в бытовых темах', 'Короткие вопросы о себе, работе и городе. Учимся отвечать двумя-тремя предложениями вместо односложного «yes».', 'speaking', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 6, 'Listening Section 2: карты и планы', 'Ориентация в пространстве на слух: предлоги места, повороты и направления. Разбор типичных ловушек с «left / right».', 'listening', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 7, 'Reading: True / False / Not Given', 'Ключевое различие между противоречием тексту и отсутствием информации — самый частый источник потерянных баллов.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 8, 'Writing Task 1: сравнение и группировка данных', 'Как выбрать значимое и не пересказывать каждую цифру. Группировка категорий и язык сравнения.', 'writing', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 9, 'Speaking Part 2: развёрнутый монолог', 'Минута на подготовку, две на ответ. Схема расширения по 5W1H, чтобы не замолчать на шестидесятой секунде.', 'speaking', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 10, 'Reading: Matching Headings', 'Определение главной мысли абзаца, работа с дистракторами и порядок действий: сначала заголовки, потом текст.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 11, 'IELTS Writing Task 2: Cause & Effect Essays', 'Эссе о причинах и следствиях: как отделить причину от симптома, выстроить логическую цепочку и не скатиться в перечисление. Разбираем структуру, язык причинности и типичные ошибки в постановке проблемы.', 'writing', 'Cause & Effect Essays — раздаточный материал', '/materials/lesson-11-cause-and-effect.pdf');
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 12, 'Listening Section 3: академический диалог', 'Разговор двух-трёх студентов с преподавателем: смена говорящих, согласие и возражение, исправления по ходу речи.', 'listening', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 13, 'Reading: Multiple Choice и Matching Features', 'Отсечение похожих, но неточных вариантов. Сопоставление утверждений с исследователями и теориями.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 14, 'Writing Task 2: Opinion Essays', 'Чёткая позиция во введении и её удержание во всех абзацах. Разница между «agree» и «partly agree» на письме.', 'writing', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 15, 'Speaking Part 3: аргументация и абстрактные темы', 'Обсуждение общества, технологий и образования. Приёмы «it depends» и разворота вопроса, когда нет готового мнения.', 'speaking', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 16, 'Listening Section 4: академическая лекция', 'Монолог без пауз и смены голосов. Конспектирование по ключевым существительным и удержание внимания после третьей минуты.', 'listening', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 17, 'Reading: Summary Completion', 'Заполнение краткого пересказа словами из текста: грамматическая форма пропуска и строгий лимит слов.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 18, 'Writing Task 2: Discussion Essays', 'Обе точки зрения плюс собственная. Как сбалансировать абзацы и не потерять своё мнение в пересказе чужих.', 'writing', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 19, 'Лексика: тематические поля и коллокации', 'Работа с частотными темами экзамена. Замена высокочастотных глаголов и естественная сочетаемость вместо словаря синонимов.', 'general', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 20, 'Грамматика: сложные конструкции для 7.0+', 'Условные предложения, относительные придаточные и пассив. Разнообразие структур без потери точности.', 'general', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 21, 'Reading: Sentence Endings и Diagram Labelling', 'Завершение предложений по смыслу и грамматике, подписи к схемам и процессам.', 'reading', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 22, 'Writing: типичные ошибки и самопроверка', 'Чек-лист последних трёх минут: артикли, согласование, лимит слов. Разбор работ группы по четырём критериям.', 'writing', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 23, 'Speaking: полная симуляция интервью', 'Все три части подряд в условиях реального времени, с записью и разбором по критериям.', 'speaking', null, null);
+insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values
+  ('11111111-1111-1111-1111-111111111111', 24, 'Полный mock-экзамен и разбор', 'Четыре секции в экзаменационном режиме, подсчёт итогового балла и индивидуальный план на оставшееся время.', 'general', null, null);
+
+-- Where each group currently stands in the programme
+update public.groups set current_lesson = 11 where name = 'IELTS 62';
+update public.groups set current_lesson = 7 where name = 'IELTS 63 (Weekend)';
+update public.groups set current_lesson = 15 where name = 'Intermediate 45';
+update public.groups set current_lesson = 4 where name = 'Pre-Intermediate 12';
+update public.groups set current_lesson = 20 where name = 'Advanced 34';

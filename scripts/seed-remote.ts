@@ -15,6 +15,7 @@
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { STUDENTS } from "../lib/mock-data";
+import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -131,11 +132,53 @@ async function main() {
   );
   check(`recommendations (${recs.length})`, await db.from("recommendations").insert(recs));
 
+  // --- Course syllabus -----------------------------------------------------
+  check(
+    "clear syllabus",
+    await db.from("lessons").delete().eq("center_id", CENTER_ID)
+  );
+
+  check(
+    `lessons (${LESSONS.length})`,
+    await db.from("lessons").insert(
+      LESSONS.map((l) => {
+        const material = l.materials[0];
+        return {
+          center_id: CENTER_ID,
+          number: l.number,
+          title: l.title,
+          summary: l.summary,
+          skill: l.skill,
+          material_title: material?.title ?? null,
+          material_url: material?.url ?? null,
+        };
+      }) as never
+    )
+  );
+
+  for (const [group, lesson] of Object.entries(GROUP_CURRENT_LESSON)) {
+    const res = await db
+      .from("groups")
+      .update({ current_lesson: lesson } as never)
+      .eq("name", group);
+    if (res.error) {
+      console.error(`✗ current lesson for ${group}: ${res.error.message}`);
+      process.exit(1);
+    }
+  }
+  console.log(`✓ current lesson set for ${Object.keys(GROUP_CURRENT_LESSON).length} groups`);
+
   const { count } = await db
     .from("students")
     .select("*", { count: "exact", head: true })
     .eq("student_group", "IELTS 62");
-  console.log(`\n✓ Seed applied. Students in «IELTS 62»: ${count}`);
+  const { count: lessonCount } = await db
+    .from("lessons")
+    .select("*", { count: "exact", head: true })
+    .eq("center_id", CENTER_ID);
+  console.log(
+    `\n✓ Seed applied. Students in «IELTS 62»: ${count} · lessons: ${lessonCount}`
+  );
 }
 
 main().catch((err) => {

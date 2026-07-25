@@ -72,6 +72,27 @@ export interface ParentReportRow {
   created_at: string;
 }
 
+export interface GroupRow {
+  id: string;
+  name: string;
+  schedule: string | null;
+  /** Pointer into the syllabus; see migration 0007. */
+  current_lesson: number;
+  created_at: string;
+}
+
+export interface LessonRow {
+  id: string;
+  center_id: string;
+  number: number;
+  title: string;
+  summary: string | null;
+  skill: SkillName | "general";
+  material_title: string | null;
+  material_url: string | null;
+  created_at: string;
+}
+
 /** Minimal Database shape for `createClient<Database>()` typing. */
 export interface Database {
   public: {
@@ -114,6 +135,19 @@ export interface Database {
         Insert: Omit<ParentReportRow, "id" | "created_at"> &
           Partial<Pick<ParentReportRow, "id" | "created_at" | "status">>;
         Update: Partial<ParentReportRow>;
+        Relationships: [];
+      };
+      groups: {
+        Row: GroupRow;
+        Insert: Partial<GroupRow> & Pick<GroupRow, "name">;
+        Update: Partial<GroupRow>;
+        Relationships: [];
+      };
+      lessons: {
+        Row: LessonRow;
+        Insert: Omit<LessonRow, "id" | "created_at"> &
+          Partial<Pick<LessonRow, "id" | "created_at">>;
+        Update: Partial<LessonRow>;
         Relationships: [];
       };
     };

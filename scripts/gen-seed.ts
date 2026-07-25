@@ -9,6 +9,7 @@
  * cleared first so re-seeding doesn't duplicate them.
  */
 import { STUDENTS } from "../lib/mock-data";
+import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -73,5 +74,31 @@ STUDENTS.forEach((s, i) => {
 
   lines.push("");
 });
+
+// --- Course syllabus -------------------------------------------------------
+// The programme is centre-wide; each group's position is a pointer on `groups`.
+lines.push("-- Course syllabus (lib/lessons-data.ts)");
+lines.push(
+  `delete from public.lessons where center_id = ${q(CENTER_ID)};`
+);
+LESSONS.forEach((l) => {
+  const material = l.materials[0];
+  lines.push(
+    `insert into public.lessons (center_id, number, title, summary, skill, material_title, material_url) values\n  (${q(
+      CENTER_ID
+    )}, ${l.number}, ${q(l.title)}, ${q(l.summary)}, ${q(l.skill)}, ${
+      material ? q(material.title) : "null"
+    }, ${material ? q(material.url) : "null"});`
+  );
+});
+lines.push("");
+
+lines.push("-- Where each group currently stands in the programme");
+Object.entries(GROUP_CURRENT_LESSON).forEach(([group, lesson]) => {
+  lines.push(
+    `update public.groups set current_lesson = ${lesson} where name = ${q(group)};`
+  );
+});
+lines.push("");
 
 process.stdout.write(lines.join("\n"));
