@@ -18,6 +18,18 @@ export interface Homework {
   section: HomeworkSection;
   dueDate: string; // ISO date
   createdAt: string; // ISO date
+  /** Assigned to these students only; when absent, the whole group gets it. */
+  assignedStudentIds?: string[];
+  /** Minimum word count for written tasks, shown and enforced in the editor. */
+  minWords?: number;
+}
+
+/** The four IELTS Writing marking criteria, each scored 1.0–9.0. */
+export interface WritingCriteria {
+  taskAchievement: number;
+  coherence: number;
+  lexical: number;
+  grammar: number;
 }
 
 export interface Submission {
@@ -29,6 +41,61 @@ export interface Submission {
   band: number | null;
   feedback: string | null;
   submittedAt: string | null;
+  /** Per-criterion marks; only set for graded writing tasks. */
+  criteria?: WritingCriteria | null;
+}
+
+export const WRITING_CRITERIA: {
+  key: keyof WritingCriteria;
+  label: string;
+  short: string;
+  hint: string;
+}[] = [
+  {
+    key: "taskAchievement",
+    label: "Task Achievement",
+    short: "TA",
+    hint: "Полнота ответа на вопрос, чёткая позиция, развитие идей.",
+  },
+  {
+    key: "coherence",
+    label: "Coherence & Cohesion",
+    short: "CC",
+    hint: "Логика изложения, деление на абзацы, связки.",
+  },
+  {
+    key: "lexical",
+    label: "Lexical Resource",
+    short: "LR",
+    hint: "Диапазон и точность лексики, словообразование.",
+  },
+  {
+    key: "grammar",
+    label: "Grammatical Range & Accuracy",
+    short: "GRA",
+    hint: "Разнообразие конструкций, точность грамматики и пунктуации.",
+  },
+];
+
+/** Valid marks for a criterion: 1.0 to 9.0 in half-band steps. */
+export const CRITERION_STEPS: number[] = Array.from(
+  { length: 17 },
+  (_, i) => 1 + i * 0.5
+);
+
+/**
+ * Overall Writing band: the mean of the four criteria rounded to the nearest
+ * half band, which is how the official descriptors combine them.
+ */
+export function criteriaToBand(c: WritingCriteria): number {
+  const mean =
+    (c.taskAchievement + c.coherence + c.lexical + c.grammar) / 4;
+  return Math.round(mean * 2) / 2;
+}
+
+export function countEssayWords(text: string): number {
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
 }
 
 export const GROUP_SCHEDULES: Record<string, string> = {
@@ -117,6 +184,19 @@ export const HOMEWORK_SEED: Homework[] = [
     dueDate: "2026-08-07",
     createdAt: "2026-07-21",
   },
+  {
+    id: "hw-08",
+    groupName: "IELTS 62",
+    title: "Writing Task 2: Плата за высшее образование",
+    description:
+      "Some people believe that university education should be free for everyone, while others think that students should pay for higher education. Discuss both views and give your own opinion.",
+    section: "writing",
+    dueDate: "2026-08-08",
+    createdAt: "2026-07-25",
+    // Individual task for Арман — his Writing is the weakest section.
+    assignedStudentIds: ["st-01"],
+    minWords: 250,
+  },
 ];
 
 /**
@@ -124,10 +204,48 @@ export const HOMEWORK_SEED: Homework[] = [
  * first student of each homework is 'graded' and the second is 'submitted';
  * the rest stay 'assigned'.
  */
-export function buildSubmissionSeed(): Submission[] {
+export function buildSubmissionSeed(
+  roster: { id: string; name: string; group: string }[] = STUDENTS
+): Submission[] {
+  /**
+   * `assignedStudentIds` holds mock ids (st-01…), but the live roster is keyed
+   * by database UUIDs. Resolve through the demo cohort's names so an individual
+   * assignment lands on the right person in both modes.
+   */
+  const resolveTargets = (mockIds: string[]) => {
+    const names = new Set(
+      STUDENTS.filter((s) => mockIds.includes(s.id)).map((s) => s.name)
+    );
+    return roster.filter(
+      (s) => mockIds.includes(s.id) || names.has(s.name)
+    );
+  };
+
   const rows: Submission[] = [];
   for (const hw of HOMEWORK_SEED) {
-    const groupStudents = STUDENTS.filter((s) => s.group === hw.groupName);
+    const individual = hw.assignedStudentIds?.length
+      ? resolveTargets(hw.assignedStudentIds)
+      : null;
+    // An individually assigned task starts untouched, so the student can
+    // actually sit down and write it.
+    if (individual) {
+      rows.push(
+        ...individual.map((student) => ({
+          id: `sub-${hw.id}-${student.id}`,
+          homeworkId: hw.id,
+          studentId: student.id,
+          content: "",
+          status: "assigned" as SubmissionStatus,
+          band: null,
+          feedback: null,
+          submittedAt: null,
+          criteria: null,
+        }))
+      );
+      continue;
+    }
+
+    const groupStudents = roster.filter((s) => s.group === hw.groupName);
     groupStudents.forEach((student, i) => {
       let status: SubmissionStatus = "assigned";
       let content = "";

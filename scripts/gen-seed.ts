@@ -46,9 +46,11 @@ STUDENTS.forEach((s, i) => {
   const sid = studentUuid(i);
   lines.push(`-- ${s.name}`);
   lines.push(
-    `insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values\n  (${q(
+    `insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values\n  (${q(
       sid
-    )}, ${q(CENTER_ID)}, ${q(TEACHER_ID)}, ${q(s.name)}, ${q(s.initials)}, ${q(
+    )}, ${q(CENTER_ID)}, ${q(TEACHER_ID)}, ${q(s.name)}, ${q(s.initials)}, ${
+      s.email ? q(s.email) : "null"
+    }, ${q(
       s.group
     )}, ${s.targetBand}, ${q(s.examDate)}, ${s.attendance}, ${q(s.teacherNote)});`
   );

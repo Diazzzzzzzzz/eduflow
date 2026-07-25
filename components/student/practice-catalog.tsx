@@ -11,6 +11,7 @@ import {
   ListChecks,
   Mic,
   PenLine,
+  Target,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -78,6 +79,26 @@ export function PracticeCatalog() {
               </button>
             );
           })}
+
+          {/* Drills sit beside the sections: same navigation, different unit of
+              practice — one question type instead of one paper. */}
+          <div className="pt-3">
+            <p className="px-3 pb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Точечная практика
+            </p>
+            <Link
+              href="/student/practice/drills"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Target className="h-4 w-4 shrink-0" />
+              <span className="flex flex-col leading-tight">
+                <span className="text-sm font-medium">По типам вопросов</span>
+                <span className="text-[11px]">
+                  TFNG, Headings, MCQ и другие
+                </span>
+              </span>
+            </Link>
+          </div>
         </div>
       </aside>
 

@@ -10,11 +10,11 @@ insert into public.teachers (id, center_id, name, role) values
   ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'Дана Искакова', 'director')
   on conflict (id) do nothing;
 
-delete from public.students where id in ('33333333-3333-3333-3333-000000000001', '33333333-3333-3333-3333-000000000002', '33333333-3333-3333-3333-000000000003', '33333333-3333-3333-3333-000000000004', '33333333-3333-3333-3333-000000000005', '33333333-3333-3333-3333-000000000006', '33333333-3333-3333-3333-000000000007', '33333333-3333-3333-3333-000000000008', '33333333-3333-3333-3333-000000000009', '33333333-3333-3333-3333-000000000010', '33333333-3333-3333-3333-000000000011', '33333333-3333-3333-3333-000000000012');
+delete from public.students where id in ('33333333-3333-3333-3333-000000000001', '33333333-3333-3333-3333-000000000002', '33333333-3333-3333-3333-000000000003', '33333333-3333-3333-3333-000000000004', '33333333-3333-3333-3333-000000000005', '33333333-3333-3333-3333-000000000006', '33333333-3333-3333-3333-000000000007', '33333333-3333-3333-3333-000000000008', '33333333-3333-3333-3333-000000000009', '33333333-3333-3333-3333-000000000010', '33333333-3333-3333-3333-000000000011', '33333333-3333-3333-3333-000000000012', '33333333-3333-3333-3333-000000000013', '33333333-3333-3333-3333-000000000014', '33333333-3333-3333-3333-000000000015', '33333333-3333-3333-3333-000000000016', '33333333-3333-3333-3333-000000000017', '33333333-3333-3333-3333-000000000018');
 
 -- Арман Калибеков
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000001', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Арман Калибеков', 'АК', 'IELTS 62', 7.5, '2026-09-19', 96, 'Арман показывает отличный прогресс в Listening. Нужно поработать над лексикой и связками в Writing Task 2.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000001', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Арман Калибеков', 'АК', null, 'IELTS 62', 7.5, '2026-09-19', 96, 'Арман показывает отличный прогресс в Listening. Нужно поработать над лексикой и связками в Writing Task 2.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000001', 'Mock #1 — Диагностика', '2026-02-14', 6, 5.5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -35,8 +35,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000001', 'speaking', 'low', 'Глубина ответов в Part 3', 'Ответы беглые, но короткие. Используйте схему «мнение → причина → пример», чтобы ответы длились дольше 30 секунд.');
 
 -- Аружан Мукашева
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000002', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Аружан Мукашева', 'АМ', 'Advanced 34', 8, '2026-08-22', 100, 'Аружан — наш сильнейший читатель. Беглость речи отличная; отточите произношение сочетаний согласных для 8.0.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000002', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Аружан Мукашева', 'АМ', null, 'Advanced 34', 8, '2026-08-22', 100, 'Аружан — наш сильнейший читатель. Беглость речи отличная; отточите произношение сочетаний согласных для 8.0.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000002', 'Mock #1 — Диагностика', '2026-02-14', 7, 7.5, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -55,8 +55,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000002', 'speaking', 'medium', 'Произношение сочетаний согласных', '«Sixth», «strengths», «crisps» — по 10 минут в день повторяйте за BBC 6-Minute English.');
 
 -- Диас Серикбай
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000003', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Диас Серикбай', 'ДС', 'Intermediate 45', 7, '2026-10-03', 88, 'Диас поднял Listening на полбалла за семестр. Главный барьер — скорость чтения; нужна работа с секциями на время.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000003', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Диас Серикбай', 'ДС', null, 'Intermediate 45', 7, '2026-10-03', 88, 'Диас поднял Listening на полбалла за семестр. Главный барьер — скорость чтения; нужна работа с секциями на время.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000003', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 5, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -75,8 +75,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000003', 'writing', 'medium', 'Разнообразие сложных предложений', 'Слишком много простых предложений. Цель — одно условное и одно определительное придаточное в каждом абзаце.');
 
 -- Айгерим Нурланова
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000004', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Айгерим Нурланова', 'АН', 'Intermediate 45', 7, '2026-11-14', 92, 'Айгерим активно участвует, её словарный запас быстро растёт. Слабое место — Listening Section 4.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000004', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Айгерим Нурланова', 'АН', null, 'Intermediate 45', 7, '2026-11-14', 92, 'Айгерим активно участвует, её словарный запас быстро растёт. Слабое место — Listening Section 4.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000004', 'Mock #1 — Диагностика', '2026-02-14', 4.5, 5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -95,8 +95,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000004', 'writing', 'medium', 'Структура абзацев в Task 2', 'Идеи хорошие, но не упорядочены. Используйте схему PEEL (Point, Explain, Example, Link) для каждого абзаца.');
 
 -- Алихан Тулегенов
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000005', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Алихан Тулегенов', 'АТ', 'IELTS 62', 7.5, '2026-09-05', 94, 'Речь Алихана почти как у носителя по беглости. Последний барьер к 7.5 — грамматическая точность в Writing под давлением времени.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000005', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Алихан Тулегенов', 'АТ', null, 'IELTS 62', 7.5, '2026-09-05', 94, 'Речь Алихана почти как у носителя по беглости. Последний барьер к 7.5 — грамматическая точность в Writing под давлением времени.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000005', 'Mock #1 — Диагностика', '2026-02-14', 6.5, 6, 5.5, 7);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -115,8 +115,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000005', 'reading', 'low', 'Стратегия matching headings', 'Сначала читайте заголовки и предполагайте функцию абзаца до сканирования текста.');
 
 -- Мадина Есенова
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000006', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Мадина Есенова', 'МЕ', 'IELTS 63 (Weekend)', 7, '2026-08-29', 85, 'Мадина заметно продвинулась за месяц после перехода на ежедневные упражнения по Listening. Держите темп в Writing Task 1.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000006', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Мадина Есенова', 'МЕ', null, 'IELTS 63 (Weekend)', 7, '2026-08-29', 85, 'Мадина заметно продвинулась за месяц после перехода на ежедневные упражнения по Listening. Держите темп в Writing Task 1.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000006', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 6, 5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -135,8 +135,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000006', 'speaking', 'medium', 'Выносливость в длинном ответе Part 2', 'Идеи заканчиваются на 60-й секунде. Ежедневно тренируйте расширение по схеме 5W1H на карточках.');
 
 -- Нурислам Бекжанов
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000007', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Нурислам Бекжанов', 'НБ', 'Pre-Intermediate 12', 6.5, '2026-12-05', 78, 'Посещаемость Нурислама снизилась в июне — отмечен для беседы с родителями. При регулярном посещении баллы держатся стабильно.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000007', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Нурислам Бекжанов', 'НБ', null, 'Pre-Intermediate 12', 6.5, '2026-12-05', 78, 'Посещаемость Нурислама снизилась в июне — отмечен для беседы с родителями. При регулярном посещении баллы держатся стабильно.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000007', 'Mock #1 — Диагностика', '2026-02-14', 4.5, 4.5, 4, 4.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -155,8 +155,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000007', 'reading', 'medium', 'Лексика для распознавания перефраза', 'Составляйте по 10 пар синонимов на юнит из Cambridge Vocabulary for IELTS.');
 
 -- Томирис Айтбаева
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000008', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Томирис Айтбаева', 'ТА', 'Intermediate 45', 7, '2026-09-26', 98, 'Томирис исключительно стабильна — никогда не пропускает домашние задания. Готова выйти за рамки заученных структур в Speaking.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000008', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Томирис Айтбаева', 'ТА', null, 'Intermediate 45', 7, '2026-09-26', 98, 'Томирис исключительно стабильна — никогда не пропускает домашние задания. Готова выйти за рамки заученных структур в Speaking.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000008', 'Mock #1 — Диагностика', '2026-02-14', 6, 6, 5.5, 5.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -175,8 +175,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000008', 'writing', 'low', 'Разнообразие лексики в Task 2', 'Заменяйте частотные глаголы: «get → obtain / acquire», «big → substantial».');
 
 -- Бекарыс Жумагулов
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000009', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Бекарыс Жумагулов', 'БЖ', 'Pre-Intermediate 12', 6.5, '2026-10-17', 90, 'Бекарыс мыслит глубоко, но неуверен в Speaking. Упражнения на уверенность работают — беглость выросла на полбалла.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000009', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Бекарыс Жумагулов', 'БЖ', null, 'Pre-Intermediate 12', 6.5, '2026-10-17', 90, 'Бекарыс мыслит глубоко, но неуверен в Speaking. Упражнения на уверенность работают — беглость выросла на полбалла.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000009', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 6, 5, 4.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -195,8 +195,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000009', 'listening', 'medium', 'Задания на карты и планы', 'Путает лево/право под давлением. Делайте по 2 задания с картами в неделю с аудио на скорости 1.25x.');
 
 -- Зере Амангельдина
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000010', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Зере Амангельдина', 'ЗА', 'Advanced 34', 8, '2026-08-15', 97, 'До экзамена Зере две недели, тренд — 7.5. Финальный фокус: чёткость позиции в Writing Task 2 для рывка к 8.0.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000010', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Зере Амангельдина', 'ЗА', null, 'Advanced 34', 8, '2026-08-15', 97, 'До экзамена Зере две недели, тренд — 7.5. Финальный фокус: чёткость позиции в Writing Task 2 для рывка к 8.0.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000010', 'Mock #1 — Диагностика', '2026-02-14', 7, 7, 6, 6.5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -215,8 +215,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000010', 'speaking', 'low', 'Разнообразие интонации', 'Речь точная, но монотонная. Отмечайте ударные слова в тренировочных ответах и утрируйте их при записи и разборе.');
 
 -- Санжар Оразбеков
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000011', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Санжар Оразбеков', 'СО', 'Pre-Intermediate 12', 6.5, '2026-11-28', 91, 'Санжар присоединился в середине семестра и быстро догоняет. Грамматическая база крепкая; приоритет — расширение словарного запаса.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000011', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Санжар Оразбеков', 'СО', null, 'Pre-Intermediate 12', 6.5, '2026-11-28', 91, 'Санжар присоединился в середине семестра и быстро догоняет. Грамматическая база крепкая; приоритет — расширение словарного запаса.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000011', 'Mock #1 — Диагностика', '2026-02-14', 5, 4.5, 4.5, 5);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -235,8 +235,8 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000011', 'writing', 'medium', 'Полнота ответа на задание', 'Часто отвечает лишь на половину вопросов из двух частей. Подчёркивайте обе части задания перед планированием.');
 
 -- Камила Даулетова
-insert into public.students (id, center_id, teacher_id, name, initials, student_group, target_band, exam_date, attendance, teacher_note) values
-  ('33333333-3333-3333-3333-000000000012', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Камила Даулетова', 'КД', 'IELTS 63 (Weekend)', 7.5, '2026-10-10', 95, 'Камила впечатляюще совмещает школьные олимпиады с подготовкой к IELTS. Reading уже на целевом уровне — держите и полируйте Writing.');
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000012', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Камила Даулетова', 'КД', null, 'IELTS 63 (Weekend)', 7.5, '2026-10-10', 95, 'Камила впечатляюще совмещает школьные олимпиады с подготовкой к IELTS. Reading уже на целевом уровне — держите и полируйте Writing.');
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
   ('33333333-3333-3333-3333-000000000012', 'Mock #1 — Диагностика', '2026-02-14', 6, 6.5, 5.5, 6);
 insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
@@ -253,3 +253,123 @@ insert into public.recommendations (student_id, skill, priority, title, detail) 
   ('33333333-3333-3333-3333-000000000012', 'writing', 'high', 'Связность без механических связок', 'Злоупотребляет «Firstly / Secondly / In conclusion». Разнообразьте отсылками («this trend», «such measures»).');
 insert into public.recommendations (student_id, skill, priority, title, detail) values
   ('33333333-3333-3333-3333-000000000012', 'listening', 'low', 'Ловушки-дистракторы в multiple-choice', 'Следите за исправлениями по ходу аудио («actually, on second thought…») в Section 2.');
+
+-- Аружан Ержан
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000013', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Аружан Ержан', 'АЕ', 'aruzhan.yerzhan@example.com', 'IELTS 62', 7, '2026-10-24', 93, 'Аружан быстро набрала темп после диагностики. Reading уже на целевом уровне, Writing требует работы над развёрнутостью аргументов.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 6, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #2 — Cambridge 17', '2026-03-14', 6, 6, 5.5, 6);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #3 — Cambridge 18', '2026-04-11', 6, 6.5, 5.5, 6);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #4 — Промежуточный', '2026-05-09', 6.5, 7, 6, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #5 — Cambridge 19', '2026-06-13', 6.5, 7, 6, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000013', 'Mock #6 — Полная симуляция', '2026-07-11', 7, 7, 6.5, 6.5);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000013', 'writing', 'high', 'Развитие аргумента в Task 2', 'Идеи заявлены, но не раскрыты. На каждый аргумент добавляйте объяснение и конкретный пример — схема PEEL.');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000013', 'speaking', 'medium', 'Разнообразие лексики в Part 1', 'Ответы точные, но словарь бытовой. Подготовьте по три синонима к частотным темам: работа, учёба, город.');
+
+-- Данияр Султанов
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000014', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Данияр Султанов', 'ДС', 'daniyar.sultanov@example.com', 'IELTS 62', 6.5, '2026-11-07', 87, 'Данияр пропустил две недели в июне, что видно по динамике. При регулярном посещении прогресс устойчивый.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #1 — Диагностика', '2026-02-14', 5, 5, 4.5, 5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #2 — Cambridge 17', '2026-03-14', 5.5, 5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #3 — Cambridge 18', '2026-04-11', 5.5, 5.5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #4 — Промежуточный', '2026-05-09', 5.5, 5.5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #5 — Cambridge 19', '2026-06-13', 6, 5.5, 5.5, 6);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000014', 'Mock #6 — Полная симуляция', '2026-07-11', 6, 6, 5.5, 6);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000014', 'listening', 'high', 'Section 4: длинные монологи', 'Теряет нить после третьей минуты. Ежедневно одна лекция TED-Ed с конспектом ключевых существительных.');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000014', 'reading', 'medium', 'Скорость чтения', 'Не успевает третий текст. Ограничьте первый текст 15 минутами и тренируйте просмотровое чтение абзацев.');
+
+-- Мадина Оспанова
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000015', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Мадина Оспанова', 'МО', 'madina.ospanova@example.com', 'IELTS 62', 7.5, '2026-09-26', 98, 'Мадина — самый дисциплинированный студент группы, не пропускает домашние задания. Осталось добрать полбалла в Writing.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #1 — Диагностика', '2026-02-14', 6, 6.5, 5.5, 6);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #2 — Cambridge 17', '2026-03-14', 6.5, 6.5, 6, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #3 — Cambridge 18', '2026-04-11', 7, 7, 6, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #4 — Промежуточный', '2026-05-09', 7, 7, 6, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #5 — Cambridge 19', '2026-06-13', 7.5, 7.5, 6.5, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000015', 'Mock #6 — Полная симуляция', '2026-07-11', 7.5, 7.5, 6.5, 7.5);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000015', 'writing', 'high', 'Чёткая позиция в Task 2', 'Позиция появляется только в заключении. Формулируйте мнение во введении и возвращайтесь к нему в каждом абзаце.');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000015', 'reading', 'low', 'Matching headings', 'Сначала читайте заголовки и прогнозируйте функцию абзаца, только потом сканируйте текст.');
+
+-- Санжар Ахметов
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000016', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Санжар Ахметов', 'СА', 'sanzhar.akhmetov@example.com', 'IELTS 62', 6.5, '2026-12-12', 82, 'Санжар присоединился к группе в мае и догоняет программу. Посещаемость требует внимания — стоит связаться с родителями.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #1 — Диагностика', '2026-02-14', 4.5, 4.5, 4.5, 5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #2 — Cambridge 17', '2026-03-14', 5, 5, 4.5, 5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #3 — Cambridge 18', '2026-04-11', 5, 5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #4 — Промежуточный', '2026-05-09', 5.5, 5.5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #5 — Cambridge 19', '2026-06-13', 5.5, 5.5, 5, 5.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000016', 'Mock #6 — Полная симуляция', '2026-07-11', 6, 5.5, 5.5, 6);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000016', 'reading', 'high', 'Академический словарь', 'Незнакомая лексика блокирует понимание. Проходите списки AWL 1–3 с интервальным повторением.');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000016', 'writing', 'medium', 'Полнота ответа на вопрос', 'Часто отвечает только на половину задания. Подчёркивайте обе части вопроса перед планированием.');
+
+-- Алина Нургалиева
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000017', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Алина Нургалиева', 'АН', 'alina.nurgalieva@example.com', 'IELTS 62', 7, '2026-10-10', 95, 'Алина сильна в Speaking — беглая и уверенная речь. Основной резерв роста в Listening на картах и схемах.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #1 — Диагностика', '2026-02-14', 5.5, 5.5, 5.5, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #2 — Cambridge 17', '2026-03-14', 5.5, 6, 5.5, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #3 — Cambridge 18', '2026-04-11', 6, 6, 6, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #4 — Промежуточный', '2026-05-09', 6, 6.5, 6, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #5 — Cambridge 19', '2026-06-13', 6.5, 6.5, 6, 7.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000017', 'Mock #6 — Полная симуляция', '2026-07-11', 6.5, 7, 6.5, 7.5);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000017', 'listening', 'high', 'Задания с картами и планами', 'Путается в ориентации «влево/вправо» под давлением. Две карты в неделю на скорости 1.25x.');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000017', 'writing', 'medium', 'Грамматическая точность', 'Повторяющиеся ошибки в артиклях. Последние три минуты каждого задания — проверка по чек-листу.');
+
+-- Темирлан Бексултан
+insert into public.students (id, center_id, teacher_id, name, initials, email, student_group, target_band, exam_date, attendance, teacher_note) values
+  ('33333333-3333-3333-3333-000000000018', '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'Темирлан Бексултан', 'ТБ', 'temirlan.bexultan@example.com', 'IELTS 62', 8, '2026-09-12', 91, 'Темирлан идёт на 8.0 и уже близок по трём секциям. Writing — единственное, что удерживает итоговый балл.');
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #1 — Диагностика', '2026-02-14', 6.5, 7, 6, 6.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #2 — Cambridge 17', '2026-03-14', 7, 7, 6, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #3 — Cambridge 18', '2026-04-11', 7.5, 7.5, 6.5, 7);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #4 — Промежуточный', '2026-05-09', 7.5, 8, 6.5, 7.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #5 — Cambridge 19', '2026-06-13', 8, 8, 6.5, 7.5);
+insert into public.mock_tests (student_id, label, taken_on, listening, reading, writing, speaking) values
+  ('33333333-3333-3333-3333-000000000018', 'Mock #6 — Полная симуляция', '2026-07-11', 8, 8.5, 7, 8);
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000018', 'writing', 'high', 'Связность без механических связок', 'Опирается на «Firstly / Secondly». Переходите к отсылкам: «this approach», «such measures».');
+insert into public.recommendations (student_id, skill, priority, title, detail) values
+  ('33333333-3333-3333-3333-000000000018', 'speaking', 'low', 'Интонационное разнообразие', 'Речь точная, но ровная. Отмечайте ударные слова в ответах и слушайте себя в записи.');

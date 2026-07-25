@@ -8,7 +8,19 @@ import { ExamRunner } from "./exam-runner";
  * Bridges the server-rendered paper to the client engine, supplying the active
  * student so a submission can be attributed when a database is configured.
  */
-export function ExamEntry({ section }: { section: ExamSection }) {
+export function ExamEntry({
+  section,
+  backHref,
+}: {
+  section: ExamSection;
+  backHref?: string;
+}) {
   const { activeStudentId } = useApp();
-  return <ExamRunner section={section} studentId={activeStudentId} />;
+  return (
+    <ExamRunner
+      section={section}
+      studentId={activeStudentId}
+      backHref={backHref}
+    />
+  );
 }

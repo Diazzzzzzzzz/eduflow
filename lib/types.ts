@@ -28,6 +28,8 @@ export interface Student {
   id: string;
   name: string;
   initials: string;
+  /** Contact address used to invite the student to the portal. */
+  email?: string;
   group: string;
   targetBand: number;
   examDate: string; // ISO date

@@ -4,6 +4,7 @@ import * as React from "react";
 import { CalendarClock, Plus } from "lucide-react";
 import { useGroups } from "@/components/groups/groups-provider";
 import { GradeDialog } from "@/components/groups/grade-dialog";
+import { EssayReviewDialog } from "@/components/teacher/essay-review";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -157,6 +158,10 @@ export function HomeworkManager({
     () => Object.fromEntries(students.map((s) => [s.id, s.name])),
     [students]
   );
+  // The task behind the submission being marked — decides which reviewer opens.
+  const gradeHomework = grade
+    ? homework.find((h) => h.id === grade.homeworkId)
+    : undefined;
 
   return (
     <div className="space-y-4">
@@ -235,8 +240,16 @@ export function HomeworkManager({
         })
       )}
 
+      {/* Writing gets the four-criteria essay reviewer; everything else the
+          single-band dialog. */}
       <GradeDialog
-        submission={grade}
+        submission={gradeHomework?.section === "writing" ? null : grade}
+        studentName={grade ? nameById[grade.studentId] ?? "" : ""}
+        onClose={() => setGrade(null)}
+      />
+      <EssayReviewDialog
+        submission={gradeHomework?.section === "writing" ? grade : null}
+        homework={gradeHomework ?? null}
         studentName={grade ? nameById[grade.studentId] ?? "" : ""}
         onClose={() => setGrade(null)}
       />

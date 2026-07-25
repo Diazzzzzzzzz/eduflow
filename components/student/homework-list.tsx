@@ -10,9 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDayMonthYear } from "@/lib/date";
+import { EssayEditor } from "@/components/student/essay-editor";
 import {
+  countEssayWords,
   SECTION_LABELS,
   submissionStatusMeta,
+  WRITING_CRITERIA,
   type Homework,
   type Submission,
 } from "@/lib/group-data";
@@ -39,6 +42,8 @@ function HomeworkCard({
   const canSubmit =
     !submission || submission.status === "assigned";
   const graded = submission?.status === "graded";
+  // Writing tasks get the full essay composer; everything else a plain box.
+  const isEssay = hw.section === "writing";
 
   function submit() {
     if (!draft.trim()) return;
@@ -77,6 +82,24 @@ function HomeworkCard({
               </span>
               {submission.band != null && <BandChip band={submission.band} size="sm" />}
             </div>
+            {submission.criteria && (
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {WRITING_CRITERIA.map((c) => (
+                  <div
+                    key={c.key}
+                    className="rounded-md border bg-card px-2 py-1.5 text-center"
+                    title={c.label}
+                  >
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {c.short}
+                    </p>
+                    <p className="tabular mt-0.5 text-sm font-semibold">
+                      {submission.criteria![c.key].toFixed(1)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
             {submission.feedback && (
               <p className="flex gap-2 text-sm text-muted-foreground">
                 <Bot className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -86,35 +109,56 @@ function HomeworkCard({
           </div>
         )}
 
-        {submission?.status === "submitted" && (
+        {submission && submission.status !== "assigned" && submission.content && (
           <div className="rounded-lg border bg-secondary/40 p-3 text-sm">
-            <p className="text-xs font-medium text-muted-foreground">Ваш ответ</p>
-            <p className="mt-1">{submission.content}</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-medium text-muted-foreground">
+                Ваш ответ
+              </p>
+              {isEssay && (
+                <span className="tabular text-xs text-muted-foreground">
+                  {countEssayWords(submission.content)} слов
+                </span>
+              )}
+            </div>
+            <p className="mt-1 whitespace-pre-wrap leading-relaxed">
+              {submission.content}
+            </p>
           </div>
         )}
 
-        {canSubmit && (
-          <div className="space-y-2">
-            <Textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Введите ответ или вставьте текст работы…"
-              className="min-h-[120px]"
-              aria-label="Ответ на задание"
+        {canSubmit &&
+          (isEssay ? (
+            <EssayEditor
+              homeworkId={hw.id}
+              studentId={studentId}
+              prompt={hw.description}
+              minWords={hw.minWords ?? 250}
+              initialContent={submission?.content ?? ""}
+              onSubmit={(content) => submitHomework(hw.id, studentId, content)}
             />
-            <div className="flex justify-end">
-              <Button onClick={submit} disabled={saving || !draft.trim()}>
-                {saving ? (
-                  <>
-                    <Loader2 className="animate-spin" /> Отправка…
-                  </>
-                ) : (
-                  "Сдать работу"
-                )}
-              </Button>
+          ) : (
+            <div className="space-y-2">
+              <Textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Введите ответ или вставьте текст работы…"
+                className="min-h-[120px]"
+                aria-label="Ответ на задание"
+              />
+              <div className="flex justify-end">
+                <Button onClick={submit} disabled={saving || !draft.trim()}>
+                  {saving ? (
+                    <>
+                      <Loader2 className="animate-spin" /> Отправка…
+                    </>
+                  ) : (
+                    "Сдать работу"
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          ))}
       </CardContent>
     </Card>
   );

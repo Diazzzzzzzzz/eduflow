@@ -48,9 +48,17 @@ import {
 
 const STORAGE_KEY = "eduflow:test-builder-draft";
 
+let keyCounter = 0;
+
+/**
+ * Keys must be stable between the server render and hydration, so the first
+ * question uses a fixed key and only later ones get a generated suffix.
+ * A random or time-based key here mismatches `htmlFor`/`id` pairs on hydration.
+ */
 function newQuestion(type: DraftQuestionType = "true_false_not_given"): DraftQuestion {
+  keyCounter += 1;
   return {
-    key: `k-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    key: `q-${keyCounter}`,
     type,
     prompt: "",
     answer: "",

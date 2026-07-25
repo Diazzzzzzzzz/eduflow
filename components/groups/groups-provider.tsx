@@ -3,12 +3,14 @@
 import * as React from "react";
 import { useApp } from "@/components/app-provider";
 import {
+  buildSubmissionSeed,
   HOMEWORK_SEED,
   SUBMISSION_SEED,
   type AttendanceStatus,
   type Homework,
   type HomeworkSection,
   type Submission,
+  type WritingCriteria,
 } from "@/lib/group-data";
 
 interface NewHomework {
@@ -27,7 +29,12 @@ interface GroupsState {
   attendance: Record<string, AttendanceStatus>;
   createHomework: (input: NewHomework) => void;
   submitHomework: (homeworkId: string, studentId: string, content: string) => void;
-  gradeSubmission: (submissionId: string, band: number, feedback: string) => void;
+  gradeSubmission: (
+    submissionId: string,
+    band: number,
+    feedback: string,
+    criteria?: WritingCriteria | null
+  ) => void;
   setAttendance: (studentId: string, date: string, status: AttendanceStatus) => void;
 }
 
@@ -40,6 +47,17 @@ export function GroupsProvider({ children }: { children: React.ReactNode }) {
   const [homework, setHomework] = React.useState<Homework[]>(HOMEWORK_SEED);
   const [submissions, setSubmissions] =
     React.useState<Submission[]>(SUBMISSION_SEED);
+
+  // The roster arrives from the API after mount and is keyed by database ids,
+  // while SUBMISSION_SEED is built from the bundled cohort. Re-seed once the
+  // real roster lands, otherwise no student matches and homework disappears.
+  const seededFor = React.useRef("");
+  React.useEffect(() => {
+    const key = students.map((s) => s.id).join(",");
+    if (!key || key === seededFor.current) return;
+    seededFor.current = key;
+    setSubmissions(buildSubmissionSeed(students));
+  }, [students]);
   const [attendance, setAttendanceState] = React.useState<
     Record<string, AttendanceStatus>
   >({});
@@ -107,11 +125,22 @@ export function GroupsProvider({ children }: { children: React.ReactNode }) {
   );
 
   const gradeSubmission = React.useCallback(
-    (submissionId: string, band: number, feedback: string) => {
+    (
+      submissionId: string,
+      band: number,
+      feedback: string,
+      criteria?: WritingCriteria | null
+    ) => {
       setSubmissions((prev) =>
         prev.map((s) =>
           s.id === submissionId
-            ? { ...s, status: "graded", band, feedback }
+            ? {
+                ...s,
+                status: "graded",
+                band,
+                feedback,
+                criteria: criteria ?? s.criteria ?? null,
+              }
             : s
         )
       );
