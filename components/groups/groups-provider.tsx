@@ -5,7 +5,6 @@ import { useApp } from "@/components/app-provider";
 import {
   buildSubmissionSeed,
   HOMEWORK_SEED,
-  SUBMISSION_SEED,
   type AttendanceStatus,
   type Homework,
   type HomeworkSection,
@@ -45,12 +44,11 @@ const GroupsContext = React.createContext<GroupsState | null>(null);
 export function GroupsProvider({ children }: { children: React.ReactNode }) {
   const { students } = useApp();
   const [homework, setHomework] = React.useState<Homework[]>(HOMEWORK_SEED);
-  const [submissions, setSubmissions] =
-    React.useState<Submission[]>(SUBMISSION_SEED);
+  // Starts empty on purpose: seeding from the bundled cohort produced rows
+  // keyed by demo ids that no live student matches, and they would be visible
+  // for a beat before the real roster replaced them.
+  const [submissions, setSubmissions] = React.useState<Submission[]>([]);
 
-  // The roster arrives from the API after mount and is keyed by database ids,
-  // while SUBMISSION_SEED is built from the bundled cohort. Re-seed once the
-  // real roster lands, otherwise no student matches and homework disappears.
   const seededFor = React.useRef("");
   React.useEffect(() => {
     const key = students.map((s) => s.id).join(",");

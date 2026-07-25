@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AppProvider } from "@/components/app-provider";
 import { GroupsProvider } from "@/components/groups/groups-provider";
+import { RosterGate } from "@/components/layout/roster-gate";
 import { Topbar } from "@/components/layout/topbar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getUserProfile } from "@/lib/supabase/auth-server";
@@ -26,7 +27,7 @@ export default async function AppLayout({
         <div className="canvas-grid flex min-h-screen flex-col">
           <Topbar user={menuUser} />
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
-            {children}
+            <RosterGate>{children}</RosterGate>
           </main>
           <SiteFooter />
         </div>

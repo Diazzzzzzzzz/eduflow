@@ -2,13 +2,21 @@
 
 import * as React from "react";
 import type { MockTest, SkillScores, Student } from "@/lib/types";
-import { STUDENTS } from "@/lib/mock-data";
 import { calcOverall } from "@/lib/band";
 
 const STORAGE_KEY = "ielts-pulse:v1";
 
+export type RosterStatus = "loading" | "ready" | "error";
+
 interface AppState {
   students: Student[];
+  /**
+   * Roster load state. `RosterGate` renders a skeleton until this is "ready",
+   * so consumers below it can rely on `students` being the real cohort and on
+   * `activeStudent` being defined.
+   */
+  rosterStatus: RosterStatus;
+  reloadRoster: () => void;
   activeStudentId: string;
   setActiveStudentId: (id: string) => void;
   activeStudent: Student;
@@ -29,8 +37,13 @@ interface AppState {
 const AppContext = React.createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [students, setStudents] = React.useState<Student[]>(STUDENTS);
-  const [activeStudentId, setActiveStudentId] = React.useState(STUDENTS[0].id);
+  // Deliberately empty: seeding this with the bundled cohort made the UI paint
+  // the demo roster first and swap it for the real one a moment later, which
+  // read as a flicker (8 students in a group, then 2).
+  const [students, setStudents] = React.useState<Student[]>([]);
+  const [rosterStatus, setRosterStatus] =
+    React.useState<RosterStatus>("loading");
+  const [activeStudentId, setActiveStudentId] = React.useState("");
   const [theme, setTheme] = React.useState<"dark" | "light">("light");
   const [dbBacked, setDbBacked] = React.useState(false);
 
@@ -48,12 +61,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  // On mount: restore theme + local extras, then load the real cohort from the
-  // API (Supabase when configured, otherwise the mock cohort) and merge.
+  // Theme and local extras come from storage and are safe to apply immediately.
   React.useEffect(() => {
-    let cancelled = false;
-
-    let extras: Record<string, MockTest[]> = {};
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -61,54 +70,64 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           extraTests?: Record<string, MockTest[]>;
           theme?: "dark" | "light";
         };
-        if (saved.extraTests) extras = saved.extraTests;
+        extraRef.current = saved.extraTests ?? {};
         if (saved.theme) setTheme(saved.theme);
       }
     } catch {
       // Corrupt storage — start fresh
       localStorage.removeItem(STORAGE_KEY);
     }
-    extraRef.current = extras;
+  }, []);
 
-    (async () => {
-      let base = STUDENTS;
-      let isDb = false;
-      try {
-        const res = await fetch("/api/students");
-        if (res.ok) {
-          const json = (await res.json()) as {
-            students?: Student[];
-            source?: "supabase" | "mock";
-          };
-          if (json.students?.length) base = json.students;
-          isDb = json.source === "supabase";
-        }
-      } catch {
-        // Network/API failure — keep the bundled cohort.
-      }
-      if (cancelled) return;
+  // Roster load, kept separate so the error state can retry it.
+  const cancelledRef = React.useRef(false);
+
+  const loadRoster = React.useCallback(async () => {
+    setRosterStatus("loading");
+    try {
+      const res = await fetch("/api/students");
+      if (!res.ok) throw new Error(`students: ${res.status}`);
+      const json = (await res.json()) as {
+        students?: Student[];
+        source?: "supabase" | "mock";
+      };
+      if (cancelledRef.current) return;
+
+      const base = json.students ?? [];
+      const isDb = json.source === "supabase";
 
       // In DB mode the database owns all results; only merge localStorage
       // extras when running on mock data.
       const merged = isDb
         ? base
         : base.map((s) =>
-            extras[s.id]?.length
-              ? { ...s, mockTests: [...s.mockTests, ...extras[s.id]] }
+            extraRef.current[s.id]?.length
+              ? { ...s, mockTests: [...s.mockTests, ...extraRef.current[s.id]] }
               : s
           );
 
       setStudents(merged);
       setDbBacked(isDb);
       setActiveStudentId((prev) =>
-        merged.some((s) => s.id === prev) ? prev : merged[0]?.id ?? prev
+        merged.some((s) => s.id === prev) ? prev : (merged[0]?.id ?? "")
       );
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+      setRosterStatus("ready");
+    } catch {
+      if (cancelledRef.current) return;
+      // Falling back to the bundled cohort here would show a roster that is not
+      // this centre's — surface the failure instead and offer a retry.
+      setStudents([]);
+      setRosterStatus("error");
+    }
   }, []);
+
+  React.useEffect(() => {
+    cancelledRef.current = false;
+    void loadRoster();
+    return () => {
+      cancelledRef.current = true;
+    };
+  }, [loadRoster]);
 
   React.useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -170,11 +189,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, [persist]);
 
+  // Undefined only while the roster is still loading or failed, which is
+  // exactly when `RosterGate` renders a placeholder instead of the page.
   const activeStudent =
     students.find((s) => s.id === activeStudentId) ?? students[0];
 
   const value: AppState = {
     students,
+    rosterStatus,
+    reloadRoster: () => void loadRoster(),
     activeStudentId,
     setActiveStudentId,
     activeStudent,
