@@ -11,7 +11,10 @@
     "auth:seed": "node --env-file=.env.local scripts/seed-auth.mjs",
     "seed:cambridge19": "tsx --env-file=.env.local scripts/seed-cambridge19.ts",
     "db:seed": "tsx scripts/seed-remote.ts",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "import:sample": "tsx --env-file=.env.local scripts/import-paper.ts content/import-samples/eduflow-reading-test1.json",
+    "gen:import-sample": "tsx scripts/gen-import-sample.ts",
+    "import:paper": "tsx --env-file=.env.local scripts/import-paper.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",

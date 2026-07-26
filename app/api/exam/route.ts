@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const full = loadFullSection({
+  const full = await loadFullSection({
     sectionId: searchParams.get("id"),
     skill: searchParams.get("skill"),
   });

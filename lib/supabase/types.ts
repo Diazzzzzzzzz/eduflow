@@ -93,6 +93,24 @@ export interface LessonRow {
   created_at: string;
 }
 
+export interface ExamPaperRow {
+  id: string;
+  center_id: string;
+  slug: string;
+  title: string;
+  skill: "reading" | "listening";
+  duration_minutes: number;
+  attribution: string | null;
+  passage_count: number;
+  question_count: number;
+  /** The whole `ExamSectionFull`, answer keys included. */
+  payload: unknown;
+  published: boolean;
+  imported_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 /** Minimal Database shape for `createClient<Database>()` typing. */
 export interface Database {
   public: {
@@ -141,6 +159,13 @@ export interface Database {
         Row: GroupRow;
         Insert: Partial<GroupRow> & Pick<GroupRow, "name">;
         Update: Partial<GroupRow>;
+        Relationships: [];
+      };
+      exam_papers: {
+        Row: ExamPaperRow;
+        Insert: Omit<ExamPaperRow, "id" | "created_at"> &
+          Partial<Pick<ExamPaperRow, "id" | "created_at">>;
+        Update: Partial<ExamPaperRow>;
         Relationships: [];
       };
       lessons: {

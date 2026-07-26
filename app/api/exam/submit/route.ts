@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
   }
 
-  const full = loadFullSection({
+  const full = await loadFullSection({
     sectionId: body.sectionId,
     skill: body.skill,
   });

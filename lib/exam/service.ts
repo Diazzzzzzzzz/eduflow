@@ -8,6 +8,7 @@
 
 import { findSectionBySkill, EXAM_SECTIONS } from "./papers";
 import { buildDrillSection, DRILL_ID_PREFIX, isDrillId } from "./drills";
+import { getFirstStoredPaper, getStoredPaper } from "@/lib/data/exam-papers";
 import { scoreSection } from "./scoring";
 import type {
   AnswerMap,
@@ -37,18 +38,32 @@ export function toPublicSection(full: ExamSectionFull): ExamSection {
   };
 }
 
-export function loadFullSection(input: {
+/**
+ * Resolve a paper by id or skill.
+ *
+ * Order matters: drills are synthesised, then imported papers from the
+ * database, then the bundled originals. Imported papers win over bundled ones
+ * for a bare skill lookup, so a centre that has uploaded its own material sees
+ * that rather than the demo paper.
+ */
+export async function loadFullSection(input: {
   sectionId?: string | null;
   skill?: string | null;
-}): ExamSectionFull | null {
+}): Promise<ExamSectionFull | null> {
   if (input.sectionId) {
-    // Drills are synthesised on demand rather than stored. The build is
-    // deterministic, so the submit route rebuilds an identical paper and can
-    // mark it without any server-side session.
+    // Deterministic rebuild, so the submit route can mark a drill without any
+    // server-side session.
     if (isDrillId(input.sectionId)) {
       return buildDrillSection(input.sectionId.slice(DRILL_ID_PREFIX.length));
     }
+    const stored = await getStoredPaper(input.sectionId);
+    if (stored) return stored;
     if (EXAM_SECTIONS[input.sectionId]) return EXAM_SECTIONS[input.sectionId];
+  }
+
+  if (input.skill === "reading" || input.skill === "listening") {
+    const stored = await getFirstStoredPaper(input.skill);
+    if (stored) return stored;
   }
   if (input.skill) return findSectionBySkill(input.skill);
   return null;
