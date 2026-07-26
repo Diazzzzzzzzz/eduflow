@@ -12,6 +12,7 @@ import { STUDENTS } from "../lib/mock-data";
 import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
 import { GROUP_TEACHER, PENDING_REVIEW_SEED, TEACHERS } from "../lib/admin-data";
 import { HOMEWORK_SEED } from "../lib/group-data";
+import { DEMO_VOCABULARY } from "../lib/vocabulary-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -139,6 +140,35 @@ HOMEWORK_SEED.forEach((h, i) => {
       h.section
     )}, ${q(h.dueDate)});`
   );
+});
+lines.push("");
+
+// --- Vocabulary ------------------------------------------------------------
+// Teacher lists go to the whole group; saved-while-reading words belong to the
+// demo student, so both sources show up in the UI.
+const g62 = STUDENTS.map((s, i) => ({ ...s, uuid: studentUuid(i) })).filter(
+  (s) => s.group === "IELTS 62"
+);
+lines.push("-- Personal vocabulary (lib/vocabulary-data.ts)");
+lines.push(
+  `delete from public.vocabulary_entries where student_id in (${g62
+    .map((s) => q(s.uuid))
+    .join(", ")});`
+);
+g62.forEach((student) => {
+  DEMO_VOCABULARY.filter(
+    (w) => w.source === "teacher" || student.uuid === studentUuid(0)
+  ).forEach((w) => {
+    lines.push(
+      `insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values\n  (${q(
+        CENTER_ID
+      )}, ${q(student.uuid)}, ${q(w.term)}, ${w.phonetic ? q(w.phonetic) : "null"}, ${q(
+        w.translation
+      )}, ${w.example ? q(w.example) : "null"}, ${q(w.source)}, ${
+        w.topic ? q(w.topic) : "null"
+      }, ${q(w.status ?? "new")});`
+    );
+  });
 });
 lines.push("");
 

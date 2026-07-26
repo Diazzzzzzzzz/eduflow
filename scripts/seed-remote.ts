@@ -18,6 +18,7 @@ import { STUDENTS } from "../lib/mock-data";
 import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
 import { GROUP_TEACHER, PENDING_REVIEW_SEED, TEACHERS } from "../lib/admin-data";
 import { HOMEWORK_SEED } from "../lib/group-data";
+import { DEMO_VOCABULARY } from "../lib/vocabulary-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -245,6 +246,42 @@ async function main() {
   check(
     `pending submissions (${submissions.length})`,
     await db.from("homework_submissions").insert(submissions as never)
+  );
+
+  // --- vocabulary ----------------------------------------------------------
+  // Teacher lists go to the whole group; words "saved while reading" belong to
+  // the demo student, so both sources are visible in the UI.
+  const groupStudents = STUDENTS.map((s, i) => ({ ...s, uuid: studentUuid(i) })).filter(
+    (s) => s.group === "IELTS 62"
+  );
+  const demoStudentId = studentUuid(0); // Арман Калибеков
+
+  check(
+    "clear vocabulary",
+    await db
+      .from("vocabulary_entries")
+      .delete()
+      .in("student_id", groupStudents.map((s) => s.uuid))
+  );
+
+  const vocabRows = groupStudents.flatMap((student) =>
+    DEMO_VOCABULARY.filter(
+      (w) => w.source === "teacher" || student.uuid === demoStudentId
+    ).map((w) => ({
+      center_id: CENTER_ID,
+      student_id: student.uuid,
+      term: w.term,
+      phonetic: w.phonetic,
+      translation: w.translation,
+      example: w.example,
+      source: w.source,
+      topic: w.topic,
+      status: w.status ?? "new",
+    }))
+  );
+  check(
+    `vocabulary (${vocabRows.length})`,
+    await db.from("vocabulary_entries").insert(vocabRows as never)
   );
 
   const { count } = await db

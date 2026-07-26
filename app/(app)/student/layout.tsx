@@ -16,6 +16,7 @@ const TABS = [
   { href: "/student", label: "Обзор" },
   { href: "/student/lessons", label: "Уроки" },
   { href: "/student/practice", label: "Практика" },
+  { href: "/student/vocabulary", label: "Словарь" },
   { href: "/student/homework", label: "Домашние задания" },
   { href: "/student/history", label: "История" },
 ];

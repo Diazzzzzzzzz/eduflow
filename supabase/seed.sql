@@ -472,6 +472,127 @@ insert into public.homework (id, group_name, title, description, section, due_da
 insert into public.homework (id, group_name, title, description, section, due_date) values
   ('55555555-5555-5555-5555-000000000008', 'IELTS 62', 'Writing Task 2: Плата за высшее образование', 'Some people believe that university education should be free for everyone, while others think that students should pay for higher education. Discuss both views and give your own opinion.', 'writing', '2026-08-08');
 
+-- Personal vocabulary (lib/vocabulary-data.ts)
+delete from public.vocabulary_entries where student_id in ('33333333-3333-3333-3333-000000000001', '33333333-3333-3333-3333-000000000005', '33333333-3333-3333-3333-000000000013', '33333333-3333-3333-3333-000000000014', '33333333-3333-3333-3333-000000000015', '33333333-3333-3333-3333-000000000016', '33333333-3333-3333-3333-000000000017', '33333333-3333-3333-3333-000000000018');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'substantial', '/səbˈstænʃəl/', 'значительный, существенный', 'A substantial share of the water soaked away before it ever reached a field.', 'student', null, 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'resilient', '/rɪˈzɪliənt/', 'устойчивый, быстро восстанавливающийся', 'The midsole is built from a light, highly resilient foam.', 'student', null, 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000001', 'inevitable', '/ɪnˈevɪtəbəl/', 'неизбежный', 'Some deterioration of the shoreline was inevitable once the rivers were diverted.', 'student', null, 'mastered');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000005', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000013', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000014', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000015', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000016', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000017', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'cohesion', '/kəʊˈhiːʒən/', 'связность, сцепление (текста)', 'Examiners mark cohesion separately: ideas must connect, not just follow one another.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'ambiguity', '/ˌæmbɪˈɡjuːəti/', 'двусмысленность, неоднозначность', 'The ambiguity of the question meant two very different answers were defensible.', 'teacher', 'Writing assessment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'plausible', '/ˈplɔːzəbəl/', 'правдоподобный, убедительный', 'The explanation is plausible, though the study stops short of proving it.', 'teacher', 'Academic argument', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'detrimental', '/ˌdetrɪˈmentəl/', 'вредный, пагубный', 'Long commutes are detrimental to both health and family life.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'mitigate', '/ˈmɪtɪɡeɪt/', 'смягчать, уменьшать (последствия)', 'Planting street trees mitigates the worst of the summer heat.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'deterioration', '/dɪˌtɪəriəˈreɪʃən/', 'ухудшение, разрушение', 'Rising salinity caused a rapid deterioration in water quality.', 'teacher', 'Environment', 'new');
+insert into public.vocabulary_entries (center_id, student_id, term, phonetic, translation, example, source, topic, status) values
+  ('11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-000000000018', 'advocate', '/ˈædvəkeɪt/', 'выступать за, отстаивать', 'Some economists advocate free tuition; others argue it shifts the cost elsewhere.', 'teacher', 'Academic argument', 'learning');
+
 -- Work awaiting review; ages are relative to when this is applied
 insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
   ('55555555-5555-5555-5555-000000000001', '33333333-3333-3333-3333-000000000001', 'Работа отправлена на проверку.', 'submitted', now() - interval '4 hours');

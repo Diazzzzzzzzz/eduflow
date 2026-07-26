@@ -105,3 +105,31 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Flashcard flip — 3D utilities Tailwind doesn't ship by default. */
+.flip-scene {
+  perspective: 1400px;
+}
+.flip-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.flip-card.is-flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-face-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-card {
+    transition-duration: 0.01ms;
+  }
+}

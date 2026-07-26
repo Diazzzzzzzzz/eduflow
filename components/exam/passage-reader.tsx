@@ -1,10 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Highlighter, StickyNote, Trash2, Type } from "lucide-react";
+import { BookmarkPlus, Highlighter, StickyNote, Trash2, Type } from "lucide-react";
+import { useApp } from "@/components/app-provider";
+import {
+  SaveWordPopover,
+  type SaveWordTarget,
+} from "@/components/vocabulary/save-word-popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { sentenceAround } from "@/lib/vocabulary-data";
 import type { ExamPassage } from "@/lib/exam/types";
 import { useExamSession, type Highlight } from "./exam-session";
 
@@ -94,7 +100,11 @@ export function PassageReader({
   const [pending, setPending] = React.useState<PendingSelection | null>(null);
   const [editingNote, setEditingNote] = React.useState<string | null>(null);
   const [showNotes, setShowNotes] = React.useState(false);
+  const [vocabTarget, setVocabTarget] = React.useState<SaveWordTarget | null>(
+    null
+  );
   const rootRef = React.useRef<HTMLDivElement>(null);
+  const { activeStudentId } = useApp();
 
   const paragraphs = React.useMemo(
     () => parseParagraphs(passage.text),
@@ -140,6 +150,20 @@ export function PassageReader({
       y: rect.top - (rootRect?.top ?? 0),
     });
   }, []);
+
+  /** Hand the selection to the vocabulary popover with its sentence. */
+  function openVocabulary() {
+    if (!pending) return;
+    const body = paragraphs[pending.para]?.body ?? "";
+    setVocabTarget({
+      term: pending.quote,
+      context: sentenceAround(body, pending.quote),
+      x: pending.x,
+      y: pending.y,
+    });
+    window.getSelection()?.removeAllRanges();
+    setPending(null);
+  }
 
   function commit(withNote: boolean) {
     if (!pending) return;
@@ -295,8 +319,44 @@ export function PassageReader({
             >
               <StickyNote className="h-3.5 w-3.5" /> С заметкой
             </Button>
+            {/* Vocabulary shares this toolbar rather than opening a second
+                popover, which would fight the highlight one for the selection. */}
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7"
+              onClick={openVocabulary}
+            >
+              <BookmarkPlus className="h-3.5 w-3.5" /> В словарь
+            </Button>
           </div>
         </div>
+      )}
+
+      {/* Quick translate + save to the student's vocabulary */}
+      {vocabTarget && (
+        <SaveWordPopover
+          target={vocabTarget}
+          onClose={() => setVocabTarget(null)}
+          onSave={async (input) => {
+            try {
+              const res = await fetch("/api/vocabulary", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ studentId: activeStudentId, ...input }),
+              });
+              const body = (await res.json()) as {
+                error?: string;
+                existed?: boolean;
+              };
+              return res.ok
+                ? { ok: true, existed: body.existed }
+                : { ok: false, error: body.error };
+            } catch {
+              return { ok: false, error: "Нет соединения с сервером" };
+            }
+          }}
+        />
       )}
 
       {/* Note editor for a clicked highlight */}
