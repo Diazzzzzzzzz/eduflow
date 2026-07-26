@@ -54,19 +54,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(roleHome(role), request.url));
   }
 
-  // Role isolation: each area belongs to one role. A teacher can't enter the
-  // Student practice workspace, etc. — send them to their own dashboard.
+  // Role isolation: each area belongs to a set of roles. A teacher can't enter
+  // the student workspace — send them to their own dashboard instead.
+  // School leadership (owner/admin) may also open the teacher area, because the
+  // director dashboard links straight into group details.
   if (authed) {
-    const areas: Array<[string, string]> = [
-      ["/teacher", "teacher"],
-      ["/student", "student"],
-      ["/parent", "parent"],
+    // `exact` matters for /admin: the dashboard is leadership-only, but
+    // /admin/add-test is the teachers' test builder and guards itself.
+    const areas: Array<{ prefix: string; allowed: string[]; exact?: boolean }> = [
+      { prefix: "/admin", allowed: ["owner", "admin"], exact: true },
+      { prefix: "/teacher", allowed: ["teacher", "owner", "admin"] },
+      { prefix: "/student", allowed: ["student"] },
+      { prefix: "/parent", allowed: ["parent"] },
     ];
-    for (const [prefix, requiredRole] of areas) {
-      if (
-        (path === prefix || path.startsWith(`${prefix}/`)) &&
-        role !== requiredRole
-      ) {
+    for (const { prefix, allowed, exact } of areas) {
+      const matches = exact
+        ? path === prefix
+        : path === prefix || path.startsWith(`${prefix}/`);
+      if (matches && !allowed.includes(role)) {
         return NextResponse.redirect(new URL(roleHome(role), request.url));
       }
     }

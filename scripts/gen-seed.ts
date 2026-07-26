@@ -10,6 +10,8 @@
  */
 import { STUDENTS } from "../lib/mock-data";
 import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
+import { GROUP_TEACHER, PENDING_REVIEW_SEED, TEACHERS } from "../lib/admin-data";
+import { HOMEWORK_SEED } from "../lib/group-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -97,6 +99,60 @@ lines.push("-- Where each group currently stands in the programme");
 Object.entries(GROUP_CURRENT_LESSON).forEach(([group, lesson]) => {
   lines.push(
     `update public.groups set current_lesson = ${lesson} where name = ${q(group)};`
+  );
+});
+lines.push("");
+
+// --- Staff, group ownership and the review queue ---------------------------
+lines.push("-- Teaching staff (lib/admin-data.ts)");
+TEACHERS.forEach((t) => {
+  lines.push(
+    `insert into public.teachers (id, center_id, name, role) values\n  (${q(
+      t.id
+    )}, ${q(CENTER_ID)}, ${q(t.name)}, ${q(t.role)})\n  on conflict (id) do update set name = excluded.name, role = excluded.role;`
+  );
+});
+lines.push("");
+
+lines.push("-- Which teacher runs which group");
+Object.entries(GROUP_TEACHER).forEach(([group, teacherId]) => {
+  lines.push(
+    `update public.groups set teacher_id = ${q(teacherId)} where name = ${q(group)};`
+  );
+});
+lines.push("");
+
+const hwUuid = (n: number) =>
+  `55555555-5555-5555-5555-${String(n).padStart(12, "0")}`;
+
+lines.push("-- Homework (submissions cascade on delete)");
+lines.push(
+  `delete from public.homework where id in (${HOMEWORK_SEED.map((_, i) =>
+    q(hwUuid(i + 1))
+  ).join(", ")});`
+);
+HOMEWORK_SEED.forEach((h, i) => {
+  lines.push(
+    `insert into public.homework (id, group_name, title, description, section, due_date) values\n  (${q(
+      hwUuid(i + 1)
+    )}, ${q(h.groupName)}, ${q(h.title)}, ${q(h.description)}, ${q(
+      h.section
+    )}, ${q(h.dueDate)});`
+  );
+});
+lines.push("");
+
+lines.push("-- Work awaiting review; ages are relative to when this is applied");
+PENDING_REVIEW_SEED.forEach((p) => {
+  const studentIndex = STUDENTS.findIndex((s) => s.name === p.studentName);
+  const hwIndex = HOMEWORK_SEED.findIndex((h) => h.id === p.homeworkId);
+  if (studentIndex === -1 || hwIndex === -1) return;
+  lines.push(
+    `insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values\n  (${q(
+      hwUuid(hwIndex + 1)
+    )}, ${q(studentUuid(studentIndex))}, ${q(
+      "Работа отправлена на проверку."
+    )}, 'submitted', now() - interval '${p.hoursAgo} hours');`
   );
 });
 lines.push("");

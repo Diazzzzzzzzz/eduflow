@@ -9,13 +9,17 @@ export const DEMO_COOKIE = "eduflow_demo_role";
 export const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман
 
 const DEMO_NAMES: Record<Role, string> = {
+  owner: "Владелец центра (демо)",
+  admin: "Директор центра (демо)",
   teacher: "Дана Искакова (демо)",
   student: "Арман Калибеков (демо)",
   parent: "Родитель Армана (демо)",
 };
 
+const DEMO_ROLES: Role[] = ["owner", "admin", "teacher", "student", "parent"];
+
 export function isDemoRole(value: string | undefined | null): value is Role {
-  return value === "teacher" || value === "student" || value === "parent";
+  return DEMO_ROLES.includes(value as Role);
 }
 
 export interface SessionInfo {
@@ -36,7 +40,9 @@ export function demoSession(role: Role): SessionInfo {
       id: `demo-${role}`,
       role,
       full_name: DEMO_NAMES[role],
-      student_id: role === "teacher" ? null : DEMO_STUDENT_ID,
+      // Only the student and parent personas are tied to a specific student.
+      student_id:
+        role === "student" || role === "parent" ? DEMO_STUDENT_ID : null,
     },
   };
 }

@@ -20,6 +20,7 @@ const PASSWORD = "demo123456";
 const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман Калибеков
 
 const DEMOS = [
+  { email: "admin@eduflow.kz", role: "admin", full_name: "Директор центра (демо)", student_id: null },
   { email: "teacher@eduflow.kz", role: "teacher", full_name: "Дана Искакова (демо)", student_id: null },
   { email: "student@eduflow.kz", role: "student", full_name: "Арман Калибеков (демо)", student_id: DEMO_STUDENT_ID },
   { email: "parent@eduflow.kz", role: "parent", full_name: "Родитель Армана (демо)", student_id: DEMO_STUDENT_ID },

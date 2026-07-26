@@ -16,6 +16,8 @@ import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import { STUDENTS } from "../lib/mock-data";
 import { GROUP_CURRENT_LESSON, LESSONS } from "../lib/lessons-data";
+import { GROUP_TEACHER, PENDING_REVIEW_SEED, TEACHERS } from "../lib/admin-data";
+import { HOMEWORK_SEED } from "../lib/group-data";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222";
@@ -167,6 +169,83 @@ async function main() {
     }
   }
   console.log(`✓ current lesson set for ${Object.keys(GROUP_CURRENT_LESSON).length} groups`);
+
+  // --- staff and group ownership -------------------------------------------
+  for (const t of TEACHERS) {
+    const res = await db.from("teachers").upsert(
+      {
+        id: t.id,
+        center_id: CENTER_ID,
+        name: t.name,
+        role: t.role,
+      } as never,
+      { onConflict: "id" }
+    );
+    if (res.error) {
+      console.error(`✗ teacher ${t.name}: ${res.error.message}`);
+      process.exit(1);
+    }
+  }
+  console.log(`✓ staff (${TEACHERS.length})`);
+
+  for (const [group, teacherId] of Object.entries(GROUP_TEACHER)) {
+    const res = await db
+      .from("groups")
+      .update({ teacher_id: teacherId } as never)
+      .eq("name", group);
+    if (res.error) {
+      console.error(`✗ group owner for ${group}: ${res.error.message}`);
+      process.exit(1);
+    }
+  }
+  console.log("✓ group ownership");
+
+  // --- homework and the review queue ---------------------------------------
+  // Fixed ids so re-seeding replaces rather than duplicates; submissions cascade.
+  const hwUuid = (n: number) =>
+    `55555555-5555-5555-5555-${String(n).padStart(12, "0")}`;
+  const hwIds = HOMEWORK_SEED.map((_, i) => hwUuid(i + 1));
+
+  check("clear homework", await db.from("homework").delete().in("id", hwIds));
+
+  check(
+    `homework (${HOMEWORK_SEED.length})`,
+    await db.from("homework").insert(
+      HOMEWORK_SEED.map((h, i) => ({
+        id: hwUuid(i + 1),
+        group_name: h.groupName,
+        title: h.title,
+        description: h.description,
+        section: h.section,
+        due_date: h.dueDate,
+      })) as never
+    )
+  );
+
+  const studentIdByName = new Map(
+    STUDENTS.map((s, i) => [s.name, studentUuid(i)])
+  );
+  const submissions = PENDING_REVIEW_SEED.flatMap((p) => {
+    const studentId = studentIdByName.get(p.studentName);
+    const hwIndex = HOMEWORK_SEED.findIndex((h) => h.id === p.homeworkId);
+    if (!studentId || hwIndex === -1) return [];
+    return [
+      {
+        homework_id: hwUuid(hwIndex + 1),
+        student_id: studentId,
+        content: "Работа отправлена на проверку.",
+        status: "submitted",
+        // Relative to apply time, so "waiting N hours" stays plausible.
+        submitted_at: new Date(
+          Date.now() - p.hoursAgo * 3_600_000
+        ).toISOString(),
+      },
+    ];
+  });
+  check(
+    `pending submissions (${submissions.length})`,
+    await db.from("homework_submissions").insert(submissions as never)
+  );
 
   const { count } = await db
     .from("students")

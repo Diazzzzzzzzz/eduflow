@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./env";
 import { DEMO_COOKIE, demoSession, isDemoRole } from "@/lib/demo-session";
+import type { Role } from "@/lib/auth-routes";
 
 /**
  * Request-scoped, cookie-based Supabase client for server components / route
@@ -31,7 +32,7 @@ export function createServerSupabase(): SupabaseClient {
 
 export interface Profile {
   id: string;
-  role: "teacher" | "student" | "parent";
+  role: Role;
   full_name: string;
   student_id: string | null;
 }

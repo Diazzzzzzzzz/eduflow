@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { GraduationCap, Loader2, School, TriangleAlert, Users } from "lucide-react";
+import {
+  Building2,
+  GraduationCap,
+  Loader2,
+  School,
+  TriangleAlert,
+  Users,
+} from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { roleHome, type Role } from "@/lib/auth-routes";
@@ -17,6 +24,7 @@ const DEMO_PASSWORD = "demo123456";
 const AUTH_TIMEOUT_MS = 10_000;
 
 const DEMOS = [
+  { role: "admin", email: "admin@eduflow.kz", label: "Войти как Директор", icon: Building2 },
   { role: "teacher", email: "teacher@eduflow.kz", label: "Войти как Учитель", icon: School },
   { role: "student", email: "student@eduflow.kz", label: "Войти как Студент", icon: GraduationCap },
   { role: "parent", email: "parent@eduflow.kz", label: "Войти как Родитель", icon: Users },

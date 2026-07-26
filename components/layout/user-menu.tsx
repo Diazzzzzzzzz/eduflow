@@ -4,15 +4,18 @@ import * as React from "react";
 import { LogOut } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { DEMO_COOKIE } from "@/lib/demo-session";
+import type { Role } from "@/lib/auth-routes";
 import { cn } from "@/lib/utils";
 
 export interface MenuUser {
   email: string;
-  role: "teacher" | "student" | "parent";
+  role: Role;
   fullName: string;
 }
 
-const ROLE_LABEL: Record<MenuUser["role"], string> = {
+const ROLE_LABEL: Record<Role, string> = {
+  owner: "Владелец",
+  admin: "Директор",
   teacher: "Учитель",
   student: "Студент",
   parent: "Родитель",

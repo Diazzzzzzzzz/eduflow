@@ -431,3 +431,55 @@ update public.groups set current_lesson = 7 where name = 'IELTS 63 (Weekend)';
 update public.groups set current_lesson = 15 where name = 'Intermediate 45';
 update public.groups set current_lesson = 4 where name = 'Pre-Intermediate 12';
 update public.groups set current_lesson = 20 where name = 'Advanced 34';
+
+-- Teaching staff (lib/admin-data.ts)
+insert into public.teachers (id, center_id, name, role) values
+  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'Дана Искакова', 'director')
+  on conflict (id) do update set name = excluded.name, role = excluded.role;
+insert into public.teachers (id, center_id, name, role) values
+  ('22222222-2222-2222-2222-000000000002', '11111111-1111-1111-1111-111111111111', 'Ержан Абдрахманов', 'teacher')
+  on conflict (id) do update set name = excluded.name, role = excluded.role;
+insert into public.teachers (id, center_id, name, role) values
+  ('22222222-2222-2222-2222-000000000003', '11111111-1111-1111-1111-111111111111', 'Салтанат Жумабаева', 'teacher')
+  on conflict (id) do update set name = excluded.name, role = excluded.role;
+insert into public.teachers (id, center_id, name, role) values
+  ('22222222-2222-2222-2222-000000000004', '11111111-1111-1111-1111-111111111111', 'Асхат Ибрагимов', 'teacher')
+  on conflict (id) do update set name = excluded.name, role = excluded.role;
+
+-- Which teacher runs which group
+update public.groups set teacher_id = '22222222-2222-2222-2222-222222222222' where name = 'IELTS 62';
+update public.groups set teacher_id = '22222222-2222-2222-2222-000000000002' where name = 'IELTS 63 (Weekend)';
+update public.groups set teacher_id = '22222222-2222-2222-2222-000000000003' where name = 'Intermediate 45';
+update public.groups set teacher_id = '22222222-2222-2222-2222-000000000004' where name = 'Pre-Intermediate 12';
+update public.groups set teacher_id = '22222222-2222-2222-2222-000000000002' where name = 'Advanced 34';
+
+-- Homework (submissions cascade on delete)
+delete from public.homework where id in ('55555555-5555-5555-5555-000000000001', '55555555-5555-5555-5555-000000000002', '55555555-5555-5555-5555-000000000003', '55555555-5555-5555-5555-000000000004', '55555555-5555-5555-5555-000000000005', '55555555-5555-5555-5555-000000000006', '55555555-5555-5555-5555-000000000007', '55555555-5555-5555-5555-000000000008');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000001', 'IELTS 62', 'Writing Task 2: Эссе о технологиях', 'Напишите эссе (250+ слов): согласны ли вы, что технологии делают людей менее общительными? Приведите аргументы и примеры.', 'writing', '2026-08-05');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000002', 'IELTS 62', 'Reading: True / False / Not Given', 'Отработайте 13 вопросов TFNG и запишите ответы с обоснованием.', 'reading', '2026-08-02');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000003', 'IELTS 63 (Weekend)', 'Listening: Sections 3–4', 'Прослушайте академические записи и заполните пропуски.', 'listening', '2026-08-03');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000004', 'Intermediate 45', 'Writing Task 1: Описание графика', 'Опишите линейный график минимум в 150 слов: обзор и ключевые тренды.', 'writing', '2026-08-04');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000005', 'Intermediate 45', 'Speaking Part 2: Монолог', 'Запишите 2-минутный монолог по карточке о любимом месте.', 'speaking', '2026-08-06');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000006', 'Pre-Intermediate 12', 'Словарь: Unit 5', 'Выучите 30 слов из юнита 5 и составьте с ними предложения.', 'general', '2026-08-01');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000007', 'Advanced 34', 'Writing Task 2: Эссе-мнение', 'Эссе о плюсах и минусах глобализации, 250+ слов, чёткая позиция.', 'writing', '2026-08-07');
+insert into public.homework (id, group_name, title, description, section, due_date) values
+  ('55555555-5555-5555-5555-000000000008', 'IELTS 62', 'Writing Task 2: Плата за высшее образование', 'Some people believe that university education should be free for everyone, while others think that students should pay for higher education. Discuss both views and give your own opinion.', 'writing', '2026-08-08');
+
+-- Work awaiting review; ages are relative to when this is applied
+insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
+  ('55555555-5555-5555-5555-000000000001', '33333333-3333-3333-3333-000000000001', 'Работа отправлена на проверку.', 'submitted', now() - interval '4 hours');
+insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
+  ('55555555-5555-5555-5555-000000000001', '33333333-3333-3333-3333-000000000015', 'Работа отправлена на проверку.', 'submitted', now() - interval '9 hours');
+insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
+  ('55555555-5555-5555-5555-000000000002', '33333333-3333-3333-3333-000000000017', 'Работа отправлена на проверку.', 'submitted', now() - interval '27 hours');
+insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
+  ('55555555-5555-5555-5555-000000000003', '33333333-3333-3333-3333-000000000006', 'Работа отправлена на проверку.', 'submitted', now() - interval '52 hours');
+insert into public.homework_submissions (homework_id, student_id, content, status, submitted_at) values
+  ('55555555-5555-5555-5555-000000000007', '33333333-3333-3333-3333-000000000002', 'Работа отправлена на проверку.', 'submitted', now() - interval '6 hours');
