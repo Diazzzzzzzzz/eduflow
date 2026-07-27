@@ -13,6 +13,7 @@ import {
   RotateCw,
 } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { LessonModeSwitch } from "@/components/classroom/lesson-mode-switch";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -251,6 +252,7 @@ function ExamShell({ backHref }: { backHref: string }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <LessonModeSwitch />
           <span className="tabular hidden rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground sm:inline">
             {answeredCount}/{totalQuestions} отвечено
           </span>

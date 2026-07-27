@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppProvider } from "@/components/app-provider";
+import { ClassroomProvider } from "@/components/classroom/classroom-provider";
 import { GroupsProvider } from "@/components/groups/groups-provider";
 import { RosterGate } from "@/components/layout/roster-gate";
 import { Topbar } from "@/components/layout/topbar";
@@ -24,13 +25,17 @@ export default async function AppLayout({
   return (
     <AppProvider>
       <GroupsProvider>
-        <div className="canvas-grid flex min-h-screen flex-col">
-          <Topbar user={menuUser} />
-          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
-            <RosterGate>{children}</RosterGate>
-          </main>
-          <SiteFooter />
-        </div>
+        {/* Mounted app-wide so a live lesson survives moving between the test
+            room and the lesson materials. */}
+        <ClassroomProvider>
+          <div className="canvas-grid flex min-h-screen flex-col">
+            <Topbar user={menuUser} />
+            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+              <RosterGate>{children}</RosterGate>
+            </main>
+            <SiteFooter />
+          </div>
+        </ClassroomProvider>
       </GroupsProvider>
     </AppProvider>
   );

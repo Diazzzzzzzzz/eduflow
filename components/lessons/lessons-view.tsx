@@ -23,6 +23,7 @@ import {
   type Lesson,
   type LessonStatus,
 } from "@/lib/lessons-data";
+import { LessonModeSwitch } from "@/components/classroom/lesson-mode-switch";
 import { LessonDialog } from "./lesson-dialog";
 
 const STATUS_ICON: Record<LessonStatus, typeof CheckCircle2> = {
@@ -105,6 +106,7 @@ export function LessonBoard({
               <p className="mt-0.5 text-sm text-muted-foreground">
                 {groupName}
               </p>
+              <LessonModeSwitch className="mt-3" />
             </div>
             <div className="text-right">
               <p className="tabular font-display text-2xl font-bold text-primary">
