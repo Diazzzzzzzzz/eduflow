@@ -3,6 +3,7 @@
 import { Bell, Moon, Sun } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { CenterBadge, Logo } from "@/components/layout/logo";
+import { UiThemeSwitch } from "@/components/layout/ui-theme-switch";
 import { UserMenu, type MenuUser } from "@/components/layout/user-menu";
 import { Button } from "@/components/ui/button";
 
@@ -17,6 +18,7 @@ export function Topbar({ user }: { user: MenuUser }) {
           <CenterBadge className="hidden sm:flex" />
         </div>
         <div className="flex items-center gap-1.5">
+          <UiThemeSwitch className="mr-1" />
           <Button
             variant="ghost"
             size="icon"

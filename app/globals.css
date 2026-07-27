@@ -61,6 +61,92 @@
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Modern theme — a friendlier, gamified skin in the spirit of consumer language
+   apps: rounder shapes, a fresh green as the action colour, and buttons with a
+   physical "press" depth.
+
+   Implemented purely as token overrides plus a handful of modern-only rules, so
+   the classic theme's values below are never touched. Toggling the
+   `.theme-modern` class on <html> switches everything that reads a token.
+   --------------------------------------------------------------------------- */
+@layer base {
+  .theme-modern {
+    --background: 210 33% 96%;
+    --foreground: 215 30% 17%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 30% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 30% 17%;
+
+    /* Grass green as the primary action. Deeper than the pure consumer-app
+       green so white label text still clears WCAG AA at small sizes. */
+    --primary: 92 68% 33%;
+    --primary-foreground: 0 0% 100%;
+    --primary-depth: 92 72% 24%;
+
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 215 25% 30%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 16% 42%;
+
+    /* Violet accent for secondary emphasis and streak-style highlights. */
+    --accent: 253 62% 54%;
+    --accent-foreground: 0 0% 100%;
+    --accent-depth: 253 64% 42%;
+
+    /* Soft coral for mistakes — corrective, not alarming. */
+    --destructive: 6 78% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-depth: 6 74% 40%;
+
+    --success: 92 68% 30%;
+    --success-foreground: 0 0% 100%;
+    --success-depth: 92 72% 22%;
+    --warning: 32 88% 40%;
+    --warning-foreground: 0 0% 100%;
+    --warning-depth: 32 84% 31%;
+
+    --border: 213 27% 88%;
+    --input: 213 24% 82%;
+    --ring: 92 68% 33%;
+
+    /* Rounder everything — the single biggest shape cue of the style. */
+    --radius: 1rem;
+  }
+
+  .theme-modern.dark {
+    --background: 220 30% 9%;
+    --foreground: 210 30% 94%;
+    --card: 220 28% 13%;
+    --card-foreground: 210 30% 94%;
+    --popover: 220 28% 12%;
+    --popover-foreground: 210 30% 94%;
+    --primary: 92 60% 45%;
+    --primary-foreground: 120 40% 8%;
+    --primary-depth: 92 64% 30%;
+    --secondary: 220 24% 18%;
+    --secondary-foreground: 210 26% 86%;
+    --muted: 220 24% 18%;
+    --muted-foreground: 215 18% 63%;
+    --accent: 253 70% 68%;
+    --accent-foreground: 250 40% 12%;
+    --accent-depth: 253 60% 46%;
+    --destructive: 6 82% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-depth: 6 70% 44%;
+    --success: 92 58% 46%;
+    --success-foreground: 120 40% 8%;
+    --success-depth: 92 62% 30%;
+    --warning: 38 88% 56%;
+    --warning-foreground: 30 60% 12%;
+    --warning-depth: 38 80% 38%;
+    --border: 220 22% 20%;
+    --input: 220 20% 26%;
+    --ring: 92 60% 45%;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -132,4 +218,97 @@
   .flip-card {
     transition-duration: 0.01ms;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Modern theme — component behaviour.
+
+   Every rule is scoped under `.theme-modern`, so the classic theme renders
+   exactly as before. Hooks (`.btn`, `.answer-option`) are inert class names
+   added to the shared components; they carry no styles of their own.
+   --------------------------------------------------------------------------- */
+
+/* Buttons gain a physical base that compresses when pressed. */
+.theme-modern .btn {
+  border-bottom-width: 4px;
+  border-bottom-color: transparent;
+  border-radius: calc(var(--radius) - 0.15rem);
+  font-weight: 600;
+  transition:
+    transform 0.08s ease,
+    filter 0.15s ease,
+    background-color 0.15s ease;
+}
+.theme-modern .btn-default {
+  border-bottom-color: hsl(var(--primary-depth));
+}
+.theme-modern .btn-success {
+  border-bottom-color: hsl(var(--success-depth));
+}
+.theme-modern .btn-destructive {
+  border-bottom-color: hsl(var(--destructive-depth));
+}
+.theme-modern .btn-outline,
+.theme-modern .btn-secondary {
+  border-bottom-color: hsl(var(--input));
+}
+/* Press = the button sinks onto its base, so the depth reads as physical. */
+.theme-modern .btn:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+.theme-modern .btn-ghost,
+.theme-modern .btn-link {
+  border-bottom-width: 0;
+}
+
+/* Answer options become selectable cards with a clear resting, hover and
+   chosen state — the single most-used control in the test room. */
+.theme-modern .answer-option {
+  border-width: 2px;
+  border-bottom-width: 4px;
+  border-radius: calc(var(--radius) - 0.25rem);
+  padding: 0.7rem 0.9rem;
+  font-weight: 500;
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+.theme-modern .answer-option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: hsl(var(--primary) / 0.55);
+  background-color: hsl(var(--primary) / 0.04);
+}
+.theme-modern .answer-option[aria-checked="true"],
+.theme-modern .answer-option[aria-pressed="true"] {
+  border-color: hsl(var(--primary));
+  border-bottom-color: hsl(var(--primary-depth));
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.theme-modern .answer-option:active:not(:disabled) {
+  transform: translateY(1px);
+  border-bottom-width: 2px;
+}
+
+/* Cards sit flatter and rounder; the depth budget belongs to the controls. */
+.theme-modern .ui-card {
+  border-radius: var(--radius);
+  border-width: 2px;
+  box-shadow: none;
+}
+
+/* Progress rails read as a game meter rather than a hairline. */
+.theme-modern .progress-rail {
+  height: 0.75rem;
+  border-radius: 9999px;
+}
+.theme-modern .progress-rail > * {
+  border-radius: 9999px;
+}
+
+/* The dotted canvas is a classic-theme flourish; modern wants a clean field. */
+.theme-modern .canvas-grid {
+  background-image: none;
 }

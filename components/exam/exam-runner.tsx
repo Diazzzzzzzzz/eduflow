@@ -12,7 +12,9 @@ import {
   Link2Off,
   RotateCw,
 } from "lucide-react";
+import { useApp } from "@/components/app-provider";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import type { ExamSection } from "@/lib/exam/types";
 import { ExamSessionProvider, useExamSession } from "./exam-session";
@@ -209,6 +211,7 @@ function ExamShell({ backHref }: { backHref: string }) {
     resumed,
     restored,
   } = useExamSession();
+  const { uiTheme } = useApp();
 
   const [dismissedResume, setDismissedResume] = React.useState(false);
 
@@ -257,6 +260,28 @@ function ExamShell({ backHref }: { backHref: string }) {
           </Button>
         </div>
       </div>
+
+      {/* Modern only: a session meter across the top of the test room. Classic
+          keeps its compact counter chip and is left untouched. */}
+      {uiTheme === "modern" && (
+        <div className="space-y-1.5">
+          <Progress
+            value={(answeredCount / Math.max(totalQuestions, 1)) * 100}
+            aria-label={`Отвечено ${answeredCount} из ${totalQuestions}`}
+            indicatorClassName={
+              answeredCount === totalQuestions ? "bg-success" : undefined
+            }
+          />
+          <div className="tabular flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              Отвечено {answeredCount} из {totalQuestions}
+            </span>
+            <span>
+              {Math.round((answeredCount / Math.max(totalQuestions, 1)) * 100)}%
+            </span>
+          </div>
+        </div>
+      )}
 
       {restored && resumed && !dismissedResume && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2 text-sm">

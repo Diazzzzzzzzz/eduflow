@@ -32,7 +32,15 @@ interface AppState {
   dbBacked: boolean;
   theme: "dark" | "light";
   toggleTheme: () => void;
+  /**
+   * Visual language, independent of light/dark: `classic` is the original
+   * design, `modern` the rounder, gamified skin. The two compose.
+   */
+  uiTheme: UiTheme;
+  setUiTheme: (next: UiTheme) => void;
 }
+
+export type UiTheme = "classic" | "modern";
 
 const AppContext = React.createContext<AppState | null>(null);
 
@@ -45,6 +53,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     React.useState<RosterStatus>("loading");
   const [activeStudentId, setActiveStudentId] = React.useState("");
   const [theme, setTheme] = React.useState<"dark" | "light">("light");
+  const [uiTheme, setUiThemeState] = React.useState<UiTheme>("classic");
   const [dbBacked, setDbBacked] = React.useState(false);
 
   // Track only user-added tests separately for localStorage persistence
@@ -52,10 +61,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const extraRef = React.useRef<Record<string, MockTest[]>>({});
 
   const persist = React.useCallback(
-    (extra: Record<string, MockTest[]>, nextTheme: "dark" | "light") => {
+    (
+      extra: Record<string, MockTest[]>,
+      nextTheme: "dark" | "light",
+      nextUiTheme: UiTheme
+    ) => {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ extraTests: extra, theme: nextTheme })
+        JSON.stringify({
+          extraTests: extra,
+          theme: nextTheme,
+          uiTheme: nextUiTheme,
+        })
       );
     },
     []
@@ -69,9 +86,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const saved = JSON.parse(raw) as {
           extraTests?: Record<string, MockTest[]>;
           theme?: "dark" | "light";
+          uiTheme?: UiTheme;
         };
         extraRef.current = saved.extraTests ?? {};
         if (saved.theme) setTheme(saved.theme);
+        if (saved.uiTheme === "modern" || saved.uiTheme === "classic") {
+          setUiThemeState(saved.uiTheme);
+        }
       }
     } catch {
       // Corrupt storage — start fresh
@@ -133,6 +154,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
+  // One class on <html> swaps every token the modern theme overrides, so the
+  // switch is instant and needs no re-render of the tree.
+  React.useEffect(() => {
+    document.documentElement.classList.toggle(
+      "theme-modern",
+      uiTheme === "modern"
+    );
+  }, [uiTheme]);
+
   const addMockResult = React.useCallback(
     (studentId: string, scores: SkillScores, label: string, date: string) => {
       const test: MockTest = {
@@ -166,10 +196,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ...extraRef.current,
           [studentId]: [...(extraRef.current[studentId] ?? []), test],
         };
-        persist(extraRef.current, theme);
+        persist(extraRef.current, theme, uiTheme);
       }
     },
-    [persist, theme, dbBacked]
+    [persist, theme, uiTheme, dbBacked]
   );
 
   const updateTeacherNote = React.useCallback(
@@ -184,10 +214,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = React.useCallback(() => {
     setTheme((t) => {
       const next = t === "dark" ? "light" : "dark";
-      persist(extraRef.current, next);
+      persist(extraRef.current, next, uiTheme);
       return next;
     });
-  }, [persist]);
+  }, [persist, uiTheme]);
+
+  const setUiTheme = React.useCallback(
+    (next: UiTheme) => {
+      setUiThemeState(next);
+      persist(extraRef.current, theme, next);
+    },
+    [persist, theme]
+  );
 
   // Undefined only while the roster is still loading or failed, which is
   // exactly when `RosterGate` renders a placeholder instead of the page.
@@ -206,6 +244,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     dbBacked,
     theme,
     toggleTheme,
+    uiTheme,
+    setUiTheme,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

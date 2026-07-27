@@ -108,7 +108,9 @@ function LetterChoices({
             aria-checked={selected}
             onClick={() => onChange(selected ? "" : opt.value)}
             className={cn(
-              "rounded-md border px-2.5 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              // `answer-option` is an inert hook the modern theme turns into a
+              // selectable card; classic keeps the compact chip.
+              "answer-option rounded-md border px-2.5 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               selected
                 ? "border-primary bg-primary/10 font-medium text-primary"
                 : "bg-card hover:bg-secondary"
@@ -184,7 +186,7 @@ function MultiChoices({
               )
             }
             className={cn(
-              "flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "answer-option flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               selected
                 ? "border-primary bg-primary/10 font-medium text-primary"
                 : blocked

@@ -8,7 +8,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow-card",
+      // `ui-card` is an inert hook the modern theme styles; classic is unchanged.
+      "ui-card rounded-xl border bg-card text-card-foreground shadow-card",
       className
     )}
     {...props}
