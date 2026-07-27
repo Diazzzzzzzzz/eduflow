@@ -1,25 +1,24 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-/** Wordmark with the pulse-line motif — a band trajectory as an EKG. */
+/**
+ * Product wordmark.
+ *
+ * The mark is the uploaded brand logo (transparent PNG), so it sits on any
+ * header colour and reads the same in both themes. `priority` because it is
+ * above the fold on every page.
+ */
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className="h-5 w-5"
-          aria-hidden
-        >
-          <path
-            d="M2 14h4l2.5-7 3.5 10 3-6.5 1.5 3.5H22"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+      <Image
+        src="/eduflow-logo.png"
+        alt="EduFlow"
+        width={36}
+        height={36}
+        priority
+        className="h-9 w-9 shrink-0 object-contain"
+      />
       <div className="hidden leading-tight min-[400px]:block">
         <p className="font-display text-sm font-bold tracking-tight">
           EduFlow

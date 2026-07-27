@@ -72,78 +72,84 @@
    --------------------------------------------------------------------------- */
 @layer base {
   .theme-modern {
-    --background: 210 33% 96%;
-    --foreground: 215 30% 17%;
+    /* #F8F9FD — a cool near-white that lets white cards still read as raised.
+       Fractional HSL because rounding to whole numbers drifts the hex by a
+       channel or two. */
+    --background: 228 55.6% 98.2%;
+    --foreground: 232 28% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 215 30% 17%;
+    --card-foreground: 232 28% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 17%;
+    --popover-foreground: 232 28% 16%;
 
-    /* Grass green as the primary action. Deeper than the pure consumer-app
-       green so white label text still clears WCAG AA at small sizes. */
-    --primary: 92 68% 33%;
+    /* Brand violet #6158f1. White label text on it measures ~5:1, so it clears
+       WCAG AA for normal text and can be used at any size. */
+    --primary: 243.5 84.5% 64.5%;
     --primary-foreground: 0 0% 100%;
-    --primary-depth: 92 72% 24%;
+    /* The shade the raised buttons sit on. */
+    --primary-depth: 243.5 62% 46%;
 
-    --secondary: 210 30% 94%;
-    --secondary-foreground: 215 25% 30%;
-    --muted: 210 30% 94%;
-    --muted-foreground: 215 16% 42%;
+    --secondary: 230 40% 95%;
+    --secondary-foreground: 232 22% 30%;
+    --muted: 230 40% 95%;
+    --muted-foreground: 232 14% 44%;
 
-    /* Violet accent for secondary emphasis and streak-style highlights. */
-    --accent: 253 62% 54%;
+    /* A deeper violet for secondary emphasis, one step from the brand hue. */
+    --accent: 248 62% 52%;
     --accent-foreground: 0 0% 100%;
-    --accent-depth: 253 64% 42%;
+    --accent-depth: 248 60% 40%;
 
     /* Soft coral for mistakes — corrective, not alarming. */
-    --destructive: 6 78% 51%;
+    --destructive: 6 78% 55%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-depth: 6 74% 40%;
+    --destructive-depth: 6 70% 43%;
 
-    --success: 92 68% 30%;
+    /* Green stays for "correct" feedback, deep enough for small label text. */
+    --success: 152 62% 30%;
     --success-foreground: 0 0% 100%;
-    --success-depth: 92 72% 22%;
+    --success-depth: 152 66% 22%;
     --warning: 32 88% 40%;
     --warning-foreground: 0 0% 100%;
     --warning-depth: 32 84% 31%;
 
-    --border: 213 27% 88%;
-    --input: 213 24% 82%;
-    --ring: 92 68% 33%;
+    --border: 230 34% 90%;
+    --input: 230 28% 84%;
+    --ring: 244 85% 65%;
 
-    /* Rounder everything — the single biggest shape cue of the style. */
+    /* rounded-2xl as the base radius — the biggest shape cue of the style. */
     --radius: 1rem;
   }
 
   .theme-modern.dark {
-    --background: 220 30% 9%;
-    --foreground: 210 30% 94%;
-    --card: 220 28% 13%;
-    --card-foreground: 210 30% 94%;
-    --popover: 220 28% 12%;
-    --popover-foreground: 210 30% 94%;
-    --primary: 92 60% 45%;
-    --primary-foreground: 120 40% 8%;
-    --primary-depth: 92 64% 30%;
-    --secondary: 220 24% 18%;
-    --secondary-foreground: 210 26% 86%;
-    --muted: 220 24% 18%;
-    --muted-foreground: 215 18% 63%;
-    --accent: 253 70% 68%;
-    --accent-foreground: 250 40% 12%;
-    --accent-depth: 253 60% 46%;
-    --destructive: 6 82% 62%;
+    --background: 233 30% 9%;
+    --foreground: 230 28% 94%;
+    --card: 233 26% 13%;
+    --card-foreground: 230 28% 94%;
+    --popover: 233 26% 12%;
+    --popover-foreground: 230 28% 94%;
+    /* Lifted toward the light end so the brand hue stays legible on dark. */
+    --primary: 244 88% 72%;
+    --primary-foreground: 244 60% 12%;
+    --primary-depth: 244 60% 48%;
+    --secondary: 233 22% 19%;
+    --secondary-foreground: 230 24% 86%;
+    --muted: 233 22% 19%;
+    --muted-foreground: 232 16% 64%;
+    --accent: 248 80% 76%;
+    --accent-foreground: 248 50% 12%;
+    --accent-depth: 248 58% 50%;
+    --destructive: 6 82% 65%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-depth: 6 70% 44%;
-    --success: 92 58% 46%;
-    --success-foreground: 120 40% 8%;
-    --success-depth: 92 62% 30%;
-    --warning: 38 88% 56%;
+    --destructive-depth: 6 68% 45%;
+    --success: 152 56% 48%;
+    --success-foreground: 152 60% 8%;
+    --success-depth: 152 60% 30%;
+    --warning: 38 88% 58%;
     --warning-foreground: 30 60% 12%;
     --warning-depth: 38 80% 38%;
-    --border: 220 22% 20%;
-    --input: 220 20% 26%;
-    --ring: 92 60% 45%;
+    --border: 233 20% 21%;
+    --input: 233 18% 27%;
+    --ring: 244 88% 72%;
   }
 }
 
