@@ -41,6 +41,14 @@ export async function middleware(request: NextRequest) {
       : "student";
 
   if (path === "/") {
+    // Supabase falls back to the project's Site URL when the requested
+    // redirect is not on its allow-list, which drops the OAuth code on the
+    // root instead of /auth/callback. Forward it rather than losing the login.
+    if (request.nextUrl.searchParams.has("code")) {
+      const forward = new URL("/auth/callback", request.url);
+      forward.search = request.nextUrl.search;
+      return NextResponse.redirect(forward);
+    }
     return NextResponse.redirect(
       new URL(authed ? roleHome(role) : "/login", request.url)
     );
