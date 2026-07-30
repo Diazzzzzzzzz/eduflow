@@ -10,6 +10,7 @@ import { DEMO_READING_SECTION } from "../demo-exam";
 import { RUNNING_SHOE_SECTION } from "./running-shoe";
 import { ACADEMIC_READING_3_SECTION } from "./academic-reading-3";
 import { ACADEMIC_READING_4_SECTION } from "./academic-reading-4";
+import { ACADEMIC_READING_5_SECTION } from "./academic-reading-5";
 import type { ExamSectionFull } from "../types";
 
 const PAPERS: ExamSectionFull[] = [
@@ -17,6 +18,7 @@ const PAPERS: ExamSectionFull[] = [
   RUNNING_SHOE_SECTION,
   ACADEMIC_READING_3_SECTION,
   ACADEMIC_READING_4_SECTION,
+  ACADEMIC_READING_5_SECTION,
 ];
 
 export const EXAM_SECTIONS: Record<string, ExamSectionFull> =
