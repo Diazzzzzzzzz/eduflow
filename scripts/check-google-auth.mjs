@@ -1,15 +1,19 @@
 /**
- * Checks whether Google sign-in is wired up end to end.
+ * Reports what can actually be verified about Google sign-in from outside.
  *
  *   npm run check:google
  *
- * Reads only the public Supabase URL, talks to the public auth endpoint and
+ * Reads only the public Supabase URL and talks to the public auth endpoint;
  * never handles a client secret. Safe to run at any time.
+ *
+ * Deliberately does NOT claim to validate the Redirect URL allow-list. The
+ * authorize endpoint echoes whatever `redirect_to` it is given, on the
+ * allow-list or not — it is enforced later, when the provider returns. An
+ * earlier version of this script checked that echo and reported invented
+ * domains as valid.
  */
 
 import { readFileSync } from "node:fs";
-
-const CALLBACK_PATHS = ["http://localhost:3000/auth/callback"];
 
 function readEnv() {
   const fromProcess = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -33,63 +37,70 @@ if (!base) {
 
 console.log(`Проект Supabase: ${base}\n`);
 
-/** The authorize endpoint answers without any credentials of ours. */
-async function probe(redirectTo) {
-  const url = new URL(`${base}/auth/v1/authorize`);
-  url.searchParams.set("provider", "google");
-  if (redirectTo) url.searchParams.set("redirect_to", redirectTo);
+const url = new URL(`${base}/auth/v1/authorize`);
+url.searchParams.set("provider", "google");
 
-  const res = await fetch(url, { redirect: "manual" });
-  const location = res.headers.get("location") ?? "";
-
-  if (res.status === 400) {
-    const body = await res.text().catch(() => "");
-    return { ok: false, reason: "disabled", body };
-  }
-  if (res.status >= 300 && res.status < 400) {
-    return { ok: true, location };
-  }
-  return { ok: false, reason: `неожиданный статус ${res.status}` };
-}
-
-const base_result = await probe(null);
-
-if (!base_result.ok && base_result.reason === "disabled") {
-  console.error("✗ Провайдер Google в Supabase ВЫКЛЮЧЕН.");
-  console.error("  Authentication → Sign In / Providers → Google: включить,");
-  console.error("  вставить Client ID и Client Secret из Google Cloud Console.");
+let res;
+try {
+  res = await fetch(url, { redirect: "manual" });
+} catch (err) {
+  console.error(`✗ Supabase недоступен: ${err.message}`);
   process.exit(1);
 }
 
-if (!base_result.ok) {
-  console.error(`✗ Не удалось проверить провайдер: ${base_result.reason}`);
+if (res.status === 400) {
+  const body = await res.text().catch(() => "");
+  console.error("✗ Провайдер Google в Supabase ВЫКЛЮЧЕН.");
+  console.error(`  Ответ: ${body.slice(0, 160)}`);
+  console.error("\n  Authentication → Sign In / Providers → Google: включить");
+  console.error("  и вставить Client ID и Client Secret из Google Cloud Console.");
+  process.exit(1);
+}
+
+const location = res.headers.get("location") ?? "";
+if (res.status < 300 || res.status >= 400 || !location) {
+  console.error(`✗ Неожиданный ответ: HTTP ${res.status}`);
   process.exit(1);
 }
 
 console.log("✓ Провайдер Google включён.");
-if (/accounts\.google\.com/.test(base_result.location)) {
-  console.log("✓ Supabase перенаправляет на accounts.google.com.");
+
+if (!/accounts\.google\.com/.test(location)) {
+  console.error(`✗ Supabase ведёт не на Google, а на: ${location.slice(0, 120)}`);
+  process.exit(1);
+}
+console.log("✓ Supabase перенаправляет на accounts.google.com.");
+
+const clientId = new URL(location).searchParams.get("client_id") ?? "";
+if (!clientId) {
+  console.error("✗ В запросе нет client_id — Client ID в Supabase не сохранён.");
+  process.exit(1);
+}
+// Only the tail, so the log can be pasted into a chat without a second thought.
+console.log(`✓ Client ID подставлен (…${clientId.slice(-28)}).`);
+
+const callbackUri = new URL(location).searchParams.get("redirect_uri") ?? "";
+const expected = `${base}/auth/v1/callback`;
+if (callbackUri === expected) {
+  console.log(`✓ Google вернёт код на ${expected}`);
+  console.log("  Ровно этот адрес должен стоять в Authorized redirect URIs.");
+} else {
+  console.error(`✗ Ожидался redirect_uri ${expected}, получен ${callbackUri}`);
+  process.exit(1);
 }
 
-// A redirect_to that is not on the allow-list is silently replaced by the
-// project's Site URL, which is the failure that looks like "nothing happens".
-let allowListOk = true;
-for (const target of CALLBACK_PATHS) {
-  const res = await probe(target);
-  if (!res.ok) {
-    console.error(`✗ ${target}: ${res.reason}`);
-    allowListOk = false;
-    continue;
-  }
-  const echoed = decodeURIComponent(res.location);
-  if (echoed.includes(encodeURIComponent(target)) || echoed.includes(target)) {
-    console.log(`✓ ${target} — принят в списке Redirect URLs.`);
-  } else {
-    console.error(`✗ ${target} — НЕ в списке Redirect URLs Supabase.`);
-    console.error("  Authentication → URL Configuration → Redirect URLs: добавьте этот адрес.");
-    allowListOk = false;
-  }
-}
+console.log(`
+Проверить извне НЕЛЬЗЯ — это видно только в дашборде:
 
-if (!allowListOk) process.exit(1);
-console.log("\nВсё настроено — можно входить через Google.");
+  1. Authentication → URL Configuration
+       Site URL      — домен задеплоенного сайта (НЕ localhost)
+       Redirect URLs — https://<домен>/auth/callback
+                       http://localhost:3000/auth/callback
+     Если адреса нет в списке, Supabase молча подставит Site URL,
+     и пользователь вернётся не на страницу входа, а на главную.
+
+  2. Google Cloud Console → OAuth consent screen → Publishing status
+       Должно быть "In production". В статусе "Testing" войти смогут
+       ТОЛЬКО аккаунты из списка Test users — для публичного сайта
+       это означает, что посторонние получат ошибку 403 access_denied.
+`);

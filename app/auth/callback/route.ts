@@ -33,10 +33,16 @@ function ruError(message: string): string {
 export async function GET(request: Request) {
   const url = new URL(request.url);
 
+  // Relative Location, deliberately. Behind a proxy (Railway terminates TLS
+  // and forwards to the container) `request.url` can carry the internal
+  // http://localhost origin, and redirecting to that would send real users to
+  // their own machine. A relative target is resolved by the browser against
+  // the address it actually asked for, so this works on any domain.
+  const to = (path: string) =>
+    new NextResponse(null, { status: 307, headers: { Location: path } });
+
   const fail = (message: string) =>
-    NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(ruError(message))}`, url.origin)
-    );
+    to(`/login?error=${encodeURIComponent(ruError(message))}`);
 
   // The provider reports a refusal (user cancelled, app not approved) in the
   // query string rather than by failing the request.
@@ -93,5 +99,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(new URL(roleHome(role), url.origin));
+  return to(roleHome(role));
 }
