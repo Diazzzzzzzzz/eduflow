@@ -89,18 +89,26 @@ if (callbackUri === expected) {
   process.exit(1);
 }
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "")
+  ?? "https://eduflow-production-6ed5.up.railway.app";
+
 console.log(`
 Проверить извне НЕЛЬЗЯ — это видно только в дашборде:
 
-  1. Authentication → URL Configuration
-       Site URL      — домен задеплоенного сайта (НЕ localhost)
-       Redirect URLs — https://<домен>/auth/callback
-                       http://localhost:3000/auth/callback
+  1. Supabase → Authentication → URL Configuration
+       Site URL:
+         ${SITE}
+       Redirect URLs (оба):
+         ${SITE}/auth/callback
+         http://localhost:3000/auth/callback
      Если адреса нет в списке, Supabase молча подставит Site URL,
-     и пользователь вернётся не на страницу входа, а на главную.
+     и пользователь вернётся на главную вместо страницы входа.
 
   2. Google Cloud Console → OAuth consent screen → Publishing status
        Должно быть "In production". В статусе "Testing" войти смогут
-       ТОЛЬКО аккаунты из списка Test users — для публичного сайта
-       это означает, что посторонние получат ошибку 403 access_denied.
+       ТОЛЬКО аккаунты из списка Test users — остальные получат
+       ошибку 403 access_denied.
+
+Подтвердить оба пункта можно лишь реальным входом: откройте
+${SITE}/login в режиме инкогнито и нажмите «Войти через Google».
 `);
