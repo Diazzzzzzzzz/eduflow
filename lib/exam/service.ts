@@ -6,9 +6,13 @@
  * here too, so a candidate cannot read the keys out of the network tab.
  */
 
-import { findSectionBySkill, EXAM_SECTIONS } from "./papers";
+import { findSectionBySkill, EXAM_SECTIONS, listPapers } from "./papers";
 import { buildDrillSection, DRILL_ID_PREFIX, isDrillId } from "./drills";
-import { getFirstStoredPaper, getStoredPaper } from "@/lib/data/exam-papers";
+import {
+  getFirstStoredPaper,
+  getStoredPaper,
+  listStoredPapers,
+} from "@/lib/data/exam-papers";
 import { scoreSection } from "./scoring";
 import type {
   AnswerMap,
@@ -67,6 +71,49 @@ export async function loadFullSection(input: {
   }
   if (input.skill) return findSectionBySkill(input.skill);
   return null;
+}
+
+/** One entry in the student-facing catalogue. Carries no answer keys. */
+export interface PaperListing {
+  id: string;
+  title: string;
+  skill: "reading" | "listening";
+  durationMinutes: number;
+  passages: number;
+  questions: number;
+  /** Imported by the centre, as opposed to shipped with the app. */
+  imported: boolean;
+}
+
+/**
+ * Every paper a student may open, imported first.
+ *
+ * Deduplicated by id, because an imported paper that reuses a bundled slug is
+ * the same test — `loadFullSection` would serve the stored copy, so the
+ * catalogue must not offer both.
+ */
+export async function listAvailablePapers(
+  skill?: "reading" | "listening"
+): Promise<PaperListing[]> {
+  const stored = await listStoredPapers(skill);
+  const listings: PaperListing[] = stored
+    .filter((p) => p.published)
+    .map((p) => ({
+      id: p.slug,
+      title: p.title,
+      skill: p.skill,
+      durationMinutes: p.durationMinutes,
+      passages: p.passages,
+      questions: p.questions,
+      imported: true,
+    }));
+
+  const seen = new Set(listings.map((p) => p.id));
+  for (const p of listPapers(skill)) {
+    if (seen.has(p.id)) continue;
+    listings.push({ ...p, skill: p.skill as "reading" | "listening", imported: false });
+  }
+  return listings;
 }
 
 export function gradeSection(

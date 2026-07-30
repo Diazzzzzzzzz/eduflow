@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { PaperListing } from "@/lib/exam/service";
 import {
   CAMBRIDGE_BOOKS,
   CATALOG_SECTIONS,
@@ -35,11 +36,21 @@ const SECTION_ICONS: Record<SectionId, typeof Layers> = {
   speaking: Mic,
 };
 
-export function PracticeCatalog() {
+export function PracticeCatalog({
+  papers = [],
+}: {
+  /** Papers the exam engine can actually open, from the server. */
+  papers?: PaperListing[];
+}) {
   const [section, setSection] = React.useState<SectionId>("full");
   const [openBook, setOpenBook] = React.useState<number>(CAMBRIDGE_BOOKS[0]);
 
   const meta = CATALOG_SECTIONS.find((s) => s.id === section)!;
+
+  // "Full Mock" is a shortcut to everything; a skill tab shows only its own.
+  const visiblePapers = papers.filter(
+    (p) => section === "full" || p.skill === section
+  );
 
   return (
     <div className="grid grid-cols-12 gap-6">
@@ -117,6 +128,52 @@ export function PracticeCatalog() {
             .
           </p>
         </div>
+
+        {/* Papers the exam engine can open right now. Unlike the catalogue
+            below, every card here launches a real, scored test. */}
+        {visiblePapers.length > 0 && (
+          <div key={`papers-${section}`} className="animate-fade-up space-y-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Доступны сейчас
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {visiblePapers.map((p) => (
+                <Card key={p.id} className="flex flex-col">
+                  <CardContent className="flex flex-1 flex-col gap-2 p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-medium leading-tight">{p.title}</p>
+                      <Badge variant={p.imported ? "secondary" : "success"}>
+                        {p.imported ? "Импортирован" : "Готов"}
+                      </Badge>
+                    </div>
+                    <p className="tabular flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" /> {p.durationMinutes} мин
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <ListChecks className="h-3.5 w-3.5" /> {p.questions}{" "}
+                        вопросов
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <BookOpen className="h-3.5 w-3.5" /> {p.passages}{" "}
+                        {p.passages === 1 ? "текст" : "текста"}
+                      </span>
+                    </p>
+                    <Link
+                      href={`/student/practice/${p.skill}?paper=${encodeURIComponent(p.id)}`}
+                      className={cn(
+                        buttonVariants({ size: "sm" }),
+                        "mt-auto w-full"
+                      )}
+                    >
+                      Начать тест
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* key=section remounts the list so it fades in on section change */}
         <div key={section} className="animate-fade-up space-y-3">
