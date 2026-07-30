@@ -15,6 +15,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { roleHome, type Role } from "@/lib/auth-routes";
 import { DEMO_COOKIE } from "@/lib/demo-session";
 import { Logo } from "@/components/layout/logo";
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -101,6 +102,23 @@ export default function LoginPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<string | null>(null);
 
+  // The OAuth callback reports failures by redirecting back with ?error=.
+  // Read it from the URL rather than useSearchParams so this page needs no
+  // Suspense boundary, then strip it so a refresh doesn't resurrect it.
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromCallback = params.get("error");
+    if (!fromCallback) return;
+    setError(fromCallback);
+    params.delete("error");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + (query ? `?${query}` : "")
+    );
+  }, []);
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -143,6 +161,21 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* Shared by both flows, so it sits outside the email form. */}
+          {error && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-sm text-destructive"
+            >
+              <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <GoogleButton label="Войти через Google" onError={setError} />
+
+          <AuthDivider />
+
           <form className="space-y-3" onSubmit={onSubmit}>
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
@@ -168,16 +201,6 @@ export default function LoginPage() {
                 required
               />
             </div>
-
-            {error && (
-              <div
-                role="alert"
-                className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-sm text-destructive"
-              >
-                <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
 
             <Button type="submit" className="w-full" disabled={!!loading}>
               {loading === "form" ? (

@@ -13,6 +13,19 @@ export function isStaff(role: string | null | undefined): boolean {
   return role === "owner" || role === "admin" || role === "teacher";
 }
 
+/**
+ * Roles a visitor may pick for themselves on the sign-up form.
+ *
+ * Deliberately excludes owner/admin: leadership is granted from the director
+ * dashboard, never claimed. The OAuth callback checks against this before
+ * honouring a role carried in the redirect URL.
+ */
+export const SELF_ASSIGNABLE_ROLES: Role[] = ["student", "teacher", "parent"];
+
+export function isSelfAssignableRole(role: string | null | undefined): role is Role {
+  return SELF_ASSIGNABLE_ROLES.includes(role as Role);
+}
+
 /** The landing route for each role after sign-in. */
 export function roleHome(role: string | null | undefined): string {
   switch (role) {

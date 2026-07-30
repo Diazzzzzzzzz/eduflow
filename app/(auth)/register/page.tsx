@@ -7,6 +7,7 @@ import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { roleHome, type Role } from "@/lib/auth-routes";
 import { Logo } from "@/components/layout/logo";
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,10 @@ const ROLES: { value: Role; label: string }[] = [
   { value: "teacher", label: "Учитель" },
   { value: "parent", label: "Родитель" },
 ];
+
+const ROLE_LABELS = Object.fromEntries(
+  ROLES.map((r) => [r.value, r.label])
+) as Record<Role, string>;
 
 export default function RegisterPage() {
   const [fullName, setFullName] = React.useState("");
@@ -144,13 +149,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            {notice && (
-              <p className="rounded-md border border-primary/25 bg-primary/5 p-2.5 text-sm text-foreground">
-                {notice}
-              </p>
-            )}
-
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
                 <>
@@ -161,6 +159,24 @@ export default function RegisterPage() {
               )}
             </Button>
           </form>
+
+          {/* Shared by both flows, so it sits outside the email form. */}
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          {notice && (
+            <p className="rounded-md border border-primary/25 bg-primary/5 p-2.5 text-sm text-foreground">
+              {notice}
+            </p>
+          )}
+
+          <AuthDivider />
+
+          {/* Names the selected role, because the picker sits above and the
+              choice is carried through the Google redirect. */}
+          <GoogleButton
+            role={role}
+            label={`Продолжить с Google как ${ROLE_LABELS[role]}`}
+            onError={setError}
+          />
 
           <p className="text-center text-sm text-muted-foreground">
             Уже есть аккаунт?{" "}
