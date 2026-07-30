@@ -2,8 +2,8 @@
   "id": "eduflow-reading-test-1",
   "title": "EduFlow Reading — Test 1",
   "module": "Reading",
-  "durationMinutes": 20,
-  "attribution": "Оригинальный материал EduFlow. Пример файла для импорта в /admin/tests.",
+  "durationMinutes": 60,
+  "attribution": "Оригинальный материал EduFlow. Три текста, 40 вопросов, 60 минут — полный формат Academic Reading.",
   "passages": [
     {
       "number": 1,
@@ -105,6 +105,278 @@
               "prompt": "The same technology was later built into track ___ used by distance runners.",
               "answer": "spikes",
               "explanation": "Paragraph 8: «spikes built around slimmer plates and the new foam»."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "The concrete that repairs itself",
+      "subtitle": "Why Roman harbours outlast modern ones",
+      "text": "[A] At Baiae on the Bay of Naples the concrete piers of a Roman harbour still stand in the sea. They were poured before the birth of Christ, they have been under salt water ever since, and they are intact. A reinforced concrete jetty built in the same water in 1950 would by now have been condemned, patched, and probably demolished. This is an awkward comparison for an industry that produces the most heavily used manufactured substance on earth, and for most of the twentieth century it was treated as a curiosity rather than a question. It is a question.\n\n[B] The recipe was never secret. Vitruvius, writing in the first century before Christ, set it out plainly: take the ash found in the region of Puteoli, mix it with lime and with rubble of volcanic rock, and it will set hard even under water. That ash, thrown out by the volcanic field west of Naples, is rich in silica and alumina in a glassy, chemically restless form. Lime alone will not harden under the sea. Lime combined with a reactive ash of this kind produces a binder that will, and Roman engineers used it to build harbours, breakwaters and fish tanks along the whole Mediterranean coast, shipping the ash by sea to sites that had no volcano of their own.\n\n[C] What has since been discovered is that the sea, which destroys modern concrete, was doing the Roman material a favour. Seawater percolating slowly through the structure dissolves the volcanic glass that has not yet reacted, and from the dissolved material new minerals crystallise inside the pores and the cracks. The most important of them, a rare plate-like mineral called tobermorite, is almost impossible to grow deliberately in a laboratory at ordinary temperatures, yet it forms unhurried in these piers over centuries. Its interlocking plates reinforce the binder from the inside. A Roman breakwater does not merely resist the sea; it uses the sea to go on assembling itself, and is stronger after two thousand years than it was after twenty.\n\n[D] A second mechanism was identified only recently, and it explains something that had been dismissed as sloppy workmanship. Roman concrete is full of small white lumps of lime, which archaeologists long assumed were the result of careless mixing. Careful examination showed instead that the lime had been added unslaked and mixed hot, at temperatures that leave these lumps deliberately scattered through the material. They are reservoirs. When a crack opens and water reaches one, the lump dissolves and the solution recrystallises in the crack as calcite, sealing it. The material repairs its own fractures, which is precisely the failure mode that ends the life of a modern structure.\n\n[E] Modern concrete fails for a reason the Romans never had to consider, because they never used steel. Portland cement is strong in compression and feeble in tension, so since the nineteenth century it has been cast around steel bars that carry the tensile load. The arrangement works until salt or carbon dioxide reaches the steel. The bars then rust, rust occupies more volume than the metal it replaces, and the expansion splits the concrete from within, opening paths for more salt to arrive. The very component that makes the modern material useful is the component that limits its life, and no improvement to the cement itself can remove that vulnerability.\n\n[F] None of which means the ancient recipe should simply be revived. Roman concrete is weak in tension too, and without reinforcement it cannot span or cantilever, so it could not produce a bridge deck, a multi-storey frame or anything else that defines modern construction. It gains its strength slowly, over months and years rather than the days a construction programme allows. It depends on a volcanic ash of a particular composition that is abundant near Naples and absent almost everywhere else. What the Roman harbours offer is not a blueprint but a demonstration that durability of this order is chemically possible.\n\n[G] The reason anyone is paying attention now is the carbon arithmetic. Making Portland cement requires heating limestone to around fourteen hundred degrees, which burns fuel and drives carbon dioxide out of the rock itself, and the industry is responsible for a share of global emissions larger than aviation and shipping combined. Replacing part of the cement with a reactive ash cuts that figure directly, and blends using fly ash from coal power stations or slag from steelworks already do so. Both supplies are shrinking as the industries that produced them close down. The search has therefore turned to the material the Romans used, and to the harder problem the piers at Baiae pose: how to build something that lasts long enough that it does not have to be built twice.",
+      "groups": [
+        {
+          "type": "matching_headings",
+          "instructions": "Reading Passage 2 has seven paragraphs, A–G. Choose the correct heading for each paragraph from the list of headings below.",
+          "optionsTitle": "List of Headings",
+          "options": [
+            "i. A recipe that was written down and published",
+            "ii. Why the sea strengthens rather than destroys it",
+            "iii. The weakness that arrived with steel",
+            "iv. A material that has outlasted its replacements",
+            "v. How the cracks close themselves",
+            "vi. What the ancient mixture cannot be asked to do",
+            "vii. The carbon problem that revived the question",
+            "viii. Disputes over the dating of the harbours",
+            "ix. The cost of shipping the ash across the empire",
+            "x. Attempts to patent a modern version"
+          ],
+          "questions": [
+            {
+              "number": 14,
+              "prompt": "Paragraph A",
+              "answer": "iv",
+              "explanation": "A contrasts intact Roman piers with a modern jetty that would already have been demolished."
+            },
+            {
+              "number": 15,
+              "prompt": "Paragraph B",
+              "answer": "i",
+              "explanation": "B quotes Vitruvius setting the recipe out «plainly» in the first century BC."
+            },
+            {
+              "number": 16,
+              "prompt": "Paragraph C",
+              "answer": "ii",
+              "explanation": "C explains that seawater dissolves the glass and grows tobermorite, so the structure strengthens with age."
+            },
+            {
+              "number": 17,
+              "prompt": "Paragraph D",
+              "answer": "v",
+              "explanation": "D describes the lime lumps that dissolve and recrystallise as calcite, sealing cracks."
+            },
+            {
+              "number": 18,
+              "prompt": "Paragraph E",
+              "answer": "iii",
+              "explanation": "E attributes modern failure to corroding steel reinforcement, which the Romans never used."
+            },
+            {
+              "number": 19,
+              "prompt": "Paragraph F",
+              "answer": "vi",
+              "explanation": "F lists the limits: weak in tension, slow to gain strength, dependent on a local ash."
+            },
+            {
+              "number": 20,
+              "prompt": "Paragraph G",
+              "answer": "vii",
+              "explanation": "G is about cement's share of global emissions and the search for lower-carbon blends."
+            }
+          ]
+        },
+        {
+          "type": "gap_fill",
+          "instructions": "Complete the summary below. Choose ONE WORD ONLY from the passage for each answer.",
+          "wordLimit": 1,
+          "intro": "How Roman marine concrete works",
+          "questions": [
+            {
+              "number": 21,
+              "prompt": "The Romans combined lime with a reactive volcanic ___ from the Bay of Naples.",
+              "answer": "ash",
+              "explanation": "Paragraph B: «take the ash found in the region of Puteoli, mix it with lime»."
+            },
+            {
+              "number": 22,
+              "prompt": "Seawater moving through the structure grows crystals of a mineral called ___.",
+              "answer": "tobermorite",
+              "explanation": "Paragraph C: «a rare plate-like mineral called tobermorite»."
+            },
+            {
+              "number": 23,
+              "prompt": "Lumps of lime dissolve and recrystallise in a crack as ___, sealing it.",
+              "answer": "calcite",
+              "explanation": "Paragraph D: «the solution recrystallises in the crack as calcite»."
+            },
+            {
+              "number": 24,
+              "prompt": "Modern concrete fails when the steel ___ inside it begins to rust and expand.",
+              "answer": "reinforcement|bars",
+              "explanation": "Paragraph E: «without reinforcement» the material cannot span; the steel bars rust and split the concrete."
+            },
+            {
+              "number": 25,
+              "prompt": "Cement manufacture is responsible for a large share of global carbon ___.",
+              "answer": "emissions",
+              "explanation": "Paragraph G: «responsible for a share of global emissions larger than aviation and shipping combined»."
+            }
+          ]
+        },
+        {
+          "type": "short_answer",
+          "instructions": "Answer the questions below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          "wordLimit": 2,
+          "questions": [
+            {
+              "number": 26,
+              "prompt": "Which Roman writer recorded the recipe for the concrete?",
+              "answer": "Vitruvius",
+              "explanation": "Paragraph B: «Vitruvius, writing in the first century before Christ, set it out plainly»."
+            },
+            {
+              "number": 27,
+              "prompt": "Which by-product of coal power stations is used in modern low-carbon blends?",
+              "answer": "fly ash",
+              "explanation": "Paragraph G: «blends using fly ash from coal power stations or slag from steelworks»."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "The case against the smart city",
+      "subtitle": "What the sensors are actually being asked to solve",
+      "text": "Every few years a city is offered the same proposal. Instrument the streets with sensors, gather the resulting data in a central platform, and let software allocate the traffic, the energy, the rubbish collection and the policing more efficiently than the municipality has managed on its own. The pitch is delivered with renderings of clean plazas and is rarely accompanied by a figure for what any of it costs to run. It is worth asking why a proposal this attractive has produced so little.\n\nThe purpose-built examples are not encouraging. Songdo in South Korea was designed from empty reclaimed land as a fully instrumented city and has spent more than a decade struggling to attract the residents its plans assumed. Masdar in the United Arab Emirates was to be a carbon-neutral settlement of fifty thousand people and remains, long past its original completion date, a small research campus. The most instructive case is the one that never began: a proposal by a subsidiary of Google to develop a district of the Toronto waterfront, which collapsed in 2020 after two years of public argument that was not really about technology at all. It was about who would hold the data, who had authorised its collection, and what recourse a resident would have. The company withdrew without those questions being answered.\n\nThe recurring flaw is a category error. The difficulties that actually afflict cities are overwhelmingly political, and they are presented as though they were informational. Traffic congestion is the standard illustration. It is not caused by drivers lacking information about traffic; it is caused by a large number of people wanting to occupy the same scarce road space at the same moment, at a price that does not reflect its scarcity. A city that prices road space, or that converts a lane to buses, will reduce congestion. A city that installs sensors to measure congestion in finer detail will know more about it. Only one of those is a solution, and the difference is that the first requires a council to face down an organised constituency while the second requires a procurement.\n\nProcurement brings its own problem. These platforms are proprietary, and a municipality that runs its transport, lighting and waste systems on one supplier's software cannot readily change supplier, because the cost of migrating is deliberately high and the expertise to do it sits with the vendor rather than with the city. Local authorities have spent thirty years reducing their internal technical capacity; they are now poorly placed to specify such systems, audit them, or take them back. A dependency of this kind is not a partnership. It is the transfer of a core municipal function to a company whose obligations end at the contract.\n\nThen there is the ratchet. Data gathered for one stated purpose does not stay there, because a system that already exists is far easier to point at a new problem than a system that must be built and justified from nothing. Cameras installed to time traffic signals become cameras that enforce parking, then cameras that support investigations, and each step is individually reasonable and collectively a surveillance infrastructure that no one ever voted to build. The safeguard usually offered is a policy document, which is to say a promise by the present administration about the behaviour of its successors.\n\nA subtler objection concerns what optimisation actually optimises. A system trained on how a city is currently used will efficiently reproduce how a city is currently used. If a neighbourhood has poor bus service, the demand data will show few bus passengers there, and a model allocating vehicles by demand will conclude that few are needed. The existing pattern is read as a preference rather than as a consequence of past decisions, and the algorithm hardens it. Efficiency, applied without a view about what the city ought to become, is a machine for entrenching the status quo with better graphics.\n\nNone of this is an argument against technology in city government, and the record here is genuinely positive — it is simply unexciting. Acoustic sensors placed on water mains locate leaks that would otherwise run for months, and cities using them have cut losses substantially. Traffic signals that adapt to actual queues rather than to a fixed timetable move buses through junctions measurably faster. These systems share a shape. Each addresses a narrow, well-defined problem, produces a result that can be checked against a number the city already collects, and runs on equipment that can be replaced by a different supplier next year. None of them requires a district to be rebuilt, and none of them appears in a rendering.\n\nThat suggests a test any council could apply before signing. Would this still be worth doing if the data it generates were published openly, and if the supplier could be replaced at the end of the term without the system ceasing to function? A proposal that survives both conditions is probably a piece of useful municipal infrastructure. A proposal that fails either one is not selling a city a capability. It is selling the city a landlord.",
+      "groups": [
+        {
+          "type": "yes_no_not_given",
+          "instructions": "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES if the statement agrees with the claims of the writer, NO if the statement contradicts the claims of the writer, or NOT GIVEN if it is impossible to say what the writer thinks about this.",
+          "options": [
+            "YES",
+            "NO",
+            "NOT GIVEN"
+          ],
+          "questions": [
+            {
+              "number": 28,
+              "prompt": "Technology has no useful part to play in the running of a city.",
+              "answer": "NO",
+              "explanation": "Paragraph 7: «None of this is an argument against technology in city government, and the record here is genuinely positive»."
+            },
+            {
+              "number": 29,
+              "prompt": "Purpose-built smart cities have attracted fewer residents than their plans assumed.",
+              "answer": "YES",
+              "explanation": "Paragraph 2: Songdo «has spent more than a decade struggling to attract the residents its plans assumed»."
+            },
+            {
+              "number": 30,
+              "prompt": "Congestion is best understood as a shortage of information.",
+              "answer": "NO",
+              "explanation": "Paragraph 3: «It is not caused by drivers lacking information about traffic» but by scarce road space priced too low."
+            },
+            {
+              "number": 31,
+              "prompt": "The Toronto development would have been profitable had it gone ahead.",
+              "answer": "NOT GIVEN",
+              "explanation": "The passage describes why the project collapsed but says nothing about its likely profitability."
+            },
+            {
+              "number": 32,
+              "prompt": "Systems trained on current behaviour tend to preserve existing patterns.",
+              "answer": "YES",
+              "explanation": "Paragraph 6: «A system trained on how a city is currently used will efficiently reproduce how a city is currently used»."
+            },
+            {
+              "number": 33,
+              "prompt": "A city should be able to change technology supplier without its systems failing.",
+              "answer": "YES",
+              "explanation": "Paragraph 8: the test asks whether «the supplier could be replaced at the end of the term without the system ceasing to function»."
+            }
+          ]
+        },
+        {
+          "type": "mcq_single",
+          "instructions": "Choose the correct letter, A, B, C or D.",
+          "questions": [
+            {
+              "number": 34,
+              "prompt": "What does the writer identify as the central error in the smart-city proposal?",
+              "answer": "A",
+              "explanation": "Paragraph 3: «The recurring flaw is a category error» — political difficulties «are presented as though they were informational».",
+              "options": [
+                "A. Political problems are treated as though they were problems of information.",
+                "B. The technology proposed is rarely mature enough to deploy.",
+                "C. The projects are too small to affect how a city works.",
+                "D. Residents are consulted too late in the planning process."
+              ]
+            },
+            {
+              "number": 35,
+              "prompt": "Why does the writer object to proprietary municipal platforms?",
+              "answer": "C",
+              "explanation": "Paragraph 4: migration costs are «deliberately high» and the expertise «sits with the vendor rather than with the city».",
+              "options": [
+                "A. They are more expensive to buy than open alternatives.",
+                "B. They collect more data than a city has any use for.",
+                "C. A city that adopts one cannot realistically change supplier.",
+                "D. They are rarely compatible with equipment already installed."
+              ]
+            },
+            {
+              "number": 36,
+              "prompt": "What test does the writer propose before a council signs a contract?",
+              "answer": "B",
+              "explanation": "Paragraph 8: would it still be worth doing «if the data it generates were published openly, and if the supplier could be replaced»?",
+              "options": [
+                "A. whether the system has worked in a comparable city",
+                "B. whether it would still be worth doing with open data and a replaceable supplier",
+                "C. whether residents have approved it in a referendum",
+                "D. whether the cost can be recovered within the term of office"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "sentence_endings",
+          "instructions": "Complete each sentence with the correct ending, A–E, below.",
+          "optionsTitle": "Sentence Endings",
+          "options": [
+            "A. because a system that already exists is easier to redirect than one that must be justified from nothing.",
+            "B. because they address narrow problems with equipment that can be replaced.",
+            "C. because councils are required to publish their procurement decisions.",
+            "D. because the companies involved have withdrawn from the market.",
+            "E. because residents rarely notice that the equipment has been installed."
+          ],
+          "questions": [
+            {
+              "number": 37,
+              "prompt": "Data collected for one purpose tends to be used for others",
+              "answer": "A",
+              "explanation": "Paragraph 5: «a system that already exists is far easier to point at a new problem than a system that must be built and justified from nothing»."
+            },
+            {
+              "number": 38,
+              "prompt": "The schemes that have genuinely worked attract little attention",
+              "answer": "B",
+              "explanation": "Paragraph 7: each «addresses a narrow, well-defined problem» and «runs on equipment that can be replaced by a different supplier»."
+            }
+          ]
+        },
+        {
+          "type": "mcq_multi",
+          "instructions": "Choose TWO letters, A–E. Which TWO uses of technology does the writer accept have worked?",
+          "questions": [
+            {
+              "number": 39,
+              "prompt": "Which TWO uses of technology does the writer accept have worked?",
+              "answer": [
+                "A",
+                "C"
+              ],
+              "explanation": "Paragraph 7 credits acoustic leak detection on water mains and traffic signals that adapt to actual queues.",
+              "numberTo": 40,
+              "options": [
+                "A. locating leaks in water mains",
+                "B. removing congestion from city centres",
+                "C. traffic signals that respond to real queues",
+                "D. reducing the cost of municipal software",
+                "E. raising public confidence in local government"
+              ]
             }
           ]
         }

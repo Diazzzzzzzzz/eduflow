@@ -134,7 +134,7 @@ export function PracticeCatalog({
         {visiblePapers.length > 0 && (
           <div key={`papers-${section}`} className="animate-fade-up space-y-3">
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Доступны сейчас
+              IELTS Academic
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               {visiblePapers.map((p) => (
