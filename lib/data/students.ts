@@ -103,12 +103,9 @@ export function scopeStudentsForRole(
 /**
  * Group names a teacher is assigned to, via groups.teacher_id → their row.
  *
- * The teacher's identity is resolved UNDER RLS (their own teachers row), so it
- * cannot be spoofed. The group-name lookup then goes through the admin client:
- * `groups` has no per-user RLS policy yet (it is string-linked to students, a
- * Stage 2 concern), so an RLS read returns nothing. Group names are not
- * sensitive and the query is pinned to the RLS-verified teacher id, so this is
- * a scoped, justified service-role read.
+ * Fully under RLS since migration 0012 gave `groups` its policies (it had RLS
+ * enabled with none, so it was invisible to every session — Stage 1 had to
+ * work around that with the admin client).
  */
 async function teacherGroupNames(
   rls: NonNullable<ReturnType<typeof createRlsClient>>,
@@ -122,9 +119,7 @@ async function teacherGroupNames(
   const teacherId = (teacher.data as { id: string } | null)?.id;
   if (!teacherId) return null;
 
-  const admin = createAdminClient();
-  if (!admin) return null;
-  const groups = await admin
+  const groups = await rls
     .from("groups")
     .select("name")
     .eq("teacher_id", teacherId);
