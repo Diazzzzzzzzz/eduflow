@@ -19,7 +19,14 @@ const migrations = readdirSync(migrationsDir)
   .sort();
 
 // Order matters: schema first, then data.
-const seeds = ["seed.sql", "cambridge-seed.sql", "groups-seed.sql"];
+// relink-seed.sql must stay LAST: seed.sql re-inserts the student rows, which
+// nulls profiles.student_id and drops guardianships, and this restores them.
+const seeds = [
+  "seed.sql",
+  "cambridge-seed.sql",
+  "groups-seed.sql",
+  "relink-seed.sql",
+];
 
 const parts = [
   "-- EduFlow — one-shot setup: schema + RLS + seed.",
