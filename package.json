@@ -22,6 +22,7 @@
     "seed:assignments": "node --env-file=.env.local scripts/backfill-assignments.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-progress": "^1.1.0",
