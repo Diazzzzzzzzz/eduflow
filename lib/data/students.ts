@@ -1,14 +1,22 @@
 /**
  * Server-side data access for students and their nested mock tests +
- * recommendations. Reads from Supabase when a service-role key is configured,
- * otherwise falls back to the bundled mock cohort so the app always renders.
+ * recommendations.
  *
- * SERVER ONLY — imports the service-role client. Do not import from a client
- * component; the client fetches this data through /api/students instead.
+ * READS run through the caller's own session (createRlsClient), so Postgres
+ * RLS — not this code — decides which rows come back: a student sees only their
+ * own row, a parent only their wards, staff only their centre (migration 0011).
+ * The one exception is the mock-data fallback used when Supabase is
+ * unconfigured, which is scoped in code by `scopeStudentsForRole` to mirror the
+ * same rules.
+ *
+ * SERVER ONLY.
  */
 import type { MockTest, Recommendation, Student } from "@/lib/types";
+import type { Role } from "@/lib/auth-routes";
 import { STUDENTS } from "@/lib/mock-data";
 import { calcOverall } from "@/lib/band";
+import { DEMO_STUDENT_ID } from "@/lib/demo-session";
+import { createRlsClient, type Session } from "@/lib/supabase/auth-server";
 import { createAdminClient } from "@/lib/supabase/server";
 import type {
   Database,
@@ -66,12 +74,97 @@ function mapStudent(row: StudentWithChildren): Student {
 }
 
 /**
- * Returns the cohort with full history. Falls back to mock data whenever
- * Supabase is unconfigured or the query fails/returns nothing.
+ * Pure scoping rule for the mock-data fallback (and the unit tests).
+ *
+ * Mirrors the RLS policies so the app behaves the same with or without a
+ * database: a student sees only their own row; a parent only their wards; staff
+ * see the whole cohort. Defaults to "nothing" for an unknown/absent role, so a
+ * missing profile never leaks the cohort.
  */
-export async function getStudents(): Promise<{ students: Student[]; source: "supabase" | "mock" }> {
-  const supabase = createAdminClient();
-  if (!supabase) return { students: STUDENTS, source: "mock" };
+export function scopeStudentsForRole(
+  cohort: Student[],
+  opts: { role: Role | undefined; studentId?: string | null; wardIds?: string[] }
+): Student[] {
+  const { role, studentId, wardIds = [] } = opts;
+  switch (role) {
+    case "owner":
+    case "admin":
+    case "teacher":
+      return cohort;
+    case "student":
+      return cohort.filter((s) => s.id === studentId);
+    case "parent":
+      return cohort.filter((s) => wardIds.includes(s.id));
+    default:
+      return [];
+  }
+}
+
+/**
+ * Group names a teacher is assigned to, via groups.teacher_id → their row.
+ *
+ * The teacher's identity is resolved UNDER RLS (their own teachers row), so it
+ * cannot be spoofed. The group-name lookup then goes through the admin client:
+ * `groups` has no per-user RLS policy yet (it is string-linked to students, a
+ * Stage 2 concern), so an RLS read returns nothing. Group names are not
+ * sensitive and the query is pinned to the RLS-verified teacher id, so this is
+ * a scoped, justified service-role read.
+ */
+async function teacherGroupNames(
+  rls: NonNullable<ReturnType<typeof createRlsClient>>,
+  userId: string
+): Promise<string[] | null> {
+  const teacher = await rls
+    .from("teachers")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  const teacherId = (teacher.data as { id: string } | null)?.id;
+  if (!teacherId) return null;
+
+  const admin = createAdminClient();
+  if (!admin) return null;
+  const groups = await admin
+    .from("groups")
+    .select("name")
+    .eq("teacher_id", teacherId);
+  const rows = (groups.data as { name: string }[] | null) ?? [];
+  return rows.map((g) => g.name);
+}
+
+/**
+ * The cohort visible to the given session, read under RLS.
+ *
+ * Falls back to the (role-scoped) mock cohort when Supabase is unconfigured, so
+ * the app always renders. `source` tells the caller which path served the data.
+ */
+export async function getStudentsForSession(
+  session: Session
+): Promise<{ students: Student[]; source: "supabase" | "mock" }> {
+  const role = session.profile?.role;
+  const studentId = session.profile?.student_id ?? null;
+  const wardIds = role === "parent" && studentId ? [studentId] : [];
+
+  // Demo sessions have no real Supabase JWT, so an RLS client would run as anon
+  // and see nothing. Demo mode (dev-only, off in production) instead reads the
+  // cohort via the admin path and scopes it in code with the same rule as RLS.
+  const isDemo = session.user.id.startsWith("demo-");
+  if (isDemo) {
+    const { students: cohort, source } = await getAllStudentsAdmin();
+    return {
+      students: scopeStudentsForRole(cohort, { role, studentId, wardIds }),
+      source,
+    };
+  }
+
+  const supabase = createRlsClient();
+  if (!supabase) {
+    // No database configured: scope the bundled cohort the same way RLS would.
+    return {
+      students: scopeStudentsForRole(STUDENTS, { role, studentId, wardIds }),
+      source: "mock",
+    };
+  }
 
   try {
     const { data, error } = await supabase
@@ -80,19 +173,30 @@ export async function getStudents(): Promise<{ students: Student[]; source: "sup
       .order("created_at", { ascending: true });
 
     if (error) {
-      console.warn("[data/students] Supabase query failed, using mock:", error.message);
-      return { students: STUDENTS, source: "mock" };
+      console.warn("[data/students] RLS query failed:", error.message);
+      return { students: [], source: "supabase" };
     }
-    if (!data || data.length === 0) {
-      return { students: STUDENTS, source: "mock" };
+
+    let students = ((data as unknown as StudentWithChildren[]) ?? []).map(
+      mapStudent
+    );
+
+    // Teachers: RLS limits them to their centre; narrow further to the groups
+    // they actually run. String match because groups↔students are still linked
+    // by name — real enrollment FKs are Stage 2. If a teacher has no assigned
+    // groups we keep the centre-wide result rather than blanking the dashboard.
+    if (role === "teacher") {
+      const names = await teacherGroupNames(supabase, session.user.id);
+      if (names && names.length > 0) {
+        const allowed = new Set(names);
+        students = students.filter((s) => allowed.has(s.group));
+      }
     }
-    return {
-      students: (data as unknown as StudentWithChildren[]).map(mapStudent),
-      source: "supabase",
-    };
+
+    return { students, source: "supabase" };
   } catch (err) {
-    console.warn("[data/students] Unexpected error, using mock:", err);
-    return { students: STUDENTS, source: "mock" };
+    console.warn("[data/students] Unexpected error:", err);
+    return { students: [], source: "supabase" };
   }
 }
 
@@ -107,14 +211,15 @@ export interface NewMockResult {
 }
 
 /**
- * Persists a mock result to Supabase when configured. Returns persisted=false
- * when there's no database, so the caller can still echo the computed result
- * (the client keeps a localStorage copy in that case).
+ * Persists a mock result under the CALLER'S session, so RLS enforces that only
+ * staff of the student's centre can write it — a student or parent session is
+ * rejected by the policy, not by trust in this code. Returns persisted=false
+ * when there's no database.
  */
 export async function createMockResult(
   input: NewMockResult
-): Promise<{ persisted: boolean; result?: MockTest }> {
-  const supabase = createAdminClient();
+): Promise<{ persisted: boolean; result?: MockTest; error?: string }> {
+  const supabase = createRlsClient();
   if (!supabase) return { persisted: false };
 
   const payload: Database["public"]["Tables"]["mock_tests"]["Insert"] = {
@@ -129,16 +234,45 @@ export async function createMockResult(
 
   const { data, error } = await supabase
     .from("mock_tests")
-    // Cast: the hand-written Database generic doesn't fully narrow insert()'s
-    // value type. Regenerate types with `supabase gen types typescript` to drop
-    // this. Runtime shape is validated by `payload` above.
     .insert(payload as never)
     .select()
     .single();
 
   if (error || !data) {
+    // An RLS rejection lands here too — surface it so the route can 403.
     console.warn("[data/students] insert mock_test failed:", error?.message);
-    return { persisted: false };
+    return { persisted: false, error: error?.message };
   }
   return { persisted: true, result: mapMockTest(data as MockTestRow) };
+}
+
+export { DEMO_STUDENT_ID };
+
+/**
+ * SERVICE-ROLE cohort read — bypasses RLS. Retained ONLY for server-side
+ * aggregates that legitimately span the whole centre before per-user scoping
+ * applies (see lib/data/admin.ts) and for the seed. Never call from a
+ * user-facing read path; use getStudentsForSession instead.
+ */
+export async function getAllStudentsAdmin(): Promise<{
+  students: Student[];
+  source: "supabase" | "mock";
+}> {
+  const supabase = createAdminClient();
+  if (!supabase) return { students: STUDENTS, source: "mock" };
+  try {
+    const { data, error } = await supabase
+      .from("students")
+      .select("*, mock_tests(*), recommendations(*)")
+      .order("created_at", { ascending: true });
+    if (error || !data || data.length === 0) {
+      return { students: STUDENTS, source: "mock" };
+    }
+    return {
+      students: (data as unknown as StudentWithChildren[]).map(mapStudent),
+      source: "supabase",
+    };
+  } catch {
+    return { students: STUDENTS, source: "mock" };
+  }
 }

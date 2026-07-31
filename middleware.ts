@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isProtectedPath, roleHome } from "@/lib/auth-routes";
-import { DEMO_COOKIE, isDemoRole } from "@/lib/demo-session";
+import { DEMO_COOKIE, isDemoRole, isDemoEnabled } from "@/lib/demo-session";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -10,9 +10,11 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request });
   const path = request.nextUrl.pathname;
 
-  // Local demo fallback session (set when Supabase Auth is unreachable).
+  // Local demo fallback session — honored only when demo mode is enabled, so
+  // a stale demo cookie can never grant access on a real deployment. Kept in
+  // lock-step with getUserProfile(), which applies the same gate server-side.
   const demoRole = request.cookies.get(DEMO_COOKIE)?.value;
-  const hasDemo = isDemoRole(demoRole);
+  const hasDemo = isDemoEnabled() && isDemoRole(demoRole);
 
   let user: { user_metadata?: { role?: string } } | null = null;
   if (SUPABASE_URL && SUPABASE_ANON_KEY) {

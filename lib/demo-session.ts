@@ -8,6 +8,26 @@ import type { Role } from "@/lib/auth-routes";
 export const DEMO_COOKIE = "eduflow_demo_role";
 export const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман
 
+/**
+ * Demo one-click login is a product-showcase feature and a bypass of real auth,
+ * so it is OFF unless explicitly enabled and NEVER available in production.
+ *
+ * Enabled only when DEMO_MODE=true (or =1) AND NODE_ENV is not "production".
+ * The default — flag unset — is disabled, which is what a real deployment runs.
+ */
+export function isDemoEnabled(): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  const flag = process.env.DEMO_MODE ?? process.env.NEXT_PUBLIC_DEMO_MODE ?? "";
+  return flag === "true" || flag === "1";
+}
+
+/** Browser-visible mirror, for hiding the demo UI on the login page. */
+export function isDemoEnabledPublic(): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  const flag = process.env.NEXT_PUBLIC_DEMO_MODE ?? "";
+  return flag === "true" || flag === "1";
+}
+
 const DEMO_NAMES: Record<Role, string> = {
   owner: "Владелец центра (демо)",
   admin: "Директор центра (демо)",
