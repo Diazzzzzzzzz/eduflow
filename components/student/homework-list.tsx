@@ -45,11 +45,21 @@ function HomeworkCard({
   // Writing tasks get the full essay composer; everything else a plain box.
   const isEssay = hw.section === "writing";
 
-  function submit() {
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Now a real network write: keep the spinner up until the server confirms,
+  // and surface a refusal instead of silently appearing to succeed.
+  async function submit() {
     if (!draft.trim()) return;
     setSaving(true);
-    submitHomework(hw.id, studentId, draft.trim());
-    setSaving(false);
+    setError(null);
+    try {
+      await submitHomework(hw.id, studentId, draft.trim());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось сдать работу.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -146,6 +156,11 @@ function HomeworkCard({
                 className="min-h-[120px]"
                 aria-label="Ответ на задание"
               />
+              {error && (
+                <p role="alert" className="text-sm text-destructive">
+                  {error}
+                </p>
+              )}
               <div className="flex justify-end">
                 <Button onClick={submit} disabled={saving || !draft.trim()}>
                   {saving ? (

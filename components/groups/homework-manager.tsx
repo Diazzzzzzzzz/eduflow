@@ -53,14 +53,35 @@ function CreateHomeworkDialog({ groupName }: { groupName: string }) {
   const [section, setSection] = React.useState<HomeworkSection>("writing");
   const [dueDate, setDueDate] = React.useState("");
 
-  function save() {
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Persists over the network now: hold the dialog open until the server
+  // accepts, so a rejected assignment isn't mistaken for a saved one.
+  async function save() {
     if (!title.trim()) return;
-    createHomework({ groupName, title: title.trim(), description, section, dueDate });
-    setOpen(false);
-    setTitle("");
-    setDescription("");
-    setSection("writing");
-    setDueDate("");
+    setSaving(true);
+    setError(null);
+    try {
+      await createHomework({
+        groupName,
+        title: title.trim(),
+        description,
+        section,
+        dueDate,
+      });
+      setOpen(false);
+      setTitle("");
+      setDescription("");
+      setSection("writing");
+      setDueDate("");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Не удалось создать задание."
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -127,12 +148,17 @@ function CreateHomeworkDialog({ groupName }: { groupName: string }) {
             </div>
           </div>
         </div>
+        {error && (
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
             Отмена
           </Button>
-          <Button onClick={save} disabled={!title.trim()}>
-            Создать
+          <Button onClick={save} disabled={saving || !title.trim()}>
+            {saving ? "Сохранение…" : "Создать"}
           </Button>
         </DialogFooter>
       </DialogContent>

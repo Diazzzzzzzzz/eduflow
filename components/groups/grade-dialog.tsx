@@ -37,6 +37,8 @@ export function GradeDialog({
   const { gradeSubmission } = useGroups();
   const [band, setBand] = React.useState<string>("");
   const [feedback, setFeedback] = React.useState("");
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setBand(submission?.band != null ? String(submission.band) : "");
@@ -87,18 +89,39 @@ export function GradeDialog({
                 />
               </div>
             </div>
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
             <DialogFooter>
-              <Button variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={onClose} disabled={saving}>
                 Отмена
               </Button>
               <Button
-                disabled={!band}
-                onClick={() => {
-                  gradeSubmission(submission.id, Number(band), feedback.trim());
-                  onClose();
+                disabled={!band || saving}
+                onClick={async () => {
+                  setSaving(true);
+                  setError(null);
+                  try {
+                    await gradeSubmission(
+                      submission.id,
+                      Number(band),
+                      feedback.trim()
+                    );
+                    onClose();
+                  } catch (err) {
+                    setError(
+                      err instanceof Error
+                        ? err.message
+                        : "Не удалось сохранить оценку."
+                    );
+                  } finally {
+                    setSaving(false);
+                  }
                 }}
               >
-                <Check /> Отметить проверенным
+                <Check /> {saving ? "Сохранение…" : "Отметить проверенным"}
               </Button>
             </DialogFooter>
           </>
