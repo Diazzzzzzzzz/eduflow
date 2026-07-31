@@ -13,7 +13,7 @@ import {
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { roleHome, type Role } from "@/lib/auth-routes";
-import { DEMO_COOKIE } from "@/lib/demo-session";
+import { DEMO_COOKIE, isDemoEnabledPublic } from "@/lib/demo-session";
 import { Logo } from "@/components/layout/logo";
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
@@ -225,7 +225,10 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      {/* Demo one-click login (with local fallback) */}
+      {/* Demo one-click login — only when demo mode is enabled (never in
+          production). The server applies the same gate, so hiding it here is
+          just UX, not the security boundary. */}
+      {isDemoEnabledPublic() && (
       <Card>
         <CardContent className="space-y-3 p-6">
           <div>
@@ -257,6 +260,7 @@ export default function LoginPage() {
           </p>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
