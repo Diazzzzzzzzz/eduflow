@@ -18,7 +18,8 @@
     "check:google": "node scripts/check-google-auth.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed:users": "node --env-file=.env.local scripts/seed-users.mjs"
+    "seed:users": "node --env-file=.env.local scripts/seed-users.mjs",
+    "seed:assignments": "node --env-file=.env.local scripts/backfill-assignments.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
