@@ -40,7 +40,11 @@ interface GroupsState {
     feedback: string,
     criteria?: WritingCriteria | null
   ) => Promise<void>;
-  setAttendance: (studentId: string, date: string, status: AttendanceStatus) => void;
+  setAttendance: (
+    studentId: string,
+    date: string,
+    status: AttendanceStatus
+  ) => Promise<void>;
 }
 
 const attKey = (studentId: string, date: string) => `${studentId}|${date}`;
@@ -156,12 +160,63 @@ export function GroupsProvider({ children }: { children: React.ReactNode }) {
     [load]
   );
 
+  // Attendance: read once per roster (RLS returns the caller's slice), then
+  // written through the API. The local map updates optimistically so the
+  // tracker feels instant, and rolls back if the server refuses the mark.
   const [attendance, setAttendanceState] = React.useState<
     Record<string, AttendanceStatus>
   >({});
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/attendance", { credentials: "include" });
+        if (!res.ok) return;
+        const json = (await res.json()) as {
+          attendance?: { studentId: string; date: string; status: AttendanceStatus }[];
+        };
+        if (cancelled) return;
+        const map: Record<string, AttendanceStatus> = {};
+        for (const m of json.attendance ?? []) {
+          map[attKey(m.studentId, m.date)] = m.status;
+        }
+        setAttendanceState(map);
+      } catch (err) {
+        console.warn("[groups] attendance load failed:", err);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [rosterKey]);
+
   const setAttendance = React.useCallback(
-    (studentId: string, date: string, s: AttendanceStatus) => {
-      setAttendanceState((prev) => ({ ...prev, [attKey(studentId, date)]: s }));
+    async (studentId: string, date: string, s: AttendanceStatus) => {
+      const key = attKey(studentId, date);
+      let previous: AttendanceStatus | undefined;
+      setAttendanceState((prev) => {
+        previous = prev[key];
+        return { ...prev, [key]: s };
+      });
+
+      const res = await fetch("/api/attendance", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ studentId, date, status: s }),
+      });
+      if (!res.ok) {
+        // Roll the optimistic change back so the screen shows the truth.
+        setAttendanceState((prev) => {
+          const next = { ...prev };
+          if (previous === undefined) delete next[key];
+          else next[key] = previous;
+          return next;
+        });
+        const { error } = await res.json().catch(() => ({ error: "" }));
+        throw new Error(error || "Не удалось сохранить отметку.");
+      }
     },
     []
   );

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Check } from "lucide-react";
 import { useGroups, attendanceKey } from "@/components/groups/groups-provider";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AttendanceStatus } from "@/lib/group-data";
 import type { Student } from "@/lib/types";
@@ -24,10 +23,22 @@ export function AttendanceTracker({ students }: { students: Student[] }) {
     setDate(new Date().toISOString().slice(0, 10));
   }, []);
 
-  function mark(studentId: string, status: AttendanceStatus) {
+  const [error, setError] = React.useState<string | null>(null);
+
+  // The provider applies the mark optimistically and rolls it back if the
+  // server refuses, so this only needs to surface that refusal.
+  async function mark(studentId: string, status: AttendanceStatus) {
     if (!date) return;
-    setAttendance(studentId, date, status);
     setSaved(false);
+    setError(null);
+    try {
+      await setAttendance(studentId, date, status);
+      setSaved(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Не удалось сохранить отметку."
+      );
+    }
   }
 
   const present = students.filter(
@@ -92,19 +103,22 @@ export function AttendanceTracker({ students }: { students: Student[] }) {
         })}
       </div>
 
-      <div className="flex justify-end">
-        <Button
-          variant={saved ? "success" : "default"}
-          onClick={() => setSaved(true)}
-        >
-          {saved ? (
-            <>
-              <Check /> Сохранено
-            </>
-          ) : (
-            "Сохранить посещаемость"
-          )}
-        </Button>
+      {/* Every click persists immediately; the old "save" button only flipped
+          local state and stored nothing, which would now be misleading. */}
+      <div className="flex items-center justify-end gap-3 text-sm">
+        {error ? (
+          <p role="alert" className="text-destructive">
+            {error}
+          </p>
+        ) : saved ? (
+          <p className="flex items-center gap-1.5 text-success">
+            <Check className="h-4 w-4" /> Сохранено в журнале
+          </p>
+        ) : (
+          <p className="text-muted-foreground">
+            Отметки сохраняются автоматически.
+          </p>
+        )}
       </div>
     </div>
   );
