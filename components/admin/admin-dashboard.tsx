@@ -159,7 +159,10 @@ function KpiRow({ kpis }: { kpis: AdminOverview["kpis"] }) {
     {
       label: "Посещаемость",
       value: `${kpis.attendance}%`,
-      hint: `домашние вовремя — ${kpis.onTimeHomework}%`,
+      hint:
+        kpis.onTimeHomework === null
+          ? "домашние вовремя — нет сданных работ"
+          : `домашние вовремя — ${kpis.onTimeHomework}%`,
       icon: CheckCircle2,
       tone: "text-warning bg-warning/10 ring-warning/20",
     },
@@ -238,7 +241,9 @@ function GroupsOverview({ groups }: { groups: AdminOverview["groups"] }) {
                     </span>
                   </TableCell>
                   <TableCell className="tabular text-center text-sm">
-                    {g.students}/{g.capacity}
+                    {/* Capacity is a stored setting; without one, show the
+                        headcount alone rather than inventing a denominator. */}
+                    {g.capacity === null ? g.students : `${g.students}/${g.capacity}`}
                   </TableCell>
                   <TableCell className="min-w-[10rem]">
                     <div className="space-y-1">

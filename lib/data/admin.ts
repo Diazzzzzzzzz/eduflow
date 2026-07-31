@@ -9,15 +9,7 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { getAllStudentsAdmin } from "@/lib/data/students";
 import { TOTAL_LESSONS, currentLessonFor } from "@/lib/lessons-data";
-import {
-  GROUP_TEACHER,
-  PENDING_REVIEW_SEED,
-  REVIEW_SLA_HOURS,
-  TEACHERS,
-  teacherById,
-  type Teacher,
-} from "@/lib/admin-data";
-import { HOMEWORK_SEED } from "@/lib/group-data";
+import { REVIEW_SLA_HOURS, type Teacher } from "@/lib/admin-data";
 import type { Student } from "@/lib/types";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
@@ -27,8 +19,13 @@ export interface AdminKpis {
   activeGroups: number;
   averageBand: number;
   attendance: number;
-  /** Share of submissions handed in on or before the due date. */
-  onTimeHomework: number;
+  /**
+   * Share of submissions handed in on or before the due date, or null when
+   * nothing has been handed in yet. Null rather than a stand-in figure: this
+   * used to fall back to the attendance average, so the dashboard reported
+   * attendance under a "homework on time" label.
+   */
+  onTimeHomework: number | null;
 }
 
 export interface GroupOverviewRow {
@@ -36,8 +33,8 @@ export interface GroupOverviewRow {
   teacherName: string;
   teacherInitials: string;
   students: number;
-  /** Nominal capacity, so the UI can show "8/8". */
-  capacity: number;
+  /** Seats configured for the group; null when the centre hasn't set one. */
+  capacity: number | null;
   currentLesson: number;
   totalLessons: number;
   averageBand: number;
@@ -91,9 +88,15 @@ function averageOf(values: number[]): number {
   return Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10;
 }
 
-/** Group capacity: real headcount, rounded up to a sane class size. */
-function capacityFor(count: number): number {
-  return Math.max(count, Math.ceil(count / 4) * 4);
+/** Initials for a staff member whose row carries only a full name. */
+function initialsOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 interface SubmissionRow {
@@ -120,39 +123,45 @@ async function loadSubmissions(): Promise<SubmissionRow[] | null> {
   }
 }
 
-async function loadGroupRows(): Promise<
-  { name: string; current_lesson: number; teacher_id: string | null }[] | null
-> {
+interface GroupRow {
+  name: string;
+  current_lesson: number;
+  teacher_id: string | null;
+  capacity: number | null;
+}
+
+async function loadGroupRows(): Promise<GroupRow[] | null> {
   const supabase = createAdminClient();
   if (!supabase) return null;
   try {
     const res = await supabase
       .from("groups")
-      .select("name, current_lesson, teacher_id")
+      .select("name, current_lesson, teacher_id, capacity")
       .order("name");
     if (res.error || !res.data) return null;
-    return res.data as unknown as {
-      name: string;
-      current_lesson: number;
-      teacher_id: string | null;
-    }[];
+    return res.data as unknown as GroupRow[];
   } catch {
     return null;
   }
 }
 
-async function loadTeacherRows(): Promise<
-  { id: string; name: string; role: string }[] | null
-> {
+interface TeacherRow {
+  id: string;
+  name: string;
+  role: string;
+  email: string | null;
+}
+
+async function loadTeacherRows(): Promise<TeacherRow[] | null> {
   const supabase = createAdminClient();
   if (!supabase) return null;
   try {
     const res = await supabase
       .from("teachers")
-      .select("id, name, role")
+      .select("id, name, role, email")
       .eq("center_id", CENTER_ID);
     if (res.error || !res.data?.length) return null;
-    return res.data as unknown as { id: string; name: string; role: string }[];
+    return res.data as unknown as TeacherRow[];
   } catch {
     return null;
   }
@@ -173,6 +182,13 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     loadSubmissions(),
   ]);
 
+  // Staff, keyed by id. The database is the only source: the old code looked
+  // names up in a bundled TEACHERS list first, so a real row could be
+  // displayed under a mock person's name.
+  const staffById = new Map<string, TeacherRow>(
+    (teacherRows ?? []).map((t) => [t.id, t])
+  );
+
   // --- groups --------------------------------------------------------------
   const groupNames = Array.from(
     new Set([
@@ -181,18 +197,26 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     ])
   ).sort();
 
+  /** Which staff member runs a group, straight from groups.teacher_id. */
+  const teacherOfGroup = new Map<string, TeacherRow | undefined>(
+    groupNames.map((name) => {
+      const row = groupRows?.find((g) => g.name === name);
+      return [name, row?.teacher_id ? staffById.get(row.teacher_id) : undefined];
+    })
+  );
+
   const groups: GroupOverviewRow[] = groupNames
     .map((name) => {
       const members = students.filter((s) => s.group === name);
       const row = groupRows?.find((g) => g.name === name);
-      const teacher =
-        teacherById(row?.teacher_id ?? GROUP_TEACHER[name]) ?? TEACHERS[0];
+      const teacher = teacherOfGroup.get(name);
       return {
         name,
-        teacherName: teacher.name,
-        teacherInitials: teacher.initials,
+        // An unassigned group says so rather than borrowing someone's name.
+        teacherName: teacher?.name ?? "Не назначен",
+        teacherInitials: teacher ? initialsOf(teacher.name) : "—",
         students: members.length,
-        capacity: capacityFor(members.length),
+        capacity: row?.capacity ?? null,
         currentLesson: row?.current_lesson ?? currentLessonFor(name),
         totalLessons: TOTAL_LESSONS,
         averageBand: averageOf(members.map(latestBand)),
@@ -202,80 +226,43 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     .filter((g) => g.students > 0);
 
   // --- pending reviews -----------------------------------------------------
-  let pendingReviews: PendingReview[] = [];
-
-  const dbPending = submissionRows?.filter(
-    (r) => r.status === "submitted" && r.submitted_at
-  );
-
-  if (dbPending?.length) {
-    pendingReviews = dbPending.map((r) => {
+  // Real queue only. This used to substitute a bundled demo queue whenever the
+  // database returned nothing, so a director could be shown work waiting on
+  // teachers that nobody had actually handed in. An empty queue is a fact
+  // worth reporting.
+  const pendingReviews: PendingReview[] = (submissionRows ?? [])
+    .filter((r) => r.status === "submitted" && r.submitted_at)
+    .map((r) => {
       const groupName = r.students?.student_group ?? "—";
-      const teacher =
-        teacherById(GROUP_TEACHER[groupName]) ?? TEACHERS[0];
+      const teacher = teacherOfGroup.get(groupName);
       return {
         id: r.id,
         studentName: r.students?.name ?? "—",
         groupName,
         taskTitle: r.homework?.title ?? "Задание",
         section: r.homework?.section ?? "general",
-        teacherName: teacher.name,
+        teacherName: teacher?.name ?? "Не назначен",
         hoursWaiting: hoursSince(r.submitted_at!),
       };
     });
-  } else {
-    // No submissions in the database yet — fall back to the demo queue so the
-    // block is demonstrable rather than empty.
-    pendingReviews = PENDING_REVIEW_SEED.map((p) => {
-      const student = students.find((s) => s.name === p.studentName);
-      const groupName = student?.group ?? "IELTS 62";
-      const hw = HOMEWORK_SEED.find((h) => h.id === p.homeworkId);
-      const teacher = teacherById(GROUP_TEACHER[groupName]) ?? TEACHERS[0];
-      return {
-        id: p.id,
-        studentName: p.studentName,
-        groupName,
-        taskTitle: hw?.title ?? "Задание",
-        section: hw?.section ?? "general",
-        teacherName: teacher.name,
-        hoursWaiting: p.hoursAgo,
-      };
-    });
-  }
 
   pendingReviews.sort((a, b) => b.hoursWaiting - a.hoursWaiting);
 
   // --- teachers ------------------------------------------------------------
-  const roster: Teacher[] = teacherRows?.length
-    ? teacherRows.map(
-        (r) =>
-          teacherById(r.id) ?? {
-            id: r.id,
-            name: r.name,
-            initials: r.name
-              .split(" ")
-              .map((p) => p[0])
-              .join("")
-              .slice(0, 2)
-              .toUpperCase(),
-            email: "",
-            role: (r.role as Teacher["role"]) ?? "teacher",
-          }
-      )
-    : TEACHERS;
-
-  const teachers: TeacherLoad[] = roster.map((t) => {
+  // Straight from public.teachers; no bundled roster to fall back on.
+  const teachers: TeacherLoad[] = (teacherRows ?? []).map((t) => {
     const owned = groups.filter((g) => {
       const row = groupRows?.find((r) => r.name === g.name);
-      return (row?.teacher_id ?? GROUP_TEACHER[g.name]) === t.id;
+      return row?.teacher_id === t.id;
     });
-    const mine = pendingReviews.filter((p) => p.teacherName === t.name);
+    const mine = pendingReviews.filter((p) => p.groupName !== "—" &&
+      teacherOfGroup.get(p.groupName)?.id === t.id);
     return {
       id: t.id,
       name: t.name,
-      initials: t.initials,
-      email: t.email,
-      role: t.role,
+      initials: initialsOf(t.name),
+      email: t.email ?? "",
+      role: (t.role as Teacher["role"]) ?? "teacher",
       groups: owned.map((g) => g.name),
       students: owned.reduce((n, g) => n + g.students, 0),
       pending: mine.length,
@@ -284,22 +271,22 @@ export async function getAdminOverview(): Promise<AdminOverview> {
   });
 
   // --- KPIs ----------------------------------------------------------------
-  let onTimeHomework = 0;
-  const decided = submissionRows?.filter(
+  // Null when nothing has been handed in: the previous version substituted the
+  // attendance average here, presenting one metric under another's label.
+  const decided = (submissionRows ?? []).filter(
     (r) => r.status !== "assigned" && r.submitted_at && r.homework?.due_date
   );
-  if (decided?.length) {
-    const onTime = decided.filter(
-      (r) => new Date(r.submitted_at!) <= new Date(`${r.homework!.due_date}T23:59:59`)
-    ).length;
-    onTimeHomework = Math.round((onTime / decided.length) * 100);
-  } else {
-    // Without submission history, attendance is the closest honest proxy.
-    onTimeHomework = Math.round(
-      students.reduce((a, s) => a + s.attendance, 0) /
-        Math.max(students.length, 1)
-    );
-  }
+  const onTimeHomework = decided.length
+    ? Math.round(
+        (decided.filter(
+          (r) =>
+            new Date(r.submitted_at!) <=
+            new Date(`${r.homework!.due_date}T23:59:59`)
+        ).length /
+          decided.length) *
+          100
+      )
+    : null;
 
   const kpis: AdminKpis = {
     activeStudents: students.length,
