@@ -26,7 +26,7 @@ export function EssayEditor({
   prompt: string;
   minWords?: number;
   initialContent?: string;
-  onSubmit: (content: string) => void;
+  onSubmit: (content: string) => void | Promise<void>;
 }) {
   const storageKey = `eduflow:essay:${homeworkId}:${studentId}`;
   const [text, setText] = React.useState(initialContent);
@@ -68,16 +68,31 @@ export function EssayEditor({
   const short = words > 0 && words < minWords;
   const progress = Math.min((words / minWords) * 100, 100);
 
-  function submit() {
+  const [error, setError] = React.useState<string | null>(null);
+
+  /**
+   * Submitting is a network write now, so the local draft is only discarded
+   * once the server has accepted the essay — clearing it first would lose the
+   * student's work if the request failed.
+   */
+  async function submit() {
     if (!text.trim()) return;
     setSubmitting(true);
-    onSubmit(text.trim());
+    setError(null);
     try {
-      localStorage.removeItem(storageKey);
-    } catch {
-      // Nothing to clean up.
+      await onSubmit(text.trim());
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {
+        // Nothing to clean up.
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Не удалось отправить работу."
+      );
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   }
 
   return (
@@ -133,6 +148,12 @@ export function EssayEditor({
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Эссе короче {minWords} слов. На экзамене за недобор объёма снижают балл
           по Task Achievement — работу можно сдать, но лучше дописать.
+        </p>
+      )}
+
+      {error && (
+        <p role="alert" className="text-sm text-destructive">
+          {error}
         </p>
       )}
 

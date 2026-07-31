@@ -55,6 +55,8 @@ export function EssayReviewDialog({
   const { gradeSubmission } = useGroups();
   const [marks, setMarks] = React.useState<Partial<WritingCriteria>>(BLANK);
   const [feedback, setFeedback] = React.useState("");
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setMarks(submission?.criteria ?? BLANK);
@@ -195,23 +197,40 @@ export function EssayReviewDialog({
               </div>
             </div>
 
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
             <DialogFooter>
-              <Button variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={onClose} disabled={saving}>
                 Отмена
               </Button>
               <Button
-                disabled={!complete}
-                onClick={() => {
-                  gradeSubmission(
-                    submission.id,
-                    criteriaToBand(marks as WritingCriteria),
-                    feedback.trim(),
-                    marks as WritingCriteria
-                  );
-                  onClose();
+                disabled={!complete || saving}
+                onClick={async () => {
+                  setSaving(true);
+                  setError(null);
+                  try {
+                    await gradeSubmission(
+                      submission.id,
+                      criteriaToBand(marks as WritingCriteria),
+                      feedback.trim(),
+                      marks as WritingCriteria
+                    );
+                    onClose();
+                  } catch (err) {
+                    setError(
+                      err instanceof Error
+                        ? err.message
+                        : "Не удалось сохранить оценку."
+                    );
+                  } finally {
+                    setSaving(false);
+                  }
                 }}
               >
-                <Check /> Сохранить оценку
+                <Check /> {saving ? "Сохранение…" : "Сохранить оценку"}
               </Button>
             </DialogFooter>
           </>
