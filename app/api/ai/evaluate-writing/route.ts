@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/supabase/auth-server";
-import type { WritingEvaluation } from "@/lib/types";
+import { evaluateWriting, MIN_WORDS } from "@/lib/ai/writing-evaluator";
 
 export const dynamic = "force-dynamic";
 
 /**
- * POST /api/ai/evaluate-writing — demo evaluator.
- * Returns fixed criterion bands after a simulated model delay; replace the
- * body of this handler with a real Claude API call when AI scoring ships.
+ * POST /api/ai/evaluate-writing — mark an IELTS Task 2 essay.
  *
- * Authenticated only: this stands in for a paid model call, so it must not be
- * reachable by anonymous callers.
+ * Authenticated only: this is a paid model call, so it must not be reachable
+ * anonymously. Until now it returned fixed bands regardless of the essay; it
+ * now calls Claude and reports honestly when the evaluator is unconfigured
+ * rather than inventing a score.
  */
 export async function POST(request: Request) {
   const gate = await requireSession();
@@ -18,29 +18,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const { essay } = (await request.json()) as { essay?: string };
+  let body: { essay?: string; prompt?: string };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
+  }
 
-  if (!essay || essay.trim().split(/\s+/).length < 20) {
+  const essay = body.essay?.trim() ?? "";
+  if (!essay || essay.split(/\s+/).length < MIN_WORDS) {
     return NextResponse.json(
-      { error: "Provide an essay of at least 20 words" },
+      { error: `Нужен текст не короче ${MIN_WORDS} слов.` },
       { status: 400 }
     );
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  const evaluation: WritingEvaluation = {
-    taskAchievement: 6.5,
-    coherence: 6.0,
-    lexical: 7.0,
-    grammar: 6.5,
-    overall: 6.5,
-    feedback: [
-      "Position is clear, but body paragraph 2 drifts from the thesis — restate the main argument in the topic sentence.",
-      "Cohesive devices are repetitive ('moreover' ×4). Vary with referencing: 'this measure', 'such an approach'.",
-      "Good lexical range ('detrimental', 'inevitably'); watch article accuracy — 'the society' → 'society'.",
-    ],
-  };
-
-  return NextResponse.json({ evaluation });
+  const result = await evaluateWriting(essay, body.prompt);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  return NextResponse.json({ evaluation: result.evaluation });
 }

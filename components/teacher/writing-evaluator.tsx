@@ -13,20 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import type { WritingEvaluation } from "@/lib/types";
-
-const SAMPLE_RESULT: WritingEvaluation = {
-  taskAchievement: 6.5,
-  coherence: 6.0,
-  lexical: 7.0,
-  grammar: 6.5,
-  overall: 6.5,
-  feedback: [
-    "Позиция ясна, но второй абзац уходит от тезиса — повторите главный аргумент в первом предложении абзаца.",
-    "Средства связи однообразны ('moreover' ×4). Разнообразьте отсылками: 'this measure', 'such an approach'.",
-    "Хороший словарный запас ('detrimental', 'inevitably'); следите за артиклями — 'the society' → 'society'.",
-  ],
-};
 
 const CRITERIA: { key: keyof WritingEvaluation & string; label: string }[] = [
   { key: "taskAchievement", label: "Выполнение задания" },
@@ -40,14 +28,36 @@ export function WritingEvaluator() {
   const [loading, setLoading] = React.useState(false);
   const [result, setResult] = React.useState<WritingEvaluation | null>(null);
 
-  function analyze() {
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Real model call now: this used to render a fixed sample after a fake
+  // 1.5s delay, so every essay scored 6.5 regardless of content.
+  async function analyze() {
     setLoading(true);
     setResult(null);
-    // Demo: simulated model latency; wire to /api/ai/evaluate-writing later
-    setTimeout(() => {
-      setResult(SAMPLE_RESULT);
+    setError(null);
+    try {
+      const res = await fetch("/api/ai/evaluate-writing", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ essay }),
+      });
+      const json = (await res.json()) as {
+        evaluation?: WritingEvaluation;
+        error?: string;
+      };
+      if (!res.ok || !json.evaluation) {
+        throw new Error(json.error || "Не удалось оценить работу.");
+      }
+      setResult(json.evaluation);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Не удалось оценить работу."
+      );
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   }
 
   const words = essay.trim() ? essay.trim().split(/\s+/).length : 0;
@@ -59,9 +69,6 @@ export function WritingEvaluator() {
           <CardTitle className="flex items-center gap-2 font-display">
             <Sparkles className="h-4 w-4 text-primary" />
             AI-оценка письма
-            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-              Демо
-            </span>
           </CardTitle>
           <CardDescription>
             Вставьте эссе Task 2, чтобы получить оценку по четырём критериям.
@@ -141,12 +148,30 @@ export function WritingEvaluator() {
             </div>
           ) : (
             <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-2 text-center">
-              <Sparkles className="h-6 w-6 text-muted-foreground" />
-              <p className="text-sm font-medium">Анализа пока нет</p>
-              <p className="max-w-[26ch] text-xs text-muted-foreground">
-                Вставьте эссе и нажмите «Быстрый анализ», чтобы увидеть баллы и
-                комментарии.
-              </p>
+              <Sparkles
+                className={cn(
+                  "h-6 w-6",
+                  error ? "text-destructive" : "text-muted-foreground"
+                )}
+              />
+              {error ? (
+                <>
+                  <p className="text-sm font-medium text-destructive">
+                    Оценка не выполнена
+                  </p>
+                  <p role="alert" className="max-w-[30ch] text-xs text-destructive">
+                    {error}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">Анализа пока нет</p>
+                  <p className="max-w-[26ch] text-xs text-muted-foreground">
+                    Вставьте эссе и нажмите «Быстрый анализ», чтобы увидеть баллы
+                    и комментарии.
+                  </p>
+                </>
+              )}
             </div>
           )}
         </div>
