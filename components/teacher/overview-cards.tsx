@@ -11,6 +11,14 @@ import { useApp } from "@/components/app-provider";
 import { centerStats } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
+/** «в 1 группе / в 3 группах / в 5 группах» — russian plural for the hint. */
+function groupNoun(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "группе";
+  return "группах";
+}
+
 export function OverviewCards() {
   const { students } = useApp();
   const stats = centerStats(students);
@@ -19,14 +27,18 @@ export function OverviewCards() {
     {
       label: "Активные студенты",
       value: String(stats.totalStudents),
-      hint: `${stats.cohortSize} в вашем потоке`,
+      hint: `в ${stats.groupCount} ${groupNoun(stats.groupCount)}`,
       icon: Users,
       tone: "text-primary bg-primary/15 ring-primary/30",
     },
     {
       label: "Средний балл",
       value: stats.avgBand.toFixed(1),
-      hint: "+0.4 к прошлому семестру",
+      // Real movement between each student's last two mocks, not a slogan.
+      hint:
+        stats.bandDelta === 0
+          ? "без изменений к прошлому mock"
+          : `${stats.bandDelta > 0 ? "+" : ""}${stats.bandDelta.toFixed(1)} к прошлому mock`,
       icon: TrendingUp,
       tone: "text-accent bg-accent/15 ring-accent/30",
     },
