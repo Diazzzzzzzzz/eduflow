@@ -7,7 +7,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/server";
-import { getStudents } from "@/lib/data/students";
+import { getAllStudentsAdmin } from "@/lib/data/students";
 import { TOTAL_LESSONS, currentLessonFor } from "@/lib/lessons-data";
 import {
   GROUP_TEACHER,
@@ -163,7 +163,10 @@ function hoursSince(iso: string): number {
 }
 
 export async function getAdminOverview(): Promise<AdminOverview> {
-  const { students, source } = await getStudents();
+  // Whole-centre aggregate for the director dashboard. The route
+  // (/api/admin/overview) is already gated to owner/admin, so a service-role
+  // read of the full cohort here is intentional and scoped by that gate.
+  const { students, source } = await getAllStudentsAdmin();
   const [groupRows, teacherRows, submissionRows] = await Promise.all([
     loadGroupRows(),
     loadTeacherRows(),
