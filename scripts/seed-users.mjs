@@ -34,8 +34,12 @@ const admin = createClient(url, key, { auth: { persistSession: false } });
 // Fixed ids from the demo cohort (scripts/seed-remote.ts).
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
 const TEACHER_ID = "22222222-2222-2222-2222-222222222222"; // Дана Искакова
-const ADMIN_TEACHER_ID = "22222222-2222-2222-2222-000000000002";
-const OWNER_TEACHER_ID = "22222222-2222-2222-2222-000000000003";
+// Leadership gets its OWN teacher rows. The …0002/0003 slots belong to seeded
+// class teachers (Ержан, Салтанат); an earlier version of this script upserted
+// over them, so the director dashboard showed a real teacher's name for the
+// admin account and overwrote their contact details.
+const ADMIN_TEACHER_ID = "22222222-2222-2222-2222-0000000000a1";
+const OWNER_TEACHER_ID = "22222222-2222-2222-2222-0000000000a2";
 const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман
 
 const USERS = [
@@ -91,12 +95,13 @@ for (const u of USERS) {
 }
 
 // --- staff → teachers rows (so current_user_center_ids() resolves) ----------
-async function linkStaff(teacherRowId, userId, role, name) {
+async function linkStaff(teacherRowId, userId, role, name, email) {
   if (!userId) return;
   const { error } = await admin.from("teachers").upsert({
     id: teacherRowId,
     center_id: CENTER_ID,
     user_id: userId,
+    email,
     name,
     role: role === "teacher" ? "teacher" : role, // owner|admin|director|teacher
   });
@@ -104,9 +109,9 @@ async function linkStaff(teacherRowId, userId, role, name) {
   else console.log(`✓ linked ${role} to teachers row`);
 }
 
-await linkStaff(TEACHER_ID, ids.teacher, "teacher", "Дана Искакова (демо)");
-await linkStaff(ADMIN_TEACHER_ID, ids.admin, "admin", "Директор центра (демо)");
-await linkStaff(OWNER_TEACHER_ID, ids.owner, "owner", "Владелец центра (демо)");
+await linkStaff(TEACHER_ID, ids.teacher, "teacher", "Дана Искакова (демо)", "teacher@eduflow.kz");
+await linkStaff(ADMIN_TEACHER_ID, ids.admin, "admin", "Директор центра (демо)", "admin@eduflow.kz");
+await linkStaff(OWNER_TEACHER_ID, ids.owner, "owner", "Владелец центра (демо)", "owner@eduflow.kz");
 
 // --- parent → guardianship --------------------------------------------------
 if (ids.parent) {
