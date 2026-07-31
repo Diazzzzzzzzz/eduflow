@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { gradeSection, loadFullSection } from "@/lib/exam/service";
 import { saveSubmission } from "@/lib/data/cambridge";
+import { requireSession } from "@/lib/supabase/auth-server";
 import type { AnswerMap, AnswerValue } from "@/lib/exam/types";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +9,8 @@ export const dynamic = "force-dynamic";
 interface SubmitBody {
   sectionId?: string;
   skill?: string;
-  studentId?: string | null;
+  // studentId is intentionally NOT read from the body — the result is always
+  // attributed to the signed-in student, derived from the session below.
   answers?: Record<string, unknown>;
   durationSeconds?: number;
 }
@@ -33,6 +35,17 @@ function sanitizeAnswers(input: Record<string, unknown>): AnswerMap {
  * this is the only route that can reveal them, and only after submission.
  */
 export async function POST(request: Request) {
+  const gate = await requireSession();
+  if ("error" in gate) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status });
+  }
+  // Attribute the attempt to the caller when they are a student; staff
+  // previewing a paper simply don't persist a per-student row.
+  const studentId =
+    gate.session.profile?.role === "student"
+      ? gate.session.profile?.student_id ?? null
+      : null;
+
   let body: Partial<SubmitBody>;
   try {
     body = (await request.json()) as Partial<SubmitBody>;
@@ -60,7 +73,7 @@ export async function POST(request: Request) {
   let persisted = false;
   try {
     persisted = await saveSubmission({
-      studentId: body.studentId ?? null,
+      studentId,
       testId: full.id,
       answers: Object.fromEntries(
         Object.entries(answers).map(([k, v]) => [
