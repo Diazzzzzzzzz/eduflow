@@ -17,10 +17,29 @@ COPY . .
 # Guarantee public/ exists so the runtime COPY never fails, even if the repo
 # ships without static assets.
 RUN mkdir -p public
-# Public Supabase vars are baked into the client bundle at build time. Pass
-# them as build args on Railway if you want them inlined; the server also reads
-# them at runtime from the environment.
+# Next.js inlines NEXT_PUBLIC_* into the client bundle while `next build` runs,
+# so setting them only as runtime variables is not enough — the browser would
+# receive empty strings and every auth call would fail with "Supabase не
+# настроен". They must be declared as ARG here for the platform to pass them in.
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# A missing value here produces a bundle that looks fine and is silently broken,
+# which is expensive to diagnose. Say so loudly in the build log instead.
+RUN if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then \
+      echo "=============================================================="; \
+      echo "WARNING: NEXT_PUBLIC_SUPABASE_* not set at BUILD time."; \
+      echo "Sign-in (including Google) will fail in the browser."; \
+      echo "Set both as service variables so the builder receives them."; \
+      echo "=============================================================="; \
+    else \
+      echo "Supabase public config present at build time."; \
+    fi
+
 RUN npm run build
 
 # --- Runtime --------------------------------------------------------------
