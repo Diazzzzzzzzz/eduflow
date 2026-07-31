@@ -1,12 +1,19 @@
 "use client";
 
+import * as React from "react";
 import { ChevronRight, Clock, Users } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { GROUP_LIST } from "@/lib/group-data";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatBand } from "@/lib/band";
+
+interface GroupSummary {
+  id: string;
+  name: string;
+  schedule: string;
+}
 
 /** Derive a level label from the group name for the level badge. */
 function levelOf(name: string): string {
@@ -19,17 +26,56 @@ function levelOf(name: string): string {
 export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void }) {
   const { students } = useApp();
 
+  // Groups come from the server, scoped to the session: leadership sees the
+  // centre, a teacher only the groups they run. The old hardcoded list showed
+  // every seeded group to everyone, so a teacher got four foreign groups
+  // rendered with "0 students" — rows they can neither open nor are
+  // responsible for.
+  const [groups, setGroups] = React.useState<GroupSummary[] | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/groups", { credentials: "include" });
+        if (!res.ok) throw new Error(String(res.status));
+        const json = (await res.json()) as { groups?: GroupSummary[] };
+        if (!cancelled) setGroups(json.groups ?? []);
+      } catch (err) {
+        console.warn("[groups-overview] load failed:", err);
+        if (!cancelled) setGroups([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="space-y-4">
       <div className="animate-fade-up">
-        <h2 className="font-display text-lg font-semibold">Группы центра</h2>
+        <h2 className="font-display text-lg font-semibold">Группы</h2>
         <p className="text-sm text-muted-foreground">
           Откройте группу, чтобы увидеть журнал, домашние задания и посещаемость.
         </p>
       </div>
 
+      {groups === null ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-busy>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : groups.length === 0 ? (
+        <div className="rounded-lg border border-dashed py-12 text-center">
+          <p className="font-medium">Пока нет групп</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Группы появятся здесь, как только вас назначат преподавателем.
+          </p>
+        </div>
+      ) : (
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {GROUP_LIST.map((group, i) => {
+        {groups.map((group, i) => {
           const members = students.filter((s) => s.group === group.name);
           const avgBand = members.length
             ? members.reduce(
@@ -113,6 +159,7 @@ export function GroupsOverview({ onSelect }: { onSelect: (name: string) => void 
           );
         })}
       </div>
+      )}
     </div>
   );
 }

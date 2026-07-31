@@ -718,10 +718,33 @@ export function centerStats(students: Student[]) {
   const attendance = Math.round(
     students.reduce((a, s) => a + s.attendance, 0) / Math.max(students.length, 1)
   );
+
+  // Average movement between each student's last two mocks — the honest
+  // version of the old hardcoded "+0.4" hint.
+  const deltas = students
+    .map((s) => {
+      const n = s.mockTests.length;
+      return n >= 2
+        ? s.mockTests[n - 1].overall - s.mockTests[n - 2].overall
+        : null;
+    })
+    .filter((d): d is number => d !== null);
+  const bandDelta =
+    deltas.length > 0
+      ? Math.round((deltas.reduce((a, b) => a + b, 0) / deltas.length) * 10) / 10
+      : 0;
+
+  const groupCount = new Set(students.map((s) => s.group)).size;
+
   return {
-    totalStudents: 142, // center-wide; this workspace shows one cohort
+    // The roster is already scoped by the session (a teacher sees their own
+    // groups, leadership the whole centre), so its length IS the honest count —
+    // this used to be a hardcoded 142.
+    totalStudents: students.length,
     cohortSize: students.length,
+    groupCount,
     avgBand,
+    bandDelta,
     targetMetRate: Math.round((targetMet / Math.max(students.length, 1)) * 100),
     attendance,
   };

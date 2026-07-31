@@ -31,7 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { GROUPS } from "@/lib/mock-data";
 import { formatBand } from "@/lib/band";
 import { formatDayMonth } from "@/lib/date";
 import type { Student } from "@/lib/types";
@@ -67,6 +66,14 @@ export function Gradebook({ groupName }: { groupName?: string } = {}) {
   const router = useRouter();
   const [group, setGroup] = React.useState<string>(ALL_GROUPS);
   const [query, setQuery] = React.useState("");
+
+  // Filter options come from the roster the session is actually allowed to
+  // see (a teacher: their groups; leadership: the centre) — the hardcoded
+  // GROUPS list showed every seeded group to everyone.
+  const groupOptions = React.useMemo(
+    () => Array.from(new Set(students.map((s) => s.group))).sort(),
+    [students]
+  );
   // When scoped to a group, the journal is filtered strictly to that group and
   // the group filter + add button are hidden (owned by the group header).
   const scoped = !!groupName;
@@ -115,7 +122,7 @@ export function Gradebook({ groupName }: { groupName?: string } = {}) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={ALL_GROUPS}>Все группы</SelectItem>
-                  {GROUPS.map((g) => (
+                  {groupOptions.map((g) => (
                     <SelectItem key={g} value={g}>
                       {g}
                     </SelectItem>
