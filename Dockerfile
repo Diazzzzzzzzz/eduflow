@@ -21,10 +21,19 @@ RUN mkdir -p public
 # so setting them only as runtime variables is not enough — the browser would
 # receive empty strings and every auth call would fail with "Supabase не
 # настроен". They must be declared as ARG here for the platform to pass them in.
+#
+# EVERY NEXT_PUBLIC_* the app reads needs a line here, not just the Supabase
+# pair: a variable set on the platform but missing an ARG is invisible to the
+# builder, so the value compiles to "" and any UI gated on it silently
+# disappears. That is what happened to the demo button.
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_DEMO_MODE
+ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_DEMO_MODE=$NEXT_PUBLIC_DEMO_MODE
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -38,6 +47,13 @@ RUN if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KE
       echo "=============================================================="; \
     else \
       echo "Supabase public config present at build time."; \
+    fi
+
+# Demo mode is compiled in or out, so report which one this image is.
+RUN if [ "$NEXT_PUBLIC_DEMO_MODE" = "true" ] || [ "$NEXT_PUBLIC_DEMO_MODE" = "1" ]; then \
+      echo "Demo mode: ON — the login page will show the demo button."; \
+    else \
+      echo "Demo mode: OFF (NEXT_PUBLIC_DEMO_MODE unset) — no demo button."; \
     fi
 
 RUN npm run build
