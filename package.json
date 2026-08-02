@@ -15,6 +15,7 @@
     "import:sample": "tsx --env-file=.env.local scripts/import-paper.ts content/import-samples/eduflow-reading-test1.json",
     "gen:import-sample": "tsx scripts/gen-import-sample.ts",
     "import:paper": "tsx --env-file=.env.local scripts/import-paper.ts",
+    "import:reading1": "tsx --env-file=.env.local scripts/import-paper.ts content/import-samples/ielts-reading-test-1.json",
     "check:google": "node scripts/check-google-auth.mjs",
     "test": "vitest run",
     "test:watch": "vitest",

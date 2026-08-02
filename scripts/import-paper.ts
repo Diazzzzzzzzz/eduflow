@@ -13,6 +13,10 @@
 // reading the file itself.
 import { readFileSync } from "node:fs";
 import { validateImport } from "../lib/exam/import-schema";
+import {
+  adaptExternalPaper,
+  isExternalPaperFormat,
+} from "../lib/exam/import-adapters";
 import { savePaper } from "../lib/data/exam-papers";
 
 async function main() {
@@ -25,6 +29,19 @@ async function main() {
       `✗ Не удалось прочитать ${file}: ${err instanceof Error ? err.message : err}`
     );
     process.exit(1);
+  }
+
+  // Papers authored elsewhere use `questionGroups`/`correctAnswer`; translate
+  // them first so both dialects meet the same validator.
+  if (isExternalPaperFormat(raw)) {
+    const adapted = adaptExternalPaper(raw);
+    if (adapted.issues.length > 0) {
+      console.error(`✗ ${file} — проблемы при разборе авторского формата:`);
+      for (const issue of adapted.issues) console.error(`   ${issue}`);
+      process.exit(1);
+    }
+    console.log("→ Определён авторский формат, выполнено преобразование.");
+    raw = adapted.paper;
   }
 
   const result = validateImport(raw);
