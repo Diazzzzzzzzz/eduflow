@@ -6,6 +6,7 @@ import {
   Building2,
   GraduationCap,
   Loader2,
+  PlayCircle,
   School,
   TriangleAlert,
   Users,
@@ -21,7 +22,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const DEMO_PASSWORD = "demo123456";
 const AUTH_TIMEOUT_MS = 10_000;
 
 const DEMOS = [
@@ -132,16 +132,15 @@ export default function LoginPage() {
     setLoading(null);
   }
 
-  async function onDemo(role: Role, demoEmail: string) {
+  /**
+   * Enter the showcase. Deliberately does NOT sign in to Supabase: the demo
+   * cookie creates a synthetic session, and only that session is served from
+   * the bundled fixtures. Signing in for real would produce a real session and
+   * the screens would query the centre's live database instead.
+   */
+  function onDemo(role: Role) {
     setError(null);
     setLoading(role);
-    const res = await attemptSignIn(demoEmail, DEMO_PASSWORD);
-    if (res.ok) {
-      goTo(roleHome(res.role ?? role));
-      return;
-    }
-    // Fallback: keep the app usable via a local demo session.
-    console.warn("Demo fallback (local session):", res.error);
     setDemoCookie(role);
     goTo(roleHome(role));
   }
@@ -170,6 +169,25 @@ export default function LoginPage() {
               <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
+          )}
+
+          {/* Prominent showcase entry, next to the real sign-in. Hidden unless
+              NEXT_PUBLIC_DEMO_MODE is on. */}
+          {isDemoEnabledPublic() && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full border-primary/40 bg-primary/5 text-primary hover:bg-primary/10"
+              disabled={!!loading}
+              onClick={() => onDemo("admin")}
+            >
+              {loading === "admin" ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <PlayCircle />
+              )}
+              Войти в демо-режим
+            </Button>
           )}
 
           <GoogleButton label="Войти через Google" onError={setError} />
@@ -244,7 +262,7 @@ export default function LoginPage() {
                 variant="outline"
                 className="w-full justify-start"
                 disabled={!!loading}
-                onClick={() => onDemo(d.role, d.email)}
+                onClick={() => onDemo(d.role)}
               >
                 {loading === d.role ? (
                   <Loader2 className="animate-spin" />
@@ -255,8 +273,8 @@ export default function LoginPage() {
               </Button>
             ))}
           </div>
-          <p className="tabular text-center text-xs text-muted-foreground">
-            Пароль демо-аккаунтов: demo123456
+          <p className="text-center text-xs text-muted-foreground">
+            Демо-данные вымышленные. Реальная база центра не затрагивается.
           </p>
         </CardContent>
       </Card>

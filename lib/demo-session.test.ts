@@ -25,9 +25,18 @@ describe("isDemoEnabled", () => {
     expect(isDemoEnabled()).toBe(true);
   });
 
-  it("is OFF in production even with DEMO_MODE=true", () => {
+  it("can be enabled in production, deliberately, for client showcases", () => {
+    // A demo session is served from bundled fixtures and never touches the
+    // centre's database, so enabling it on a live deployment is safe.
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("DEMO_MODE", "true");
+    expect(isDemoEnabled()).toBe(true);
+  });
+
+  it("stays off in production when the flag is unset", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DEMO_MODE", "");
+    vi.stubEnv("NEXT_PUBLIC_DEMO_MODE", "");
     expect(isDemoEnabled()).toBe(false);
   });
 });

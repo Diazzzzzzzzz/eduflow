@@ -10,6 +10,7 @@
  * SERVER ONLY.
  */
 import { createRlsClient } from "@/lib/supabase/auth-server";
+import { HOMEWORK_SEED, buildSubmissionSeed } from "@/lib/group-data";
 import type {
   Homework,
   HomeworkSection,
@@ -70,10 +71,22 @@ function mapSubmission(r: SubmissionRow): Submission {
 }
 
 /** Homework + submissions the caller may see, optionally narrowed to a group. */
-export async function getHomeworkBoard(groupName?: string): Promise<{
-  homework: Homework[];
-  submissions: Submission[];
-}> {
+export async function getHomeworkBoard(
+  groupName?: string,
+  opts?: { demo?: boolean }
+): Promise<{ homework: Homework[]; submissions: Submission[] }> {
+  // Demo runs entirely on the bundled fixtures — never the centre's database.
+  if (opts?.demo) {
+    const homework = groupName
+      ? HOMEWORK_SEED.filter((h) => h.groupName === groupName)
+      : HOMEWORK_SEED;
+    const ids = new Set(homework.map((h) => h.id));
+    return {
+      homework,
+      submissions: buildSubmissionSeed().filter((s) => ids.has(s.homeworkId)),
+    };
+  }
+
   const supabase = createRlsClient();
   if (!supabase) return { homework: [], submissions: [] };
 

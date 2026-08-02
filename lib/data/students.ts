@@ -15,7 +15,7 @@ import type { MockTest, Recommendation, Student } from "@/lib/types";
 import type { Role } from "@/lib/auth-routes";
 import { STUDENTS } from "@/lib/mock-data";
 import { calcOverall } from "@/lib/band";
-import { DEMO_STUDENT_ID } from "@/lib/demo-session";
+import { DEMO_STUDENT_ID, isDemoSession } from "@/lib/demo-session";
 import { createRlsClient, type Session } from "@/lib/supabase/auth-server";
 import { createAdminClient } from "@/lib/supabase/server";
 import type {
@@ -140,15 +140,21 @@ export async function getStudentsForSession(
   const studentId = session.profile?.student_id ?? null;
   const wardIds = role === "parent" && studentId ? [studentId] : [];
 
-  // Demo sessions have no real Supabase JWT, so an RLS client would run as anon
-  // and see nothing. Demo mode (dev-only, off in production) instead reads the
-  // cohort via the admin path and scopes it in code with the same rule as RLS.
-  const isDemo = session.user.id.startsWith("demo-");
-  if (isDemo) {
-    const { students: cohort, source } = await getAllStudentsAdmin();
+  // A demo session is served entirely from the bundled cohort and never
+  // touches the centre's database — that is what makes it safe to show a
+  // prospect. It used to read real rows through the admin client, which both
+  // exposed actual students and broke whenever the database was empty.
+  // The demo student/parent are pinned to the first bundled student, because
+  // the fixtures use their own ids ("st-01"), not the live UUIDs.
+  if (isDemoSession(session.user.id)) {
+    const demoStudentId = STUDENTS[0]?.id ?? null;
     return {
-      students: scopeStudentsForRole(cohort, { role, studentId, wardIds }),
-      source,
+      students: scopeStudentsForRole(STUDENTS, {
+        role,
+        studentId: role === "student" ? demoStudentId : null,
+        wardIds: role === "parent" && demoStudentId ? [demoStudentId] : [],
+      }),
+      source: "mock",
     };
   }
 

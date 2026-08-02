@@ -10,6 +10,8 @@
  * SERVER ONLY.
  */
 import { createRlsClient } from "@/lib/supabase/auth-server";
+import { isDemoSession } from "@/lib/demo-session";
+import { GROUP_LIST } from "@/lib/group-data";
 import type { Session } from "@/lib/supabase/auth-server";
 
 export interface GroupSummary {
@@ -21,6 +23,15 @@ export interface GroupSummary {
 export async function getGroupsForSession(
   session: Session
 ): Promise<GroupSummary[]> {
+  // Demo runs entirely on the bundled fixtures — never the centre's database.
+  if (isDemoSession(session.user.id)) {
+    return GROUP_LIST.map((g) => ({
+      id: `demo-${g.name}`,
+      name: g.name,
+      schedule: g.schedule,
+    }));
+  }
+
   const supabase = createRlsClient();
   if (!supabase) return [];
 

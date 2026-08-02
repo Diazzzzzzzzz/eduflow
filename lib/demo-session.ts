@@ -9,23 +9,31 @@ export const DEMO_COOKIE = "eduflow_demo_role";
 export const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман
 
 /**
- * Demo one-click login is a product-showcase feature and a bypass of real auth,
- * so it is OFF unless explicitly enabled and NEVER available in production.
+ * Demo one-click login is a product-showcase feature and a bypass of real
+ * auth, so it stays OFF unless the operator turns it on deliberately.
  *
- * Enabled only when DEMO_MODE=true (or =1) AND NODE_ENV is not "production".
- * The default — flag unset — is disabled, which is what a real deployment runs.
+ * A demo session never reads the centre's database: every screen is served
+ * from the bundled fixtures in lib/mock-data, lib/group-data and
+ * lib/admin-data. That is what makes it safe to enable on a live deployment —
+ * a prospect clicking "Демо" cannot see a real student, and the demo does not
+ * depend on the database being populated.
+ *
+ * Enabled when DEMO_MODE=true (or =1). Unset — the default — is disabled.
  */
 export function isDemoEnabled(): boolean {
-  if (process.env.NODE_ENV === "production") return false;
   const flag = process.env.DEMO_MODE ?? process.env.NEXT_PUBLIC_DEMO_MODE ?? "";
   return flag === "true" || flag === "1";
 }
 
-/** Browser-visible mirror, for hiding the demo UI on the login page. */
+/** Browser-visible mirror, for showing the demo entry on the login page. */
 export function isDemoEnabledPublic(): boolean {
-  if (process.env.NODE_ENV === "production") return false;
   const flag = process.env.NEXT_PUBLIC_DEMO_MODE ?? "";
   return flag === "true" || flag === "1";
+}
+
+/** True when this session is the synthetic demo persona, not a real user. */
+export function isDemoSession(userId: string | undefined | null): boolean {
+  return typeof userId === "string" && userId.startsWith("demo-");
 }
 
 const DEMO_NAMES: Record<Role, string> = {

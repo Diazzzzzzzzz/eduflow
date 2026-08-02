@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHomework, getHomeworkBoard } from "@/lib/data/homework";
 import { requireSession } from "@/lib/supabase/auth-server";
 import { isStaff } from "@/lib/auth-routes";
+import { isDemoSession } from "@/lib/demo-session";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
   const group = new URL(request.url).searchParams.get("group") ?? undefined;
-  const board = await getHomeworkBoard(group);
+  const board = await getHomeworkBoard(group, {
+    demo: isDemoSession(gate.session.user.id),
+  });
   return NextResponse.json(board);
 }
 
