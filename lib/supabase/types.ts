@@ -93,6 +93,24 @@ export interface LessonRow {
   created_at: string;
 }
 
+/** A finished run of an exam paper (migration 0016). */
+export interface ExamAttemptRow {
+  id: string;
+  student_id: string;
+  /** Slug, not a FK: bundled papers exist only in code. */
+  paper_slug: string;
+  /** Denormalised so history survives the paper being renamed or removed. */
+  paper_title: string;
+  skill: "reading" | "listening";
+  correct: number;
+  total: number;
+  band: number | null;
+  answers: unknown;
+  duration_seconds: number | null;
+  completed_at: string;
+  created_at: string;
+}
+
 export interface ExamPaperRow {
   id: string;
   center_id: string;
@@ -159,6 +177,13 @@ export interface Database {
         Row: GroupRow;
         Insert: Partial<GroupRow> & Pick<GroupRow, "name">;
         Update: Partial<GroupRow>;
+        Relationships: [];
+      };
+      exam_attempts: {
+        Row: ExamAttemptRow;
+        Insert: Omit<ExamAttemptRow, "id" | "created_at" | "completed_at"> &
+          Partial<Pick<ExamAttemptRow, "id" | "created_at" | "completed_at">>;
+        Update: Partial<ExamAttemptRow>;
         Relationships: [];
       };
       exam_papers: {

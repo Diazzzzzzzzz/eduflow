@@ -12,7 +12,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const requireSession = vi.fn();
 const getStudentsForSession = vi.fn();
 const createMockResult = vi.fn();
-const saveSubmission = vi.fn();
+const saveAttempt = vi.fn();
 const loadFullSection = vi.fn();
 const gradeSection = vi.fn((..._args: unknown[]) => ({
   band: 7,
@@ -29,8 +29,8 @@ vi.mock("@/lib/data/students", () => ({
   getStudentsForSession: (s: unknown) => getStudentsForSession(s),
   createMockResult: (i: unknown) => createMockResult(i),
 }));
-vi.mock("@/lib/data/cambridge", () => ({
-  saveSubmission: (i: unknown) => saveSubmission(i),
+vi.mock("@/lib/data/exam-attempts", () => ({
+  saveAttempt: (i: unknown) => saveAttempt(i),
 }));
 vi.mock("@/lib/exam/service", () => ({
   loadFullSection: (i: unknown) => loadFullSection(i),
@@ -55,8 +55,13 @@ beforeEach(() => {
   vi.clearAllMocks();
   getStudentsForSession.mockResolvedValue({ students: [], source: "mock" });
   createMockResult.mockResolvedValue({ persisted: true, result: {} });
-  saveSubmission.mockResolvedValue(true);
-  loadFullSection.mockResolvedValue({ id: "paper-1", skill: "reading", passages: [] });
+  saveAttempt.mockResolvedValue(true);
+  loadFullSection.mockResolvedValue({
+    id: "paper-1",
+    title: "Paper One",
+    skill: "reading",
+    passages: [],
+  });
 });
 
 // --- GET /api/students ------------------------------------------------------
@@ -153,8 +158,8 @@ describe("POST /api/exam/submit", () => {
     requireSession.mockResolvedValue(session("student", "real-me"));
     // A malicious client tries to attribute the result to someone else.
     await examSubmitPOST(req({ studentId: "victim" }));
-    expect(saveSubmission).toHaveBeenCalledTimes(1);
-    const arg = saveSubmission.mock.calls[0][0] as { studentId: string | null };
+    expect(saveAttempt).toHaveBeenCalledTimes(1);
+    const arg = saveAttempt.mock.calls[0][0] as { studentId: string | null };
     expect(arg.studentId).toBe("real-me");
     expect(arg.studentId).not.toBe("victim");
   });
@@ -162,7 +167,50 @@ describe("POST /api/exam/submit", () => {
   it("does not attribute a staff preview to any student", async () => {
     requireSession.mockResolvedValue(session("teacher"));
     await examSubmitPOST(req({ studentId: "someone" }));
-    const arg = saveSubmission.mock.calls[0][0] as { studentId: string | null };
+    const arg = saveAttempt.mock.calls[0][0] as { studentId: string | null };
+    expect(arg.studentId).toBeNull();
+  });
+
+  it("records the attempt against the paper's slug, not a UUID", async () => {
+    // The regression this replaced: results were written to
+    // student_submissions, whose test_id is a FK to cambridge_tests. A paper is
+    // identified by slug, so every attempt failed that check silently and
+    // nothing was ever recorded.
+    requireSession.mockResolvedValue(session("student", "s-1"));
+    await examSubmitPOST(req());
+    const arg = saveAttempt.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.paperSlug).toBe("paper-1");
+    expect(arg.paperTitle).toBe("Paper One");
+    expect(arg.skill).toBe("reading");
+    // The score comes from the server-side marking, never from the body.
+    expect(arg.correct).toBe(30);
+    expect(arg.total).toBe(40);
+    expect(arg.band).toBe(7);
+  });
+
+  it("reports persistence honestly in the response", async () => {
+    requireSession.mockResolvedValue(session("student", "s-1"));
+    saveAttempt.mockResolvedValue(false);
+    const res = await examSubmitPOST(req());
+    expect(((await res.json()) as { persisted: boolean }).persisted).toBe(false);
+  });
+
+  it("never writes a demo session to the centre's database", async () => {
+    // The demo persona carries a REAL student_id, so without the guard every
+    // showcase run would land in that student's actual history.
+    requireSession.mockResolvedValue({
+      session: {
+        user: { id: "demo-student", email: "student@eduflow.kz" },
+        profile: {
+          id: "demo-student",
+          role: "student",
+          full_name: "demo",
+          student_id: "33333333-3333-3333-3333-000000000001",
+        },
+      },
+    });
+    await examSubmitPOST(req());
+    const arg = saveAttempt.mock.calls[0][0] as { studentId: string | null };
     expect(arg.studentId).toBeNull();
   });
 });

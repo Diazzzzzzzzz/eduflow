@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { gradeSection, loadFullSection } from "@/lib/exam/service";
-import { saveSubmission } from "@/lib/data/cambridge";
+import { saveAttempt } from "@/lib/data/exam-attempts";
+import { isDemoSession } from "@/lib/demo-session";
 import { requireSession } from "@/lib/supabase/auth-server";
 import type { AnswerMap, AnswerValue } from "@/lib/exam/types";
 
@@ -41,8 +42,13 @@ export async function POST(request: Request) {
   }
   // Attribute the attempt to the caller when they are a student; staff
   // previewing a paper simply don't persist a per-student row.
+  //
+  // A demo session is excluded even though its persona carries a real
+  // student_id: the showcase must never write to the centre's database, and
+  // without this every demo run would land in that student's real history.
+  const isDemo = isDemoSession(gate.session.user.id);
   const studentId =
-    gate.session.profile?.role === "student"
+    !isDemo && gate.session.profile?.role === "student"
       ? gate.session.profile?.student_id ?? null
       : null;
 
@@ -70,18 +76,27 @@ export async function POST(request: Request) {
   const result = gradeSection(full, answers, duration);
 
   // Best-effort persistence; scoring must still return if the database is down.
+  //
+  // This used to write to student_submissions, whose test_id is a FK to the
+  // (now removed) cambridge_tests. A paper is identified by slug, so every
+  // attempt failed that check silently and nothing was ever recorded.
   let persisted = false;
   try {
-    persisted = await saveSubmission({
+    persisted = await saveAttempt({
       studentId,
-      testId: full.id,
+      paperSlug: full.id,
+      paperTitle: full.title,
+      skill: full.skill,
+      correct: result.correct,
+      total: result.total,
+      band: result.band,
       answers: Object.fromEntries(
         Object.entries(answers).map(([k, v]) => [
           k,
           Array.isArray(v) ? v.join(", ") : v,
         ])
       ),
-      band: result.band,
+      durationSeconds: duration,
     });
   } catch {
     persisted = false;

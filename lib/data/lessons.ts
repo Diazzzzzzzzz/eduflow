@@ -78,7 +78,7 @@ export async function getCourse(groupName: string): Promise<Course> {
 
     // The hand-written Database shape in lib/supabase/types.ts is minimal, so a
     // filtered `.maybeSingle()` infers as `never`; the codebase casts at this
-    // boundary (see lib/data/students.ts and lib/data/cambridge.ts).
+    // boundary (see lib/data/students.ts and lib/data/exam-attempts.ts).
     const groupRes = await supabase
       .from("groups")
       .select("current_lesson")
