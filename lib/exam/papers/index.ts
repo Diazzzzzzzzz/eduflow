@@ -12,6 +12,7 @@ import { ACADEMIC_READING_1_SECTION } from "./academic-reading-1";
 import { ACADEMIC_READING_3_SECTION } from "./academic-reading-3";
 import { ACADEMIC_READING_4_SECTION } from "./academic-reading-4";
 import { ACADEMIC_READING_5_SECTION } from "./academic-reading-5";
+import { READING_PRACTICE_SET } from "./reading-practice-set";
 import type { ExamSectionFull } from "../types";
 
 const PAPERS: ExamSectionFull[] = [
@@ -21,6 +22,7 @@ const PAPERS: ExamSectionFull[] = [
   ACADEMIC_READING_3_SECTION,
   ACADEMIC_READING_4_SECTION,
   ACADEMIC_READING_5_SECTION,
+  ...READING_PRACTICE_SET,
 ];
 
 export const EXAM_SECTIONS: Record<string, ExamSectionFull> =

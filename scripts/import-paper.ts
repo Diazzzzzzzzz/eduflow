@@ -17,7 +17,64 @@ import {
   adaptExternalPaper,
   isExternalPaperFormat,
 } from "../lib/exam/import-adapters";
+import {
+  adaptBookCollection,
+  isBookCollection,
+} from "../lib/exam/import-book-collection";
 import { savePaper } from "../lib/data/exam-papers";
+
+/**
+ * Import a whole book of papers. Each test is validated and saved on its own,
+ * so one damaged paper cannot block the rest, and the summary reports exactly
+ * what landed and at what mark total.
+ */
+async function importCollection(raw: unknown, file: string) {
+  const { papers, rejected } = adaptBookCollection(raw);
+  console.log(
+    `→ Определён сборник: ${papers.length} тест(ов) пригодны, ${rejected.length} отброшено.`
+  );
+
+  let saved = 0;
+  let failed = 0;
+  const partial: string[] = [];
+
+  for (const { testNumber, paper, marks, dropped } of papers) {
+    const result = validateImport(paper);
+    if (!result.ok || !result.section) {
+      failed += 1;
+      console.error(`  ✗ Тест ${testNumber} не прошёл проверку:`);
+      for (const issue of result.issues.slice(0, 4)) {
+        console.error(`      ${issue.path || "(корень)"} — ${issue.message}`);
+      }
+      continue;
+    }
+
+    const res = await savePaper(result.section, "import-paper.ts");
+    if (!res.ok) {
+      failed += 1;
+      console.error(`  ✗ Тест ${testNumber}: ${res.error}`);
+      continue;
+    }
+    saved += 1;
+    if (marks < 40) {
+      partial.push(`тест ${testNumber} — ${marks}/40 (групп отброшено: ${dropped.length})`);
+    }
+    console.log(
+      `  ${res.replaced ? "↻" : "✓"} ${res.slug} · ${marks}/40 баллов · ${result.summary!.passages} пассажа`
+    );
+  }
+
+  console.log(`\nИтог: сохранено ${saved}, ошибок ${failed}.`);
+  if (partial.length) {
+    console.log(`Неполные (источник повреждён при распознавании): ${partial.length}`);
+    for (const p of partial) console.log(`   ${p}`);
+  }
+  for (const r of rejected) {
+    console.log(`Отброшен тест ${r.testNumber}: ${r.problems[0]}`);
+  }
+  if (failed > 0) process.exit(1);
+  console.log(`\nГотово: ${file}`);
+}
 
 async function main() {
   const file = process.argv[2] ?? "content/import-samples/eduflow-reading-test1.json";
@@ -29,6 +86,12 @@ async function main() {
       `✗ Не удалось прочитать ${file}: ${err instanceof Error ? err.message : err}`
     );
     process.exit(1);
+  }
+
+  // A whole book of papers rather than a single one.
+  if (isBookCollection(raw)) {
+    await importCollection(raw, file);
+    return;
   }
 
   // Papers authored elsewhere use `questionGroups`/`correctAnswer`; translate

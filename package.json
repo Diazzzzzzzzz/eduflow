@@ -16,6 +16,7 @@
     "gen:import-sample": "tsx scripts/gen-import-sample.ts",
     "import:paper": "tsx --env-file=.env.local scripts/import-paper.ts",
     "import:reading1": "tsx --env-file=.env.local scripts/import-paper.ts content/import-samples/ielts-reading-test-1.json",
+    "import:reading-set": "tsx --env-file=.env.local scripts/import-paper.ts content/import-samples/ielts-reading-tests-1-34.json",
     "check:google": "node scripts/check-google-auth.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
