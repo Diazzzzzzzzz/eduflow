@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { OverviewCards } from "@/components/teacher/overview-cards";
-import { WritingEvaluator } from "@/components/teacher/writing-evaluator";
 import { GroupsOverview } from "@/components/groups/groups-overview";
 
 export function TeacherDashboard() {
@@ -24,7 +23,6 @@ export function TeacherDashboard() {
           router.push(`/teacher/groups/${encodeURIComponent(name)}`)
         }
       />
-      <WritingEvaluator />
     </div>
   );
 }

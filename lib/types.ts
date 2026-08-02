@@ -40,12 +40,3 @@ export interface Student {
 }
 
 export type Role = "teacher" | "student" | "parent";
-
-export interface WritingEvaluation {
-  taskAchievement: number;
-  coherence: number;
-  lexical: number;
-  grammar: number;
-  overall: number;
-  feedback: string[];
-}
