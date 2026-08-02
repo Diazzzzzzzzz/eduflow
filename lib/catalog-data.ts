@@ -1,6 +1,6 @@
 import type { Skill } from "./types";
 
-export type SectionId = "full" | Skill;
+export type SectionId = "all" | Skill;
 
 export interface CatalogSection {
   id: SectionId;
@@ -10,53 +10,22 @@ export interface CatalogSection {
   label: string;
   duration: string;
   questions: string;
-  /** Which practice-engine section a test launches. */
-  engine: Skill;
 }
 
+/**
+ * The practice catalogue's sections.
+ *
+ * This used to also export a hard-coded Cambridge IELTS 20–12 shelf: nine
+ * books × four tests, each card showing an invented status ("Пройдено (Score:
+ * 7.5)"), and every one of them linking to the same default paper regardless
+ * of which book or test was clicked. None of it was backed by content, so it
+ * has been removed. What the catalogue lists now comes from
+ * `listAvailablePapers()` — papers the engine can actually open and score.
+ */
 export const CATALOG_SECTIONS: CatalogSection[] = [
-  { id: "full", label: "Полный тест", en: "Full Mock", duration: "2 ч 45 мин", questions: "4 секции", engine: "listening" },
-  { id: "listening", label: "Аудирование", en: "Listening", duration: "30 мин", questions: "40 вопросов", engine: "listening" },
-  { id: "reading", label: "Чтение", en: "Reading", duration: "60 мин", questions: "40 вопросов", engine: "reading" },
-  { id: "writing", label: "Письмо", en: "Writing", duration: "60 мин", questions: "2 задания", engine: "writing" },
-  { id: "speaking", label: "Говорение", en: "Speaking", duration: "11–14 мин", questions: "3 части", engine: "speaking" },
+  { id: "all", label: "Все тесты", en: "All tests", duration: "60 мин", questions: "до 40 вопросов" },
+  { id: "listening", label: "Аудирование", en: "Listening", duration: "30 мин", questions: "40 вопросов" },
+  { id: "reading", label: "Чтение", en: "Reading", duration: "60 мин", questions: "40 вопросов" },
+  { id: "writing", label: "Письмо", en: "Writing", duration: "60 мин", questions: "2 задания" },
+  { id: "speaking", label: "Говорение", en: "Speaking", duration: "11–14 мин", questions: "3 части" },
 ];
-
-/** Cambridge IELTS volumes, newest first (20 → 12). Book titles are factual. */
-export const CAMBRIDGE_BOOKS = [20, 19, 18, 17, 16, 15, 14, 13, 12];
-export const TESTS_PER_BOOK = [1, 2, 3, 4];
-
-export type TestStatus = "done" | "progress" | "new";
-export interface TestProgress {
-  status: TestStatus;
-  score?: number;
-}
-
-// Demo progress, deterministic (no Date/random → no hydration issues).
-const PROGRESS: Record<string, TestProgress> = {
-  "20-1": { status: "progress" },
-  "19-1": { status: "done", score: 7.5 },
-  "19-2": { status: "progress" },
-  "18-1": { status: "done", score: 7.0 },
-  "18-2": { status: "done", score: 6.5 },
-  "17-3": { status: "done", score: 6.0 },
-  "16-1": { status: "progress" },
-};
-
-export function progressFor(book: number, test: number): TestProgress {
-  return PROGRESS[`${book}-${test}`] ?? { status: "new" };
-}
-
-export function statusLabel(p: TestProgress): string {
-  if (p.status === "done") return `Пройдено (Score: ${p.score?.toFixed(1)})`;
-  if (p.status === "progress") return "В процессе";
-  return "Не начато";
-}
-
-export function statusTone(
-  p: TestProgress
-): "success" | "default" | "secondary" {
-  if (p.status === "done") return "success";
-  if (p.status === "progress") return "default";
-  return "secondary";
-}

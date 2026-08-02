@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import {
   BookOpen,
-  ChevronDown,
   Clock,
   Headphones,
   Layers,
@@ -18,23 +17,24 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { PaperListing } from "@/lib/exam/service";
-import {
-  CAMBRIDGE_BOOKS,
-  CATALOG_SECTIONS,
-  TESTS_PER_BOOK,
-  progressFor,
-  statusLabel,
-  statusTone,
-  type SectionId,
-} from "@/lib/catalog-data";
+import { CATALOG_SECTIONS, type SectionId } from "@/lib/catalog-data";
 
 const SECTION_ICONS: Record<SectionId, typeof Layers> = {
-  full: Layers,
+  all: Layers,
   listening: Headphones,
   reading: BookOpen,
   writing: PenLine,
   speaking: Mic,
 };
+
+/** Russian plural: 1 тест, 2 теста, 5 тестов. */
+function plural(n: number, one: string, few: string, many: string): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+}
 
 export function PracticeCatalog({
   papers = [],
@@ -42,14 +42,14 @@ export function PracticeCatalog({
   /** Papers the exam engine can actually open, from the server. */
   papers?: PaperListing[];
 }) {
-  const [section, setSection] = React.useState<SectionId>("full");
-  const [openBook, setOpenBook] = React.useState<number>(CAMBRIDGE_BOOKS[0]);
+  const [section, setSection] = React.useState<SectionId>("all");
 
   const meta = CATALOG_SECTIONS.find((s) => s.id === section)!;
+  const countFor = (id: SectionId) =>
+    id === "all" ? papers.length : papers.filter((p) => p.skill === id).length;
 
-  // "Full Mock" is a shortcut to everything; a skill tab shows only its own.
   const visiblePapers = papers.filter(
-    (p) => section === "full" || p.skill === section
+    (p) => section === "all" || p.skill === section
   );
 
   return (
@@ -63,6 +63,7 @@ export function PracticeCatalog({
           {CATALOG_SECTIONS.map((s) => {
             const Icon = SECTION_ICONS[s.id];
             const active = s.id === section;
+            const count = countFor(s.id);
             return (
               <button
                 key={s.id}
@@ -76,7 +77,7 @@ export function PracticeCatalog({
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />
-                <span className="flex flex-col leading-tight">
+                <span className="flex min-w-0 flex-1 flex-col leading-tight">
                   <span className="text-sm font-medium">{s.en}</span>
                   <span
                     className={cn(
@@ -86,6 +87,20 @@ export function PracticeCatalog({
                   >
                     {s.label}
                   </span>
+                </span>
+                {/* The real number of openable papers, so a section with none
+                    says so here rather than after a click. */}
+                <span
+                  className={cn(
+                    "tabular shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium",
+                    count === 0
+                      ? "text-muted-foreground/60"
+                      : active
+                        ? "bg-primary/15 text-primary"
+                        : "bg-secondary text-muted-foreground"
+                  )}
+                >
+                  {count}
                 </span>
               </button>
             );
@@ -113,7 +128,7 @@ export function PracticeCatalog({
         </div>
       </aside>
 
-      {/* Right column — Cambridge catalog */}
+      {/* Right column — the papers themselves */}
       <div className="col-span-12 space-y-4 lg:col-span-9">
         <div className="animate-fade-up">
           <h2 className="font-display text-lg font-semibold">
@@ -121,21 +136,21 @@ export function PracticeCatalog({
             <span className="text-muted-foreground">· {meta.label}</span>
           </h2>
           <p className="text-sm text-muted-foreground">
-            Cambridge IELTS 20–12 · выберите тест и начните.{" "}
-            <span className="tabular">
-              {meta.duration} • {meta.questions}
-            </span>
-            .
+            {visiblePapers.length > 0 ? (
+              <>
+                {visiblePapers.length}{" "}
+                {plural(visiblePapers.length, "тест", "теста", "тестов")} с
+                проверкой ответов и подсчётом балла.{" "}
+                <span className="tabular">{meta.duration}</span>.
+              </>
+            ) : (
+              <>Здесь пока нет тестов.</>
+            )}
           </p>
         </div>
 
-        {/* Papers the exam engine can open right now. Unlike the catalogue
-            below, every card here launches a real, scored test. */}
-        {visiblePapers.length > 0 && (
+        {visiblePapers.length > 0 ? (
           <div key={`papers-${section}`} className="animate-fade-up space-y-3">
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              IELTS Academic
-            </p>
             <div className="grid gap-3 sm:grid-cols-2">
               {visiblePapers.map((p) => (
                 <Card key={p.id} className="flex flex-col">
@@ -152,11 +167,11 @@ export function PracticeCatalog({
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <ListChecks className="h-3.5 w-3.5" /> {p.questions}{" "}
-                        вопросов
+                        {plural(p.questions, "вопрос", "вопроса", "вопросов")}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <BookOpen className="h-3.5 w-3.5" /> {p.passages}{" "}
-                        {p.passages === 1 ? "текст" : "текста"}
+                        {plural(p.passages, "текст", "текста", "текстов")}
                       </span>
                     </p>
                     <Link
@@ -173,82 +188,30 @@ export function PracticeCatalog({
               ))}
             </div>
           </div>
+        ) : (
+          <EmptySection label={meta.label} />
         )}
-
-        {/* key=section remounts the list so it fades in on section change */}
-        <div key={section} className="animate-fade-up space-y-3">
-          {CAMBRIDGE_BOOKS.map((book) => {
-            const open = openBook === book;
-            const doneCount = TESTS_PER_BOOK.filter(
-              (t) => progressFor(book, t).status === "done"
-            ).length;
-            return (
-              <Card key={book} className="overflow-hidden">
-                <button
-                  onClick={() => setOpenBook(open ? -1 : book)}
-                  aria-expanded={open}
-                  className="flex w-full items-center justify-between gap-3 p-5 text-left transition-colors hover:bg-secondary/40"
-                >
-                  <div>
-                    <p className="font-display font-semibold">
-                      Cambridge IELTS {book} Academic
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      4 теста · пройдено {doneCount}/4
-                    </p>
-                  </div>
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-                      open && "rotate-180"
-                    )}
-                  />
-                </button>
-
-                {open && (
-                  <CardContent className="grid gap-3 border-t pt-4 sm:grid-cols-2">
-                    {TESTS_PER_BOOK.map((t) => {
-                      const p = progressFor(book, t);
-                      return (
-                        <div
-                          key={t}
-                          className="flex flex-col gap-2 rounded-lg border p-3 transition-shadow hover:shadow-card"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium">
-                              Cambridge {book} — Test {t}
-                            </p>
-                            <Badge variant={statusTone(p)} className="whitespace-nowrap">
-                              {statusLabel(p)}
-                            </Badge>
-                          </div>
-                          <p className="tabular flex items-center gap-3 text-xs text-muted-foreground">
-                            <span className="inline-flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5" /> {meta.duration}
-                            </span>
-                            <span className="inline-flex items-center gap-1">
-                              <ListChecks className="h-3.5 w-3.5" /> {meta.questions}
-                            </span>
-                          </p>
-                          <Link
-                            href={`/student/practice/${meta.engine}`}
-                            className={cn(
-                              buttonVariants({ size: "sm" }),
-                              "mt-1 w-full"
-                            )}
-                          >
-                            Начать тест
-                          </Link>
-                        </div>
-                      );
-                    })}
-                  </CardContent>
-                )}
-              </Card>
-            );
-          })}
-        </div>
       </div>
     </div>
+  );
+}
+
+/** Honest placeholder for a section with nothing to open yet. */
+function EmptySection({ label }: { label: string }) {
+  return (
+    <Card className="animate-fade-up">
+      <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+          <BookOpen className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="font-medium">Тестов в разделе «{label}» пока нет</p>
+          <p className="mx-auto mt-1 max-w-[42ch] text-sm text-muted-foreground">
+            Они появятся, как только центр их загрузит. Сейчас доступны тесты в
+            разделе «Чтение».
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
