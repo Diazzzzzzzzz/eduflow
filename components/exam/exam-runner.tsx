@@ -13,6 +13,7 @@ import {
   RotateCw,
 } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { useFocusModeWhile } from "@/components/layout/focus-mode";
 import { LessonModeSwitch } from "@/components/classroom/lesson-mode-switch";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -216,6 +217,11 @@ function ExamShell({ backHref }: { backHref: string }) {
 
   const [dismissedResume, setDismissedResume] = React.useState(false);
 
+  // Full-screen for the attempt itself, including the review step. The results
+  // screen deliberately drops out of it — by then the student wants the
+  // navigation back.
+  useFocusModeWhile(phase !== "done");
+
   if (phase === "done" && result) {
     return (
       <ResultsView section={section} result={result} onRestart={restart} />
@@ -223,15 +229,23 @@ function ExamShell({ backHref }: { backHref: string }) {
   }
 
   if (phase === "review" || phase === "submitting") {
-    return <ReviewPanel />;
+    // Focus mode fixes the viewport height, so the review list needs its own
+    // scroll container or its tail would be unreachable.
+    return (
+      <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
+        <ReviewPanel />
+      </div>
+    );
   }
 
   const isLast = activePassage === section.passages.length - 1;
 
   return (
-    // Sized against the student workspace chrome above it (top bar, profile
-    // header, tabs) so the panes scroll internally instead of the whole page.
-    <div className="flex h-[calc(100vh-13rem)] min-h-[540px] flex-col gap-3">
+    // Fills the focus-mode viewport exactly: `min-h-0` at every level lets the
+    // two panes scroll internally instead of pushing the page taller. Height is
+    // inherited rather than computed from the chrome, so nothing has to be kept
+    // in sync with a `calc()`.
+    <div className="flex min-h-0 flex-1 flex-col gap-3 p-3 sm:p-4">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">

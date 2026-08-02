@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useApp } from "@/components/app-provider";
+import { useFocusMode } from "@/components/layout/focus-mode";
 import {
   Select,
   SelectContent,
@@ -29,11 +30,20 @@ export default function StudentLayout({
   const { students, activeStudent, activeStudentId, setActiveStudentId } =
     useApp();
   const pathname = usePathname();
+  const { focused } = useFocusMode();
   const s = activeStudent;
 
+  // Focus mode (a running test) gets the viewport to itself: the workspace
+  // header and tab strip are both chrome and a way out of a timed attempt.
+  //
+  // Both states share ONE element tree, with the chrome toggled in place.
+  // Returning a different tree for focus mode moved `children` to a new
+  // position, so React unmounted and remounted it — which tore down the exam
+  // session and silently restarted the attempt the moment focus was released.
   return (
-    <div className="space-y-6">
+    <div className={cn(focused ? "flex min-h-0 flex-1 flex-col" : "space-y-6")}>
       {/* Workspace header: who we're viewing + student picker */}
+      {!focused && (
       <div className="flex flex-wrap items-center justify-between gap-4 animate-fade-up">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary ring-1 ring-inset ring-primary/20">
@@ -59,8 +69,10 @@ export default function StudentLayout({
           </SelectContent>
         </Select>
       </div>
+      )}
 
       {/* Sub-navigation across the student workspace */}
+      {!focused && (
       <nav
         aria-label="Разделы рабочего пространства студента"
         className="flex items-center gap-1 border-b"
@@ -87,6 +99,7 @@ export default function StudentLayout({
           );
         })}
       </nav>
+      )}
 
       {children}
     </div>
