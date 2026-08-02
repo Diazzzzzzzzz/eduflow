@@ -3,6 +3,7 @@ import { AppProvider } from "@/components/app-provider";
 import { ClassroomProvider } from "@/components/classroom/classroom-provider";
 import { GroupsProvider } from "@/components/groups/groups-provider";
 import { RosterGate } from "@/components/layout/roster-gate";
+import { SessionProvider } from "@/components/session-provider";
 import { Topbar } from "@/components/layout/topbar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getUserProfile } from "@/lib/supabase/auth-server";
@@ -23,20 +24,22 @@ export default async function AppLayout({
   };
 
   return (
-    <AppProvider>
-      <GroupsProvider>
-        {/* Mounted app-wide so a live lesson survives moving between the test
-            room and the lesson materials. */}
-        <ClassroomProvider>
-          <div className="canvas-grid flex min-h-screen flex-col">
-            <Topbar user={menuUser} />
-            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
-              <RosterGate>{children}</RosterGate>
-            </main>
-            <SiteFooter />
-          </div>
-        </ClassroomProvider>
-      </GroupsProvider>
-    </AppProvider>
+    <SessionProvider user={menuUser}>
+      <AppProvider>
+        <GroupsProvider>
+          {/* Mounted app-wide so a live lesson survives moving between the test
+              room and the lesson materials. */}
+          <ClassroomProvider>
+            <div className="canvas-grid flex min-h-screen flex-col">
+              <Topbar user={menuUser} />
+              <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+                <RosterGate>{children}</RosterGate>
+              </main>
+              <SiteFooter />
+            </div>
+          </ClassroomProvider>
+        </GroupsProvider>
+      </AppProvider>
+    </SessionProvider>
   );
 }

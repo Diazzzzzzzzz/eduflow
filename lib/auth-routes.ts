@@ -26,7 +26,19 @@ export function isSelfAssignableRole(role: string | null | undefined): role is R
   return SELF_ASSIGNABLE_ROLES.includes(role as Role);
 }
 
-/** The landing route for each role after sign-in. */
+/** Human-readable role names, shared by every surface that displays one. */
+export const ROLE_LABEL: Record<Role, string> = {
+  owner: "Владелец",
+  admin: "Директор",
+  teacher: "Учитель",
+  student: "Студент",
+  parent: "Родитель",
+};
+
+/**
+ * The dashboard a role calls home. Also the "up" target for nested pages, so a
+ * director browsing a group returns to /admin rather than the teacher area.
+ */
 export function roleHome(role: string | null | undefined): string {
   switch (role) {
     case "owner":

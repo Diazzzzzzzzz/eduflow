@@ -4,7 +4,7 @@ import * as React from "react";
 import { LogOut } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { DEMO_COOKIE } from "@/lib/demo-session";
-import type { Role } from "@/lib/auth-routes";
+import { ROLE_LABEL, type Role } from "@/lib/auth-routes";
 import { cn } from "@/lib/utils";
 
 export interface MenuUser {
@@ -12,14 +12,6 @@ export interface MenuUser {
   role: Role;
   fullName: string;
 }
-
-const ROLE_LABEL: Record<Role, string> = {
-  owner: "Владелец",
-  admin: "Директор",
-  teacher: "Учитель",
-  student: "Студент",
-  parent: "Родитель",
-};
 
 function initialsFrom(user: MenuUser): string {
   const base = user.fullName || user.email;

@@ -13,6 +13,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { useSession } from "@/components/session-provider";
 import { BandChip } from "@/components/band-chip";
 import { SkillRadarChart } from "@/components/charts/skill-radar-chart";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
@@ -21,6 +22,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { canAccessAdmin, roleHome } from "@/lib/auth-routes";
 import { formatBand, SKILL_LABELS } from "@/lib/band";
 import { formatDayMonthYear } from "@/lib/date";
 import { SKILLS } from "@/lib/types";
@@ -40,6 +42,7 @@ export function StudentReport({
   studentId: string;
 }) {
   const { students, updateTeacherNote } = useApp();
+  const { role } = useSession();
   const student = students.find((s) => s.id === studentId) ?? null;
 
   const [tab, setTab] = React.useState<Tab>("overview");
@@ -52,6 +55,10 @@ export function StudentReport({
   }, [student?.id, student?.teacherNote]);
 
   const backHref = `/teacher/groups/${groupId}`;
+  // Root of the trail follows the viewer, so a director is never walked back
+  // into the teacher dashboard.
+  const homeHref = roleHome(role);
+  const homeLabel = canAccessAdmin(role) ? "Панель директора" : "Мои группы";
 
   // The roster loads client-side; show a light state until this student resolves.
   if (!student) {
@@ -100,6 +107,24 @@ export function StudentReport({
 
   return (
     <div className="space-y-6">
+      <nav aria-label="Хлебные крошки" className="animate-fade-up">
+        <ol className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+          <li>
+            <Link href={homeHref} className="transition-colors hover:text-foreground">
+              {homeLabel}
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li>
+            <Link href={backHref} className="transition-colors hover:text-foreground">
+              {student.group}
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li className="font-medium text-foreground">{student.name}</li>
+        </ol>
+      </nav>
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 animate-fade-up">
         <div className="flex items-center gap-4">

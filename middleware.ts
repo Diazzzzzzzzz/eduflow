@@ -73,6 +73,13 @@ export async function middleware(request: NextRequest) {
     // /admin/add-test is the teachers' test builder and guards itself.
     const areas: Array<{ prefix: string; allowed: string[]; exact?: boolean }> = [
       { prefix: "/admin", allowed: ["owner", "admin"], exact: true },
+      // The teacher DASHBOARD is for teachers only: it is written in one
+      // teacher's voice and is not leadership's view of the centre. Landing a
+      // director there is what made the app look like it had swapped their
+      // role, so bounce them to /admin instead.
+      { prefix: "/teacher", allowed: ["teacher"], exact: true },
+      // Everything nested under it (group workspace, student report) is shared
+      // and renders according to the viewer's role.
       { prefix: "/teacher", allowed: ["teacher", "owner", "admin"] },
       { prefix: "/student", allowed: ["student"] },
       { prefix: "/parent", allowed: ["parent"] },

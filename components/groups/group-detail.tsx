@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   ArrowLeft,
   BookOpen,
@@ -10,14 +11,16 @@ import {
   Layers,
 } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { useSession } from "@/components/session-provider";
 import { AttendanceTracker } from "@/components/groups/attendance-tracker";
 import { CurrentLessonControl } from "@/components/lessons/current-lesson-control";
 import { HomeworkManager } from "@/components/groups/homework-manager";
 import { AddResultDialog } from "@/components/teacher/add-result-dialog";
 import { Gradebook } from "@/components/teacher/gradebook";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { canAccessAdmin, roleHome } from "@/lib/auth-routes";
 import { GROUP_SCHEDULES } from "@/lib/group-data";
 
 type Tab = "students" | "lessons" | "homework" | "attendance";
@@ -29,30 +32,50 @@ const TABS: { id: Tab; label: string; icon: typeof GraduationCap }[] = [
   { id: "attendance", label: "Посещаемость", icon: ClipboardList },
 ];
 
-export function GroupDetail({
-  groupName,
-  onBack,
-}: {
-  groupName: string;
-  onBack: () => void;
-}) {
+export function GroupDetail({ groupName }: { groupName: string }) {
   const { students } = useApp();
+  const { role } = useSession();
   const [tab, setTab] = React.useState<Tab>("students");
   const members = students.filter((s) => s.group === groupName);
 
+  // The group workspace is shared: leadership reaches it from the director
+  // dashboard, a teacher from their own. "Up" therefore follows the viewer's
+  // role, not the /teacher/... prefix this page happens to be filed under —
+  // sending a director to /teacher was what made the app look like it had
+  // demoted them.
+  const leadership = canAccessAdmin(role);
+  const backHref = roleHome(role);
+  const backLabel = leadership
+    ? "Назад в панель директора"
+    : "Назад к моим группам";
+  const rootLabel = leadership ? "Панель директора" : "Мои группы";
+
   return (
     <div className="space-y-5">
+      {/* Breadcrumbs — make the return path explicit, since two different
+          dashboards lead here. */}
+      <nav aria-label="Хлебные крошки" className="animate-fade-up">
+        <ol className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+          <li>
+            <Link href={backHref} className="transition-colors hover:text-foreground">
+              {rootLabel}
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li className="font-medium text-foreground">{groupName}</li>
+        </ol>
+      </nav>
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 animate-fade-up">
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onBack}
-            aria-label="Назад к группам"
+          <Link
+            href={backHref}
+            aria-label={backLabel}
+            className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
           >
             <ArrowLeft className="h-4 w-4" />
-          </Button>
+          </Link>
           <div>
             <h2 className="font-display text-lg font-semibold leading-tight">
               {groupName}
