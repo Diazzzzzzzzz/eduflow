@@ -39,9 +39,36 @@ export interface TeacherStudentRow {
   group: string;
   /** Latest mock band, or null when they have never sat one. */
   band: number | null;
+  /** First mock band; null when they have never sat one. */
+  startingBand: number | null;
   /** Change from their first mock to their latest; null with fewer than two. */
   delta: number | null;
   attendance: number;
+}
+
+/**
+ * How far the cohort has moved, not just where it stands.
+ *
+ * A current average alone cannot tell a teacher who inherited a strong group
+ * from one who lifted a weak one, which is the more useful thing for a
+ * director to see.
+ *
+ * `from`, `to` and `delta` are all computed over the SAME subset — students
+ * with at least two mocks — so `from + delta === to` exactly. Mixing subsets
+ * would produce a headline gain that its own two endpoints contradict.
+ */
+export interface TeacherProgress {
+  /** Students progress could be measured on (two or more mocks). */
+  measured: number;
+  /** Mean first-mock band across those students. */
+  from: number;
+  /** Mean latest band across those students. */
+  to: number;
+  /** Mean gain, `to - from`. */
+  delta: number;
+  improved: number;
+  declined: number;
+  unchanged: number;
 }
 
 export interface TeacherHomeworkStats {
@@ -63,6 +90,8 @@ export interface TeacherKpis {
   attendance: number | null;
   /** Share of handed-in work that has been marked, 0–100; null if none. */
   reviewedRate: number | null;
+  /** Movement since each student's first mock; null when nobody has two. */
+  progress: TeacherProgress | null;
 }
 
 export interface TeacherAnalytics {
@@ -107,6 +136,32 @@ function meanPercent(values: number[]): number | null {
   return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
 }
 
+/**
+ * Cohort movement, over the students who have sat at least two mocks.
+ *
+ * Shared by the live and demo paths so the two cannot drift apart. `delta` is
+ * derived from the rounded `from` and `to` rather than averaged separately, so
+ * the three figures always reconcile on screen.
+ */
+function computeProgress(students: TeacherStudentRow[]): TeacherProgress | null {
+  const measured = students.filter(
+    (s) => s.band != null && s.startingBand != null && s.delta != null
+  );
+  if (measured.length === 0) return null;
+
+  const from = mean(measured.map((s) => s.startingBand!))!;
+  const to = mean(measured.map((s) => s.band!))!;
+  return {
+    measured: measured.length,
+    from,
+    to,
+    delta: Math.round((to - from) * 10) / 10,
+    improved: measured.filter((s) => s.delta! > 0).length,
+    declined: measured.filter((s) => s.delta! < 0).length,
+    unchanged: measured.filter((s) => s.delta! === 0).length,
+  };
+}
+
 /* -------------------------------------------------------------------------- */
 /* Demo                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -138,6 +193,7 @@ export function demoTeacherAnalytics(teacherId: string): TeacherAnalytics | null
       initials: s.initials,
       group: s.group,
       band: last?.overall ?? null,
+      startingBand: first?.overall ?? null,
       delta:
         first && last && s.mockTests.length > 1
           ? Math.round((last.overall - first.overall) * 10) / 10
@@ -175,6 +231,7 @@ export function demoTeacherAnalytics(teacherId: string): TeacherAnalytics | null
       ),
       attendance: meanPercent(students.map((s) => s.attendance)),
       reviewedRate: percent(graded.length, handedIn),
+      progress: computeProgress(students),
     },
     students: students.sort((a, b) => (b.band ?? 0) - (a.band ?? 0)),
     homework: {
@@ -280,7 +337,12 @@ export async function getTeacherAnalytics(
       },
     groups: [],
     studentCount: 0,
-    kpis: { averageBand: null, attendance: null, reviewedRate: null },
+    kpis: {
+      averageBand: null,
+      attendance: null,
+      reviewedRate: null,
+      progress: null,
+    },
     students: [],
     homework: {
       tasks: 0,
@@ -327,6 +389,7 @@ export async function getTeacherAnalytics(
       initials: s.initials,
       group: s.student_group,
       band: last ? bandOf(last) : null,
+      startingBand: first ? bandOf(first) : null,
       delta:
         tests.length > 1
           ? Math.round((bandOf(last) - bandOf(first)) * 10) / 10
@@ -379,6 +442,7 @@ export async function getTeacherAnalytics(
       // Of the work actually handed in — counting never-submitted rows here
       // would blame the teacher for the students' backlog.
       reviewedRate: percent(graded.length, handedIn),
+      progress: computeProgress(students),
     },
     students: students.sort((a, b) => (b.band ?? 0) - (a.band ?? 0)),
     homework: {

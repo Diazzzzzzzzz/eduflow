@@ -6,6 +6,7 @@ import {
   BookOpen,
   CalendarClock,
   CheckCircle2,
+  ArrowRight,
   ClipboardList,
   GraduationCap,
   Mail,
@@ -38,6 +39,11 @@ import { countOf } from "@/lib/plural";
 import { cn } from "@/lib/utils";
 import type { TeacherAnalytics } from "@/lib/data/teacher-analytics";
 import type { TeacherLoad } from "@/lib/data/admin";
+
+/** Always show the sign on a change: "+0.8" reads as movement, "0.8" as a value. */
+function signed(delta: number): string {
+  return `${delta > 0 ? "+" : ""}${delta.toFixed(1)}`;
+}
 
 /** A dash beats a zero: an absent figure is not the same as a bad one. */
 function orDash(value: number | null, format: (n: number) => string): string {
@@ -146,23 +152,33 @@ export function TeacherDetailDialog({
 
 function TeacherBody({ data }: { data: TeacherAnalytics }) {
   const { kpis, homework } = data;
+  const progress = kpis.progress;
 
   const kpiCards = [
     {
       label: "Средний балл",
       value: orDash(kpis.averageBand, formatBand),
-      hint: countOf(data.studentCount, "студент", "студента", "студентов"),
+      // Where the cohort stands is only half the story; the movement is what
+      // says whether this teacher got them there.
+      trend: progress ? progress.delta : null,
+      // The badge beside the value already carries the gain; repeating it here
+      // would say the same thing twice on one card.
+      hint: progress
+        ? `было ${formatBand(progress.from)}`
+        : countOf(data.studentCount, "студент", "студента", "студентов"),
       icon: GraduationCap,
     },
     {
       label: "Посещаемость",
       value: orDash(kpis.attendance, (n) => `${n}%`),
+      trend: null,
       hint: countOf(data.groups.length, "группа", "группы", "групп"),
       icon: CalendarClock,
     },
     {
       label: "Проверено ДЗ",
       value: orDash(kpis.reviewedRate, (n) => `${n}%`),
+      trend: null,
       hint: "от сданных работ",
       icon: CheckCircle2,
     },
@@ -177,13 +193,59 @@ function TeacherBody({ data }: { data: TeacherAnalytics }) {
             <p className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               <k.icon className="h-3.5 w-3.5" /> {k.label}
             </p>
-            <p className="tabular mt-1 font-display text-2xl font-bold">
+            <p className="tabular mt-1 flex items-baseline gap-2 font-display text-2xl font-bold">
               {k.value}
+              {k.trend != null && k.trend !== 0 && (
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-0.5 text-sm font-semibold",
+                    k.trend > 0 ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {k.trend > 0 ? (
+                    <TrendingUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <TrendingDown className="h-3.5 w-3.5" />
+                  )}
+                  {signed(k.trend)}
+                </span>
+              )}
             </p>
             <p className="text-xs text-muted-foreground">{k.hint}</p>
           </div>
         ))}
       </div>
+
+      {/* Progress breakdown */}
+      {progress && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border bg-card px-3 py-2.5 text-sm">
+          <span className="tabular flex items-center gap-1.5 font-medium">
+            {formatBand(progress.from)}
+            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+            {formatBand(progress.to)}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            по {countOf(progress.measured, "студенту", "студентам", "студентам")}{" "}
+            с двумя и более mock
+          </span>
+          <span className="ml-auto flex flex-wrap items-center gap-3 text-xs">
+            <span className="inline-flex items-center gap-1 text-success">
+              <TrendingUp className="h-3.5 w-3.5" /> выросли {progress.improved}
+            </span>
+            {progress.unchanged > 0 && (
+              <span className="text-muted-foreground">
+                без изменений {progress.unchanged}
+              </span>
+            )}
+            {progress.declined > 0 && (
+              <span className="inline-flex items-center gap-1 text-destructive">
+                <TrendingDown className="h-3.5 w-3.5" /> снизились{" "}
+                {progress.declined}
+              </span>
+            )}
+          </span>
+        </div>
+      )}
 
       {/* Groups */}
       <section className="space-y-2">
@@ -282,7 +344,8 @@ function TeacherBody({ data }: { data: TeacherAnalytics }) {
                 <TableRow className="hover:bg-transparent">
                   <TableHead>Студент</TableHead>
                   <TableHead>Группа</TableHead>
-                  <TableHead className="text-center">Балл</TableHead>
+                  <TableHead className="text-center">Было</TableHead>
+                  <TableHead className="text-center">Стало</TableHead>
                   <TableHead className="text-center">Динамика</TableHead>
                   <TableHead className="text-center">Посещ.</TableHead>
                 </TableRow>
@@ -300,6 +363,11 @@ function TeacherBody({ data }: { data: TeacherAnalytics }) {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {s.group}
+                    </TableCell>
+                    <TableCell className="tabular text-center text-xs text-muted-foreground">
+                      {s.startingBand != null && s.delta != null
+                        ? formatBand(s.startingBand)
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-center">
                       {s.band != null ? (

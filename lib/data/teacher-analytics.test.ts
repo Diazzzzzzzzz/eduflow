@@ -152,6 +152,70 @@ describe("demoTeacherAnalytics", () => {
     }
   });
 
+  it("reports cohort progress that reconciles with its own endpoints", () => {
+    for (const t of withGroups) {
+      const { kpis, students } = demoTeacherAnalytics(t.id)!;
+      const p = kpis.progress;
+      const measurable = students.filter(
+        (s) => s.band != null && s.startingBand != null && s.delta != null
+      );
+      if (measurable.length === 0) {
+        expect(p, t.name).toBeNull();
+        continue;
+      }
+      expect(p, t.name).not.toBeNull();
+      expect(p!.measured, t.name).toBe(measurable.length);
+      // The headline gain must equal the gap between the two figures shown
+      // beside it, or the card contradicts itself.
+      expect(Math.round((p!.to - p!.from) * 10) / 10, t.name).toBe(p!.delta);
+      expect(p!.improved + p!.declined + p!.unchanged, t.name).toBe(p!.measured);
+      for (const v of [p!.from, p!.to]) {
+        expect(v).toBeGreaterThanOrEqual(0);
+        expect(v).toBeLessThanOrEqual(9);
+      }
+    }
+  });
+
+  it("counts a student as improved only when their own delta is positive", () => {
+    for (const t of withGroups) {
+      const { kpis, students } = demoTeacherAnalytics(t.id)!;
+      const p = kpis.progress;
+      if (!p) continue;
+      const measurable = students.filter((s) => s.delta != null);
+      expect(p.improved, t.name).toBe(
+        measurable.filter((s) => s.delta! > 0).length
+      );
+      expect(p.declined, t.name).toBe(
+        measurable.filter((s) => s.delta! < 0).length
+      );
+    }
+  });
+
+  it("gives every student a starting band whenever they have a delta", () => {
+    // The table prints "было" from startingBand next to the delta, so one
+    // cannot exist without the other.
+    for (const t of withGroups) {
+      for (const s of demoTeacherAnalytics(t.id)!.students) {
+        if (s.delta != null) {
+          expect(s.startingBand, `${t.name}/${s.name}`).not.toBeNull();
+          expect(s.band, `${t.name}/${s.name}`).not.toBeNull();
+          expect(
+            Math.round((s.band! - s.startingBand!) * 10) / 10,
+            `${t.name}/${s.name}`
+          ).toBe(s.delta);
+        }
+      }
+    }
+  });
+
+  it("has no progress to report for a teacher with no cohort", () => {
+    const idle = TEACHERS.find(
+      (t) => !Object.values(GROUP_TEACHER).includes(t.id)
+    );
+    if (!idle) return;
+    expect(demoTeacherAnalytics(idle.id)!.kpis.progress).toBeNull();
+  });
+
   it("marks itself as fixture-backed so the UI can tell", () => {
     expect(demoTeacherAnalytics(withGroups[0].id)!.source).toBe("mock");
   });
