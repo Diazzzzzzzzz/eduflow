@@ -9,7 +9,20 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { getAllStudentsAdmin } from "@/lib/data/students";
 import { TOTAL_LESSONS, currentLessonFor } from "@/lib/lessons-data";
-import { REVIEW_SLA_HOURS, type Teacher } from "@/lib/admin-data";
+import {
+  GROUP_TEACHER,
+  PENDING_REVIEW_SEED,
+  REVIEW_SLA_HOURS,
+  TEACHERS,
+  teacherById,
+  type Teacher,
+} from "@/lib/admin-data";
+import {
+  GROUP_SCHEDULES,
+  HOMEWORK_SEED,
+  buildSubmissionSeed,
+} from "@/lib/group-data";
+import { STUDENTS } from "@/lib/mock-data";
 import type { Student } from "@/lib/types";
 
 const CENTER_ID = "11111111-1111-1111-1111-111111111111";
@@ -169,6 +182,104 @@ async function loadTeacherRows(): Promise<TeacherRow[] | null> {
 
 function hoursSince(iso: string): number {
   return Math.max(0, (Date.now() - new Date(iso).getTime()) / 3_600_000);
+}
+
+/**
+ * The dashboard assembled from the bundled fixtures, for a demo session.
+ *
+ * A demo session is meant to be entirely self-contained — that is what makes it
+ * safe to show a prospect on a live deployment. Without this branch the
+ * director's demo read the centre's real students, groups and staff through the
+ * service-role client, and the teacher ids it handed out were real UUIDs that
+ * the fixture-backed teacher panel could not resolve.
+ */
+export function demoAdminOverview(): AdminOverview {
+  const students = STUDENTS;
+  const groupNames = Array.from(new Set(students.map((s) => s.group))).sort();
+
+  const groups: GroupOverviewRow[] = groupNames.map((name) => {
+    const members = students.filter((s) => s.group === name);
+    const teacher = teacherById(GROUP_TEACHER[name]);
+    return {
+      name,
+      teacherName: teacher?.name ?? "—",
+      teacherInitials: teacher?.initials ?? "—",
+      students: members.length,
+      capacity: 8,
+      currentLesson: currentLessonFor(name),
+      totalLessons: TOTAL_LESSONS,
+      averageBand: averageOf(members.map(latestBand)),
+    };
+  });
+
+  const submissions = buildSubmissionSeed();
+
+  const pendingReviews: PendingReview[] = PENDING_REVIEW_SEED.map((p) => {
+    const hw = HOMEWORK_SEED.find((h) => h.id === p.homeworkId);
+    const teacher = hw ? teacherById(GROUP_TEACHER[hw.groupName]) : undefined;
+    return {
+      id: p.id,
+      studentName: p.studentName,
+      groupName: hw?.groupName ?? "—",
+      taskTitle: hw?.title ?? "Домашнее задание",
+      section: hw?.section ?? "general",
+      teacherName: teacher?.name ?? "—",
+      hoursWaiting: p.hoursAgo,
+    };
+  });
+
+  const teachers: TeacherLoad[] = TEACHERS.map((t) => {
+    const owned = groupNames.filter((name) => GROUP_TEACHER[name] === t.id);
+    const mine = pendingReviews.filter((p) => owned.includes(p.groupName));
+    return {
+      id: t.id,
+      name: t.name,
+      initials: t.initials,
+      email: t.email,
+      role: t.role,
+      groups: owned,
+      students: owned.reduce(
+        (n, name) => n + students.filter((s) => s.group === name).length,
+        0
+      ),
+      pending: mine.length,
+      overdue: mine.filter((p) => p.hoursWaiting > REVIEW_SLA_HOURS).length,
+    };
+  });
+
+  const decided = submissions.filter((s) => s.status !== "assigned");
+  const onTime = decided.filter((s) => {
+    const hw = HOMEWORK_SEED.find((h) => h.id === s.homeworkId);
+    if (!hw?.dueDate || !s.submittedAt) return false;
+    return s.submittedAt.slice(0, 10) <= hw.dueDate;
+  });
+
+  return {
+    kpis: {
+      activeStudents: students.length,
+      activeGroups: groups.length,
+      averageBand: averageOf(students.map(latestBand)),
+      attendance: Math.round(
+        students.reduce((a, s) => a + s.attendance, 0) /
+          Math.max(students.length, 1)
+      ),
+      onTimeHomework: decided.length
+        ? Math.round((onTime.length / decided.length) * 100)
+        : null,
+    },
+    groups,
+    pendingReviews,
+    teachers,
+    students: students.map((s) => ({
+      id: s.id,
+      name: s.name,
+      initials: s.initials,
+      email: s.email ?? null,
+      group: s.group,
+      band: latestBand(s),
+    })),
+    source: "mock",
+  };
 }
 
 export async function getAdminOverview(): Promise<AdminOverview> {

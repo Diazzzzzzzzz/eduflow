@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ArrowUpRight,
+  BarChart3,
   CheckCircle2,
   Clock,
   GraduationCap,
@@ -63,6 +64,7 @@ import {
   STAFF_ROLE_LABELS,
 } from "@/lib/admin-data";
 import type { AdminOverview } from "@/lib/data/admin";
+import { TeacherDetailDialog } from "@/components/admin/teacher-detail-dialog";
 
 type Tab = "teachers" | "students";
 
@@ -215,6 +217,8 @@ function GroupsOverview({ groups }: { groups: AdminOverview["groups"] }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* A wide table must scroll inside its card, not push the page sideways. */}
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
@@ -270,6 +274,7 @@ function GroupsOverview({ groups }: { groups: AdminOverview["groups"] }) {
             })}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   );
@@ -282,8 +287,11 @@ function PendingReviews({ items }: { items: AdminOverview["pendingReviews"] }) {
 
   return (
     <Card className="animate-fade-up" style={{ animationDelay: "260ms" }}>
-      <CardHeader className="flex-row items-start justify-between space-y-0">
-        <div>
+      {/* flex-wrap + min-w-0: the badges are `shrink-0`, so on a narrow screen
+          they used to push this header — and with it the page — wider than the
+          viewport. */}
+      <CardHeader className="flex-row flex-wrap items-start justify-between gap-2 space-y-0">
+        <div className="min-w-0">
           <CardTitle className="font-display">На проверке</CardTitle>
           <CardDescription>
             Работы, ожидающие фидбека преподавателя.
@@ -411,6 +419,9 @@ function UserManagement({
   const [moving, setMoving] = React.useState<
     AdminOverview["students"][number] | null
   >(null);
+  const [openTeacher, setOpenTeacher] = React.useState<
+    AdminOverview["teachers"][number] | null
+  >(null);
 
   const groupNames = data.groups.map((g) => g.name);
 
@@ -460,6 +471,7 @@ function UserManagement({
       </CardHeader>
 
       <CardContent>
+        <div className="overflow-x-auto">
         {tab === "students" ? (
           <Table>
             <TableHeader>
@@ -513,11 +525,25 @@ function UserManagement({
                 <TableHead>Роль</TableHead>
                 <TableHead>Группы</TableHead>
                 <TableHead className="text-center">Студенты</TableHead>
+                <TableHead className="w-24 text-right">Аналитика</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.teachers.map((t) => (
-                <TableRow key={t.id}>
+                <TableRow
+                  key={t.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Аналитика преподавателя ${t.name}`}
+                  onClick={() => setOpenTeacher(t)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setOpenTeacher(t);
+                    }
+                  }}
+                  className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                >
                   <TableCell>
                     <span className="flex items-center gap-2.5">
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
@@ -542,11 +568,24 @@ function UserManagement({
                   <TableCell className="tabular text-center text-sm">
                     {t.students}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenTeacher(t);
+                      }}
+                    >
+                      <BarChart3 /> Подробнее
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         )}
+        </div>
       </CardContent>
 
       <AddPersonDialog
@@ -554,6 +593,10 @@ function UserManagement({
         groups={groupNames}
         onClose={() => setAddOpen(null)}
         onDone={onChanged}
+      />
+      <TeacherDetailDialog
+        teacher={openTeacher}
+        onClose={() => setOpenTeacher(null)}
       />
       <MoveStudentDialog
         student={moving}
