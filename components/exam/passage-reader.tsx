@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { BookmarkPlus, Highlighter, StickyNote, Trash2, Type } from "lucide-react";
+import {
+  BookmarkPlus,
+  Highlighter,
+  Languages,
+  StickyNote,
+  Trash2,
+  Type,
+} from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import {
   SaveWordPopover,
@@ -103,6 +110,15 @@ export function PassageReader({
   const [vocabTarget, setVocabTarget] = React.useState<SaveWordTarget | null>(
     null
   );
+  /** Translation for the current selection, looked up without being asked. */
+  const [glance, setGlance] = React.useState<{
+    term: string;
+    translation: string | null;
+    phonetic: string | null;
+    lemma?: string;
+    state: "loading" | "done";
+  } | null>(null);
+  const [savedWord, setSavedWord] = React.useState<string | null>(null);
   const rootRef = React.useRef<HTMLDivElement>(null);
   const { activeStudentId } = useApp();
 
@@ -150,6 +166,100 @@ export function PassageReader({
       y: rect.top - (rootRect?.top ?? 0),
     });
   }, []);
+
+  // Look the selection up as soon as it exists. The translation is the reason
+  // a student selects a word at all, so making them click for it first was
+  // pure friction.
+  React.useEffect(() => {
+    const quote = pending?.quote?.trim();
+    if (!quote) {
+      setGlance(null);
+      return;
+    }
+    // A sentence-long selection is a highlight, not a word to translate.
+    if (quote.length > 40 || quote.split(/\s+/).length > 4) {
+      setGlance(null);
+      return;
+    }
+    let cancelled = false;
+    setGlance({ term: quote, translation: null, phonetic: null, state: "loading" });
+    (async () => {
+      try {
+        const res = await fetch("/api/vocabulary/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: quote }),
+        });
+        const body = (await res.json()) as {
+          translation: string | null;
+          phonetic: string | null;
+          lemma?: string;
+        };
+        if (cancelled) return;
+        setGlance({
+          term: quote,
+          translation: body.translation ?? null,
+          phonetic: body.phonetic ?? null,
+          lemma: body.lemma,
+          state: "done",
+        });
+      } catch {
+        if (!cancelled) {
+          setGlance({ term: quote, translation: null, phonetic: null, state: "done" });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [pending?.quote]);
+
+  /** Persist a word to the student's list. */
+  const saveToVocabulary = React.useCallback(
+    async (input: {
+      term: string;
+      translation: string;
+      phonetic: string | null;
+      example: string;
+    }) => {
+      try {
+        const res = await fetch("/api/vocabulary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentId: activeStudentId, ...input }),
+        });
+        const body = (await res.json()) as { error?: string; existed?: boolean };
+        return res.ok
+          ? { ok: true, existed: body.existed }
+          : { ok: false, error: body.error };
+      } catch {
+        return { ok: false, error: "Нет соединения с сервером" };
+      }
+    },
+    [activeStudentId]
+  );
+
+  /**
+   * One-click save, used when the lookup already knows the translation. Only
+   * an unknown word still needs the popover, to be typed in by hand.
+   */
+  async function saveKnownWord() {
+    if (!pending || !glance?.translation) return;
+    const body = paragraphs[pending.para]?.body ?? "";
+    const term = pending.quote;
+    const res = await saveToVocabulary({
+      term,
+      translation: glance.translation,
+      phonetic: glance.phonetic,
+      example: sentenceAround(body, term),
+    });
+    window.getSelection()?.removeAllRanges();
+    setPending(null);
+    if (res.ok) {
+      setSavedWord(res.existed ? `${term} — уже в словаре` : `${term} → в словарь`);
+      setTimeout(() => setSavedWord(null), 2200);
+    }
+  }
 
   /** Hand the selection to the vocabulary popover with its sentence. */
   function openVocabulary() {
@@ -307,29 +417,71 @@ export function PassageReader({
           className="absolute z-20 -translate-x-1/2 -translate-y-full pb-2"
           style={{ left: pending.x, top: pending.y }}
         >
-          <div className="flex items-center gap-1 rounded-lg border bg-popover p-1 shadow-lg">
-            <Button size="sm" className="h-7" onClick={() => commit(false)}>
-              <Highlighter className="h-3.5 w-3.5" /> Выделить
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7"
-              onClick={() => commit(true)}
-            >
-              <StickyNote className="h-3.5 w-3.5" /> С заметкой
-            </Button>
-            {/* Vocabulary shares this toolbar rather than opening a second
-                popover, which would fight the highlight one for the selection. */}
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7"
-              onClick={openVocabulary}
-            >
-              <BookmarkPlus className="h-3.5 w-3.5" /> В словарь
-            </Button>
+          <div className="overflow-hidden rounded-lg border bg-popover shadow-lg">
+            {/* The translation appears here on its own — selecting the word is
+                the whole request, so nothing should have to be clicked first. */}
+            {glance && (
+              <div className="flex items-start gap-2 border-b px-2.5 py-1.5">
+                <Languages className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <div className="min-w-0 max-w-[16rem]">
+                  {glance.state === "loading" ? (
+                    <p className="text-xs text-muted-foreground">Ищем перевод…</p>
+                  ) : glance.translation ? (
+                    <>
+                      <p className="text-sm font-medium leading-tight">
+                        {glance.translation}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {glance.lemma && glance.lemma !== glance.term.toLowerCase()
+                          ? `${glance.lemma}${glance.phonetic ? " " + glance.phonetic : ""}`
+                          : glance.phonetic}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Перевода нет — введите свой
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center gap-1 p-1">
+              <Button size="sm" className="h-7" onClick={() => commit(false)}>
+                <Highlighter className="h-3.5 w-3.5" /> Выделить
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7"
+                onClick={() => commit(true)}
+              >
+                <StickyNote className="h-3.5 w-3.5" /> С заметкой
+              </Button>
+              {/* Known word: one click saves it. Unknown: the popover opens so
+                  the translation can be typed rather than guessed. */}
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7"
+                onClick={() =>
+                  glance?.translation ? void saveKnownWord() : openVocabulary()
+                }
+              >
+                <BookmarkPlus className="h-3.5 w-3.5" />
+                {glance?.translation ? "В словарь" : "В словарь…"}
+              </Button>
+            </div>
           </div>
+        </div>
+      )}
+
+      {/* Confirmation for a one-click save */}
+      {savedWord && (
+        <div
+          role="status"
+          className="animate-fade-up absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-sm text-success shadow-lg"
+        >
+          <BookmarkPlus className="h-4 w-4 shrink-0" /> {savedWord}
         </div>
       )}
 
@@ -338,24 +490,7 @@ export function PassageReader({
         <SaveWordPopover
           target={vocabTarget}
           onClose={() => setVocabTarget(null)}
-          onSave={async (input) => {
-            try {
-              const res = await fetch("/api/vocabulary", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ studentId: activeStudentId, ...input }),
-              });
-              const body = (await res.json()) as {
-                error?: string;
-                existed?: boolean;
-              };
-              return res.ok
-                ? { ok: true, existed: body.existed }
-                : { ok: false, error: body.error };
-            } catch {
-              return { ok: false, error: "Нет соединения с сервером" };
-            }
-          }}
+          onSave={saveToVocabulary}
         />
       )}
 

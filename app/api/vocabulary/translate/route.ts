@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUserProfile } from "@/lib/supabase/auth-server";
-import { normalizeTerm, QUICK_GLOSSARY } from "@/lib/vocabulary-data";
+import { lookupTerm, normalizeTerm } from "@/lib/vocabulary-data";
 
 export const dynamic = "force-dynamic";
 
@@ -37,13 +37,15 @@ export async function POST(request: Request) {
   }
 
   const term = normalizeTerm(raw);
-  const hit = QUICK_GLOSSARY[term];
+  const hit = lookupTerm(raw);
 
   if (hit) {
     return NextResponse.json({
       term,
       translation: hit.translation,
       phonetic: hit.phonetic ?? null,
+      // Which headword answered, so the UI can show "constraints → constraint".
+      lemma: hit.lemma,
       found: true,
     });
   }

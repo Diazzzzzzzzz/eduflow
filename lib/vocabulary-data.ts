@@ -186,7 +186,213 @@ export const QUICK_GLOSSARY: Record<string, { translation: string; phonetic?: st
   permeable: { translation: "проницаемый", phonetic: "/ˈpɜːmiəbəl/" },
   consensus: { translation: "согласие, консенсус", phonetic: "/kənˈsensəs/" },
   ratify: { translation: "ратифицировать, утверждать", phonetic: "/ˈrætɪfaɪ/" },
+
+  // --- academic verbs -------------------------------------------------------
+  accumulate: { translation: "накапливать", phonetic: "/əˈkjuːmjəleɪt/" },
+  acquire: { translation: "приобретать, овладевать", phonetic: "/əˈkwaɪə/" },
+  allocate: { translation: "распределять, выделять", phonetic: "/ˈæləkeɪt/" },
+  alleviate: { translation: "облегчать, смягчать", phonetic: "/əˈliːvieɪt/" },
+  anticipate: { translation: "предвидеть, ожидать", phonetic: "/ænˈtɪsɪpeɪt/" },
+  assert: { translation: "утверждать", phonetic: "/əˈsɜːt/" },
+  attribute: { translation: "приписывать; признак", phonetic: "/əˈtrɪbjuːt/" },
+  compile: { translation: "составлять, собирать", phonetic: "/kəmˈpaɪl/" },
+  comprise: { translation: "включать, состоять из", phonetic: "/kəmˈpraɪz/" },
+  conceive: { translation: "задумать, представить", phonetic: "/kənˈsiːv/" },
+  constitute: { translation: "составлять, образовывать", phonetic: "/ˈkɒnstɪtjuːt/" },
+  correlate: { translation: "соотноситься, коррелировать", phonetic: "/ˈkɒrəleɪt/" },
+  cultivate: { translation: "выращивать, развивать", phonetic: "/ˈkʌltɪveɪt/" },
+  deduce: { translation: "выводить, заключать", phonetic: "/dɪˈdjuːs/" },
+  depict: { translation: "изображать, описывать", phonetic: "/dɪˈpɪkt/" },
+  derive: { translation: "получать, происходить от", phonetic: "/dɪˈraɪv/" },
+  diminish: { translation: "уменьшать(ся)", phonetic: "/dɪˈmɪnɪʃ/" },
+  discern: { translation: "различать, распознавать", phonetic: "/dɪˈsɜːn/" },
+  displace: { translation: "вытеснять, перемещать", phonetic: "/dɪsˈpleɪs/" },
+  emerge: { translation: "появляться, возникать", phonetic: "/ɪˈmɜːdʒ/" },
+  encompass: { translation: "охватывать", phonetic: "/ɪnˈkʌmpəs/" },
+  enhance: { translation: "усиливать, улучшать", phonetic: "/ɪnˈhɑːns/" },
+  exacerbate: { translation: "обострять, усугублять", phonetic: "/ɪɡˈzæsəbeɪt/" },
+  exceed: { translation: "превышать", phonetic: "/ɪkˈsiːd/" },
+  facilitate: { translation: "облегчать, способствовать", phonetic: "/fəˈsɪlɪteɪt/" },
+  fluctuate: { translation: "колебаться", phonetic: "/ˈflʌktʃueɪt/" },
+  hinder: { translation: "препятствовать, мешать", phonetic: "/ˈhɪndə/" },
+  impose: { translation: "навязывать, вводить", phonetic: "/ɪmˈpəʊz/" },
+  induce: { translation: "вызывать, побуждать", phonetic: "/ɪnˈdjuːs/" },
+  infer: { translation: "делать вывод", phonetic: "/ɪnˈfɜː/" },
+  inhibit: { translation: "сдерживать, подавлять", phonetic: "/ɪnˈhɪbɪt/" },
+  integrate: { translation: "объединять, интегрировать", phonetic: "/ˈɪntɪɡreɪt/" },
+  outweigh: { translation: "перевешивать", phonetic: "/ˌaʊtˈweɪ/" },
+  perceive: { translation: "воспринимать", phonetic: "/pəˈsiːv/" },
+  postulate: { translation: "постулировать, предполагать", phonetic: "/ˈpɒstjʊleɪt/" },
+  precede: { translation: "предшествовать", phonetic: "/prɪˈsiːd/" },
+  presume: { translation: "предполагать", phonetic: "/prɪˈzjuːm/" },
+  prohibit: { translation: "запрещать", phonetic: "/prəˈhɪbɪt/" },
+  refute: { translation: "опровергать", phonetic: "/rɪˈfjuːt/" },
+  reinforce: { translation: "укреплять, подкреплять", phonetic: "/ˌriːɪnˈfɔːs/" },
+  replicate: { translation: "воспроизводить, повторять", phonetic: "/ˈreplɪkeɪt/" },
+  reveal: { translation: "выявлять, раскрывать", phonetic: "/rɪˈviːl/" },
+  speculate: { translation: "предполагать, рассуждать", phonetic: "/ˈspekjəleɪt/" },
+  sustain: { translation: "поддерживать, выдерживать", phonetic: "/səˈsteɪn/" },
+  undermine: { translation: "подрывать", phonetic: "/ˌʌndəˈmaɪn/" },
+  undertake: { translation: "предпринимать", phonetic: "/ˌʌndəˈteɪk/" },
+  utilise: { translation: "использовать", phonetic: "/ˈjuːtɪlaɪz/" },
+  utilize: { translation: "использовать", phonetic: "/ˈjuːtɪlaɪz/" },
+
+  // --- academic nouns -------------------------------------------------------
+  adversity: { translation: "трудности, невзгоды", phonetic: "/ədˈvɜːsəti/" },
+  aftermath: { translation: "последствия", phonetic: "/ˈɑːftəmæθ/" },
+  aptitude: { translation: "способность, склонность", phonetic: "/ˈæptɪtjuːd/" },
+  bias: { translation: "предвзятость, смещение", phonetic: "/ˈbaɪəs/" },
+  breakthrough: { translation: "прорыв", phonetic: "/ˈbreɪkθruː/" },
+  catalyst: { translation: "катализатор", phonetic: "/ˈkætəlɪst/" },
+  constraint: { translation: "ограничение", phonetic: "/kənˈstreɪnt/" },
+  criterion: { translation: "критерий", phonetic: "/kraɪˈtɪəriən/" },
+  demise: { translation: "гибель, упадок", phonetic: "/dɪˈmaɪz/" },
+  depletion: { translation: "истощение", phonetic: "/dɪˈpliːʃən/" },
+  discrepancy: { translation: "расхождение, несоответствие", phonetic: "/dɪsˈkrepənsi/" },
+  drought: { translation: "засуха", phonetic: "/draʊt/" },
+  epidemic: { translation: "эпидемия", phonetic: "/ˌepɪˈdemɪk/" },
+  equilibrium: { translation: "равновесие", phonetic: "/ˌiːkwɪˈlɪbriəm/" },
+  fatigue: { translation: "усталость", phonetic: "/fəˈtiːɡ/" },
+  habitat: { translation: "среда обитания", phonetic: "/ˈhæbɪtæt/" },
+  hierarchy: { translation: "иерархия", phonetic: "/ˈhaɪərɑːki/" },
+  hypothesis: { translation: "гипотеза", phonetic: "/haɪˈpɒθəsɪs/" },
+  incentive: { translation: "стимул", phonetic: "/ɪnˈsentɪv/" },
+  infrastructure: { translation: "инфраструктура", phonetic: "/ˈɪnfrəstrʌktʃə/" },
+  initiative: { translation: "инициатива", phonetic: "/ɪˈnɪʃətɪv/" },
+  intervention: { translation: "вмешательство", phonetic: "/ˌɪntəˈvenʃən/" },
+  legacy: { translation: "наследие", phonetic: "/ˈleɡəsi/" },
+  livelihood: { translation: "средства к существованию", phonetic: "/ˈlaɪvlihʊd/" },
+  momentum: { translation: "импульс, инерция", phonetic: "/məˈmentəm/" },
+  paradigm: { translation: "парадигма", phonetic: "/ˈpærədaɪm/" },
+  phenomenon: { translation: "явление, феномен", phonetic: "/fəˈnɒmɪnən/" },
+  precedent: { translation: "прецедент", phonetic: "/ˈpresɪdənt/" },
+  premise: { translation: "предпосылка", phonetic: "/ˈpremɪs/" },
+  prevalence: { translation: "распространённость", phonetic: "/ˈprevələns/" },
+  proximity: { translation: "близость", phonetic: "/prɒkˈsɪməti/" },
+  rationale: { translation: "обоснование", phonetic: "/ˌræʃəˈnɑːl/" },
+  scarcity: { translation: "нехватка, дефицит", phonetic: "/ˈskeəsəti/" },
+  scrutiny: { translation: "тщательное изучение", phonetic: "/ˈskruːtɪni/" },
+  sediment: { translation: "осадок, отложения", phonetic: "/ˈsedɪmənt/" },
+  spectrum: { translation: "спектр, диапазон", phonetic: "/ˈspektrəm/" },
+  surplus: { translation: "излишек, профицит", phonetic: "/ˈsɜːpləs/" },
+  turnover: { translation: "оборот; текучесть кадров", phonetic: "/ˈtɜːnəʊvə/" },
+  vicinity: { translation: "окрестность, близость", phonetic: "/vɪˈsɪnəti/" },
+  yield: { translation: "урожай, доход; приносить", phonetic: "/jiːld/" },
+
+  // --- academic adjectives --------------------------------------------------
+  abundant: { translation: "обильный, изобилующий", phonetic: "/əˈbʌndənt/" },
+  adverse: { translation: "неблагоприятный", phonetic: "/ˈædvɜːs/" },
+  ambiguous: { translation: "двусмысленный", phonetic: "/æmˈbɪɡjuəs/" },
+  arbitrary: { translation: "произвольный", phonetic: "/ˈɑːbɪtrəri/" },
+  coherent: { translation: "связный, последовательный", phonetic: "/kəʊˈhɪərənt/" },
+  compelling: { translation: "убедительный", phonetic: "/kəmˈpelɪŋ/" },
+  conclusive: { translation: "убедительный, окончательный", phonetic: "/kənˈkluːsɪv/" },
+  contemporary: { translation: "современный", phonetic: "/kənˈtempərəri/" },
+  controversial: { translation: "спорный", phonetic: "/ˌkɒntrəˈvɜːʃəl/" },
+  crucial: { translation: "решающий, важнейший", phonetic: "/ˈkruːʃəl/" },
+  cumulative: { translation: "накопительный, совокупный", phonetic: "/ˈkjuːmjələtɪv/" },
+  diverse: { translation: "разнообразный", phonetic: "/daɪˈvɜːs/" },
+  empirical: { translation: "эмпирический, опытный", phonetic: "/ɪmˈpɪrɪkəl/" },
+  explicit: { translation: "явный, чёткий", phonetic: "/ɪkˈsplɪsɪt/" },
+  feasible: { translation: "осуществимый", phonetic: "/ˈfiːzəbəl/" },
+  implicit: { translation: "неявный, подразумеваемый", phonetic: "/ɪmˈplɪsɪt/" },
+  indigenous: { translation: "коренной, местный", phonetic: "/ɪnˈdɪdʒənəs/" },
+  intricate: { translation: "запутанный, сложный", phonetic: "/ˈɪntrɪkət/" },
+  negligible: { translation: "незначительный", phonetic: "/ˈneɡlɪdʒəbəl/" },
+  notable: { translation: "заметный, примечательный", phonetic: "/ˈnəʊtəbəl/" },
+  novel: { translation: "новый, новаторский", phonetic: "/ˈnɒvəl/" },
+  optimal: { translation: "оптимальный", phonetic: "/ˈɒptɪməl/" },
+  paramount: { translation: "первостепенный", phonetic: "/ˈpærəmaʊnt/" },
+  profound: { translation: "глубокий", phonetic: "/prəˈfaʊnd/" },
+  prominent: { translation: "видный, заметный", phonetic: "/ˈprɒmɪnənt/" },
+  redundant: { translation: "избыточный, лишний", phonetic: "/rɪˈdʌndənt/" },
+  robust: { translation: "прочный, надёжный", phonetic: "/rəʊˈbʌst/" },
+  scarce: { translation: "скудный, редкий", phonetic: "/skeəs/" },
+  simultaneous: { translation: "одновременный", phonetic: "/ˌsɪməlˈteɪniəs/" },
+  sophisticated: { translation: "сложный, изощрённый", phonetic: "/səˈfɪstɪkeɪtɪd/" },
+  sceptical: { translation: "скептический", phonetic: "/ˈskeptɪkəl/" },
+  skeptical: { translation: "скептический", phonetic: "/ˈskeptɪkəl/" },
+  subsequent: { translation: "последующий", phonetic: "/ˈsʌbsɪkwənt/" },
+  susceptible: { translation: "восприимчивый, подверженный", phonetic: "/səˈseptəbəl/" },
+  unprecedented: { translation: "беспрецедентный", phonetic: "/ʌnˈpresɪdentɪd/" },
+  viable: { translation: "жизнеспособный", phonetic: "/ˈvaɪəbəl/" },
+  vulnerable: { translation: "уязвимый", phonetic: "/ˈvʌlnərəbəl/" },
+  widespread: { translation: "широко распространённый", phonetic: "/ˈwaɪdspred/" },
+
+  // --- linking / discourse --------------------------------------------------
+  albeit: { translation: "хотя и", phonetic: "/ɔːlˈbiːɪt/" },
+  conversely: { translation: "наоборот, напротив", phonetic: "/ˈkɒnvɜːsli/" },
+  furthermore: { translation: "кроме того", phonetic: "/ˌfɜːðəˈmɔː/" },
+  hence: { translation: "следовательно", phonetic: "/hens/" },
+  nevertheless: { translation: "тем не менее", phonetic: "/ˌnevəðəˈles/" },
+  notwithstanding: { translation: "несмотря на", phonetic: "/ˌnɒtwɪθˈstændɪŋ/" },
+  thereby: { translation: "тем самым", phonetic: "/ˌðeəˈbaɪ/" },
+  whereas: { translation: "тогда как", phonetic: "/weərˈæz/" },
 };
+
+export interface GlossaryHit {
+  translation: string;
+  phonetic?: string;
+  /** The headword matched, when it differs from what was selected. */
+  lemma: string;
+}
+
+/**
+ * Look a selection up, falling back to its likely dictionary form.
+ *
+ * Passages contain inflected words — "constraints", "diminishing", "sustained"
+ * — while the glossary holds headwords. Without this, the automatic lookup
+ * would miss most of what a student actually selects.
+ *
+ * Deliberately conservative: it only undoes regular English endings, and every
+ * candidate must be present in the glossary, so a wrong guess yields nothing
+ * rather than a wrong translation.
+ */
+export function lookupTerm(raw: string): GlossaryHit | null {
+  const term = normalizeTerm(raw);
+  if (!term) return null;
+
+  const direct = QUICK_GLOSSARY[term];
+  if (direct) return { ...direct, lemma: term };
+
+  const candidates: string[] = [];
+  const add = (w: string) => {
+    if (w.length >= 3 && !candidates.includes(w)) candidates.push(w);
+  };
+
+  // plurals / third person
+  if (term.endsWith("ies")) add(term.slice(0, -3) + "y");
+  if (term.endsWith("es")) add(term.slice(0, -2));
+  if (term.endsWith("s") && !term.endsWith("ss")) add(term.slice(0, -1));
+  // past / participle
+  if (term.endsWith("ied")) add(term.slice(0, -3) + "y");
+  if (term.endsWith("ed")) {
+    add(term.slice(0, -2));
+    add(term.slice(0, -1));
+    if (/([^aeiou])\1ed$/.test(term)) add(term.slice(0, -3));
+  }
+  // continuous
+  if (term.endsWith("ing")) {
+    add(term.slice(0, -3));
+    add(term.slice(0, -3) + "e");
+    if (/([^aeiou])\1ing$/.test(term)) add(term.slice(0, -4));
+  }
+  // adverbs
+  if (term.endsWith("ally")) add(term.slice(0, -2));
+  if (term.endsWith("ily")) add(term.slice(0, -3) + "y");
+  if (term.endsWith("ly")) {
+    add(term.slice(0, -2));
+    // "notably" → "notable", "feasibly" → "feasible": the adjective keeps its
+    // final -e, so only the "y" comes off.
+    add(term.slice(0, -1) + "e");
+  }
+
+  for (const c of candidates) {
+    const hit = QUICK_GLOSSARY[c];
+    if (hit) return { ...hit, lemma: c };
+  }
+  return null;
+}
 
 /**
  * Strip surrounding punctuation and case so "Cohesion," matches the glossary.
