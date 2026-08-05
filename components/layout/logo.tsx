@@ -23,9 +23,6 @@ export function Logo({ className }: { className?: string }) {
         <p className="font-display text-sm font-bold tracking-tight">
           EduFlow
         </p>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          IELTS Analytics
-        </p>
       </div>
     </div>
   );
