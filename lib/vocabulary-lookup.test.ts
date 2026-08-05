@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { EXAM_SECTIONS } from "./exam/papers";
 import {
   lookupTerm,
   normalizeTerm,
@@ -115,5 +116,45 @@ describe("sentenceAround", () => {
 
   it("returns empty for empty context", () => {
     expect(sentenceAround("", "word")).toBe("");
+  });
+});
+
+/**
+ * The opening of Test 34 is seeded end-to-end, so a student can read the first
+ * two sentences with a translation behind every word. Asserted against the
+ * real paper, so re-importing it cannot silently break the coverage.
+ */
+describe("Test 34, Passage 1 — the first two sentences", () => {
+  const section = EXAM_SECTIONS["ielts-reading-practice-34"];
+
+  function openingTokens(): string[] {
+    const flat = section.passages[0].text
+      .replace(/\[[A-Z]\]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const two = flat.match(/^.*?[.!?]\s+.*?[.!?](?=\s|$)/);
+    return (two ? two[0] : "")
+      .split(/\s+/)
+      .map((t) => t.replace(/^[^A-Za-z']+|[^A-Za-z']+$/g, ""))
+      .filter(Boolean);
+  }
+
+  it("is the passage we think it is", () => {
+    expect(section).toBeDefined();
+    expect(section.passages[0].title).toContain("Bristlecone");
+  });
+
+  it("translates every word as it appears, inflections included", () => {
+    const tokens = openingTokens();
+    expect(tokens.length).toBeGreaterThan(20);
+    const missing = tokens.filter((t) => !lookupTerm(t));
+    expect(missing, `без перевода: ${missing.join(", ")}`).toEqual([]);
+  });
+
+  it("resolves the possessive and the plurals in that opening", () => {
+    expect(lookupTerm("earth's")?.lemma).toBe("earth");
+    expect(lookupTerm("humans")?.lemma).toBe("human");
+    expect(lookupTerm("Mountains")?.lemma).toBe("mountain");
+    expect(lookupTerm("served")?.lemma).toBe("serve");
   });
 });

@@ -328,6 +328,51 @@ export const QUICK_GLOSSARY: Record<string, { translation: string; phonetic?: st
   notwithstanding: { translation: "несмотря на", phonetic: "/ˌnɒtwɪθˈstændɪŋ/" },
   thereby: { translation: "тем самым", phonetic: "/ˌðeəˈbaɪ/" },
   whereas: { translation: "тогда как", phonetic: "/weərˈæz/" },
+
+  // --- Test 34, Passage 1 (LONGAEVA: Ancient Bristlecone Pine) --------------
+  // Seeded so the whole opening reads with translations while the glossary is
+  // still local; the general fix is a dictionary source.
+  about: { translation: "о, около", phonetic: "/əˈbaʊt/" },
+  any: { translation: "любой, какой-нибудь", phonetic: "/ˈeni/" },
+  bristlecone: { translation: "остистая (сосна)", phonetic: "/ˈbrɪsəlkəʊn/" },
+  california: { translation: "Калифорния", phonetic: "/ˌkælɪˈfɔːniə/" },
+  earth: { translation: "Земля; земля, почва", phonetic: "/ɜːθ/" },
+  environment: { translation: "окружающая среда", phonetic: "/ɪnˈvaɪrənmənt/" },
+  free: { translation: "свободный; бесплатный", phonetic: "/friː/" },
+  greater: { translation: "больший, более значительный", phonetic: "/ˈɡreɪtə/" },
+  history: { translation: "история", phonetic: "/ˈhɪstəri/" },
+  human: { translation: "человек; человеческий", phonetic: "/ˈhjuːmən/" },
+  insight: { translation: "понимание, проникновение в суть", phonetic: "/ˈɪnsaɪt/" },
+  longaeva: { translation: "лонгева (видовое название, «долгоживущая»)" },
+  look: { translation: "смотреть, обращаться (к чему-л.)", phonetic: "/lʊk/" },
+  mountain: { translation: "гора", phonetic: "/ˈmaʊntɪn/" },
+  natural: { translation: "природный, естественный", phonetic: "/ˈnætʃərəl/" },
+  often: { translation: "часто", phonetic: "/ˈɒfən/" },
+  other: { translation: "другой", phonetic: "/ˈʌðə/" },
+  past: { translation: "прошлое; прошлый", phonetic: "/pɑːst/" },
+  pine: { translation: "сосна", phonetic: "/paɪn/" },
+  pinus: { translation: "сосна (лат. род Pinus)" },
+  planet: { translation: "планета", phonetic: "/ˈplænɪt/" },
+  purpose: { translation: "цель, назначение", phonetic: "/ˈpɜːpəs/" },
+  serve: { translation: "служить, выполнять (роль)", phonetic: "/sɜːv/" },
+  species: { translation: "вид (биологический)", phonetic: "/ˈspiːʃiːz/" },
+  understand: { translation: "понимать", phonetic: "/ˌʌndəˈstænd/" },
+  white: { translation: "белый", phonetic: "/waɪt/" },
+
+  // Function words, so nothing in the sentence comes back empty.
+  than: { translation: "чем (при сравнении)", phonetic: "/ðæn/" },
+  this: { translation: "этот, это", phonetic: "/ðɪs/" },
+  into: { translation: "в, внутрь", phonetic: "/ˈɪntuː/" },
+  more: { translation: "больше, более", phonetic: "/mɔː/" },
+  have: { translation: "иметь; вспомогательный глагол", phonetic: "/hæv/" },
+  has: { translation: "имеет (3-е л. ед. ч. от have)", phonetic: "/hæz/" },
+  the: { translation: "определённый артикль", phonetic: "/ðə/" },
+  and: { translation: "и", phonetic: "/ænd/" },
+  for: { translation: "для, за, в течение", phonetic: "/fɔː/" },
+  of: { translation: "предлог родительного падежа: из, от", phonetic: "/ɒv/" },
+  on: { translation: "на", phonetic: "/ɒn/" },
+  to: { translation: "к, в; частица инфинитива", phonetic: "/tuː/" },
+  in: { translation: "в, внутри", phonetic: "/ɪn/" },
 };
 
 export interface GlossaryHit {
@@ -359,6 +404,9 @@ export function lookupTerm(raw: string): GlossaryHit | null {
   const add = (w: string) => {
     if (w.length >= 3 && !candidates.includes(w)) candidates.push(w);
   };
+
+  // possessive: "earth's" → "earth"
+  if (/['\u2019]s$/.test(term)) add(term.replace(/['\u2019]s$/, ""));
 
   // plurals / third person
   if (term.endsWith("ies")) add(term.slice(0, -3) + "y");
