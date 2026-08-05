@@ -2,18 +2,20 @@ import { NextResponse } from "next/server";
 import { getUserProfile } from "@/lib/supabase/auth-server";
 import {
   deleteWord,
+  demoEntries,
   listVocabulary,
   saveWord,
   setWordStatus,
 } from "@/lib/data/vocabulary";
+import { isDemoSession } from "@/lib/demo-session";
 import { STATUS_ORDER } from "@/lib/vocabulary-data";
 
 export const dynamic = "force-dynamic";
 
 /**
  * A student may only touch their own list. The id comes from the query for the
- * demo student picker, but is checked against the session for real logins so a
- * student cannot read a classmate's vocabulary.
+ * staff student picker, but is checked against the session for a student login
+ * so nobody can read a classmate's vocabulary.
  */
 async function resolveStudentId(requested: string | null) {
   const session = await getUserProfile();
@@ -21,15 +23,25 @@ async function resolveStudentId(requested: string | null) {
 
   const role = session.profile?.role;
   const own = session.profile?.student_id ?? null;
+  const demo = isDemoSession(session.user.id);
 
-  // Staff may inspect any student's list; a student is pinned to their own.
+  // Staff may inspect any student's list; a student is pinned to their own —
+  // unconditionally. The previous version only enforced that when `own` was
+  // set, so a student account with no linked student row fell through to
+  // whatever id the caller asked for and could read anyone's list.
   if (role === "student") {
-    if (own && requested && requested !== own) {
+    if (!own) {
+      return {
+        error: "Аккаунт не связан с профилем студента.",
+        status: 403 as const,
+      };
+    }
+    if (requested && requested !== own) {
       return { error: "Нет доступа к чужому словарю.", status: 403 as const };
     }
-    return { studentId: own ?? requested ?? null };
+    return { studentId: own, demo };
   }
-  return { studentId: requested ?? own ?? null };
+  return { studentId: requested ?? own ?? null, demo };
 }
 
 /** GET /api/vocabulary?studentId=… */
@@ -41,6 +53,12 @@ export async function GET(request: Request) {
   }
   if (!gate.studentId) {
     return NextResponse.json({ error: "Не указан студент" }, { status: 400 });
+  }
+
+  // The showcase is served from the bundled set: it must not read the centre's
+  // vocabulary, and the demo student has no row of their own to read.
+  if (gate.demo) {
+    return NextResponse.json({ entries: demoEntries(), source: "mock" });
   }
 
   const { entries, source } = await listVocabulary(gate.studentId);
@@ -75,6 +93,28 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Нужны слово и перевод" },
       { status: 422 }
+    );
+  }
+
+  // Acknowledge the word without writing it: a demo session keeps its additions
+  // client-side, so the panel behaves while the database stays untouched.
+  if (gate.demo) {
+    return NextResponse.json(
+      {
+        entry: {
+          id: `demo-new-${Date.now()}`,
+          term: body.term.trim(),
+          phonetic: body.phonetic ?? null,
+          translation: body.translation.trim(),
+          example: body.example ?? null,
+          source: body.source === "teacher" ? "teacher" : "student",
+          topic: body.topic ?? null,
+          status: "new" as const,
+          createdAt: new Date().toISOString(),
+        },
+        existed: false,
+      },
+      { status: 201 }
     );
   }
 
@@ -120,6 +160,10 @@ export async function PATCH(request: Request) {
     );
   }
 
+  if (gate.demo) {
+    return NextResponse.json({ id: body.id, status: body.status });
+  }
+
   const res = await setWordStatus(
     gate.studentId,
     body.id,
@@ -140,6 +184,8 @@ export async function DELETE(request: Request) {
   if (!gate.studentId || !id) {
     return NextResponse.json({ error: "Нужны studentId и id" }, { status: 422 });
   }
+
+  if (gate.demo) return NextResponse.json({ id, deleted: true });
 
   const res = await deleteWord(gate.studentId, id);
   if (!res.ok) return NextResponse.json({ error: res.error }, { status: 500 });

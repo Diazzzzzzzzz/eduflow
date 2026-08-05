@@ -6,7 +6,23 @@ import type { Role } from "@/lib/auth-routes";
  * personas remain fully usable without a real session.
  */
 export const DEMO_COOKIE = "eduflow_demo_role";
-export const DEMO_STUDENT_ID = "33333333-3333-3333-3333-000000000001"; // Арман
+
+/**
+ * The demo student, as the BUNDLED roster identifies them (lib/mock-data's
+ * first student, Арман).
+ *
+ * This used to be the real UUID of the seeded Арман row. That gave the demo two
+ * identity spaces for one person: the session claimed a database UUID while the
+ * roster the demo actually renders hands out fixture ids like "st-01". Any
+ * endpoint comparing "the id you asked for" against "the id on your session"
+ * therefore saw a mismatch and refused — which is what made the vocabulary page
+ * fail with 403 for a demo student.
+ *
+ * Kept as a literal rather than importing lib/mock-data: this module is pulled
+ * into the middleware bundle, and the fixtures are far too big for the edge
+ * runtime. lib/demo-session.test.ts asserts it still matches STUDENTS[0].id.
+ */
+export const DEMO_STUDENT_ID = "st-01";
 
 /**
  * Demo one-click login is a product-showcase feature and a bypass of real

@@ -43,8 +43,11 @@ function rowToEntry(r: VocabRow): VocabEntry {
   };
 }
 
-/** Deterministic demo list, used when there is no database. */
-function demoEntries(): VocabEntry[] {
+/**
+ * Deterministic demo list, used when there is no database and for a demo
+ * session, which must never read the centre's real vocabulary.
+ */
+export function demoEntries(): VocabEntry[] {
   return DEMO_VOCABULARY.map((w, i) => ({
     id: `demo-${i + 1}`,
     term: w.term,

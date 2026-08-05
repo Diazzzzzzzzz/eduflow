@@ -74,13 +74,20 @@ export function useVocabulary(studentId: string | undefined): VocabularyState {
           entry?: VocabEntry;
         };
         if (!res.ok) return { ok: false, error: body.error ?? "Не удалось сохранить" };
-        reload();
+        // A demo session has no server-side list to re-read, so refetching
+        // would drop the word that was just added. Keep it locally instead.
+        if (demo && body.entry) {
+          const added = body.entry;
+          setEntries((prev) => [added, ...prev]);
+        } else {
+          reload();
+        }
         return { ok: true, existed: body.existed };
       } catch {
         return { ok: false, error: "Нет соединения с сервером" };
       }
     },
-    [studentId, reload]
+    [studentId, reload, demo]
   );
 
   const setWordStatus = React.useCallback(
