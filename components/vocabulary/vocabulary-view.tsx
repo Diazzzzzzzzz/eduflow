@@ -143,14 +143,6 @@ export function VocabularyView() {
         </div>
       </div>
 
-      {vocab.demo && (
-        <p className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-sm text-warning">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-          Показан демонстрационный набор: словарь этого студента ещё не сохранён
-          в базе, поэтому изменения не сохранятся.
-        </p>
-      )}
-
       {/* Counters */}
       <div className="grid gap-3 sm:grid-cols-4">
         {(

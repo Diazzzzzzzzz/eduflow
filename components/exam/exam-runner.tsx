@@ -10,10 +10,13 @@ import {
   GripVertical,
   Link2,
   Link2Off,
+  Maximize,
+  Minimize,
   RotateCw,
 } from "lucide-react";
 import { useApp } from "@/components/app-provider";
 import { useFocusModeWhile } from "@/components/layout/focus-mode";
+import { useFullscreen } from "@/lib/use-fullscreen";
 import { LessonModeSwitch } from "@/components/classroom/lesson-mode-switch";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -214,6 +217,7 @@ function ExamShell({ backHref }: { backHref: string }) {
     restored,
   } = useExamSession();
   const { uiTheme } = useApp();
+  const fullscreen = useFullscreen();
 
   const [dismissedResume, setDismissedResume] = React.useState(false);
 
@@ -271,6 +275,34 @@ function ExamShell({ backHref }: { backHref: string }) {
             {answeredCount}/{totalQuestions} отвечено
           </span>
           <ExamTimer />
+          {/* The browser's own fullscreen, on top of the app's focus mode:
+              focus mode hides EduFlow's chrome, this hides the browser's.
+              Entering needs a user gesture, so it has to be a button. */}
+          {fullscreen.supported && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={fullscreen.toggle}
+              aria-pressed={fullscreen.active}
+              aria-label={
+                fullscreen.active
+                  ? "Выйти из полноэкранного режима"
+                  : "Полноэкранный режим"
+              }
+              title={
+                fullscreen.active
+                  ? "Выйти из полноэкранного режима"
+                  : "Полноэкранный режим"
+              }
+            >
+              {fullscreen.active ? (
+                <Minimize className="h-4 w-4" />
+              ) : (
+                <Maximize className="h-4 w-4" />
+              )}
+            </Button>
+          )}
           <Button size="sm" onClick={openReview}>
             <ClipboardList /> Проверить и сдать
           </Button>
